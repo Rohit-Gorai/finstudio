@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LedgerSchool — Learn finance by building it</title>
+<title>FinStudio — Learn finance by building it</title>
 <meta name="description" content="Free, text-only finance school. Learn accounting, the three financial statements, ratios and financial modeling by building every number yourself in a live spreadsheet.">
-<meta property="og:title" content="LedgerSchool — Learn finance by building it">
+<meta property="og:title" content="FinStudio — Learn finance by building it">
 <meta property="og:description" content="Free W3Schools-style finance course. Every lesson ends in a live spreadsheet where you build the number yourself — and the balance sheet has to tie.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="LedgerSchool">
+<meta property="og:site_name" content="FinStudio">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMZWRnZXJTY2hvb2wiPgogIDxyZWN0IHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjYiIGZpbGw9IiNGQkY5RjMiLz4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9IiMxRTZCNEUiIHN0cm9rZS13aWR0aD0iMi42Ij4KICAgIDxyZWN0IHg9IjQuMyIgeT0iNC4zIiB3aWR0aD0iMjMuNCIgaGVpZ2h0PSIyMy40IiByeD0iMi41Ii8+CiAgICA8bGluZSB4MT0iNC4zIiB5MT0iMTIiIHgyPSIyNy43IiB5Mj0iMTIiLz4KICAgIDxsaW5lIHgxPSI0LjMiIHkxPSIyMCIgeDI9IjI3LjciIHkyPSIyMCIvPgogICAgPGxpbmUgeDE9IjE2IiB5MT0iNC4zIiB4Mj0iMTYiIHkyPSIyNy43Ii8+CiAgPC9nPgo8L3N2Zz4K">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   LedgerSchool — design system
+   FinStudio — design system
    Ledger-paper palette:
    paper #FBF9F3 · ink #182530 · ledger green #1E6B4E · debit red #B23A2F
    Fraunces (display) · Public Sans (body) · IBM Plex Mono (cells)
@@ -185,7 +185,7 @@ body {
 .side-module { margin-bottom: 0.35rem; }
 .side-module-head {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;   /* keeps the count on the title's first line */
   gap: 0.5rem;
   width: 100%;
   padding: 0.42rem 1.1rem;
@@ -199,27 +199,22 @@ body {
   text-decoration: none;
 }
 .side-module-head:hover { background: var(--paper-2); }
-.side-code {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--green);
-  font-weight: 600;
-  flex: none;
-  width: 2.6rem;
-}
+.side-module-title { flex: 1 1 auto; min-width: 0; }
 .side-module-head .side-progress {
-  margin-left: auto;
+  flex: none;
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  line-height: 1.5;
   color: var(--ink-faint);
   font-weight: 500;
+  white-space: nowrap;
 }
 .side-lessons { list-style: none; margin: 0; padding: 0; }
 .side-lessons a {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 0.5rem;
-  padding: 0.3rem 1.1rem 0.3rem 1.1rem;
+  padding: 0.32rem 1.1rem 0.32rem 1.6rem;   /* indented under its module */
   color: var(--ink-soft);
   text-decoration: none;
   border-left: 3px solid transparent;
@@ -231,9 +226,9 @@ body {
   color: var(--ink);
   font-weight: 600;
 }
-.side-lessons .side-code { color: var(--ink-faint); font-weight: 500; }
-.side-lessons a.active .side-code { color: var(--green); }
+.side-lesson-title { flex: 1 1 auto; min-width: 0; }
 .side-done {
+  flex: none;
   margin-left: auto;
   color: var(--green);
   font-size: 0.8rem;
@@ -495,7 +490,44 @@ table.sheet input.cell-input:focus {
 }
 table.sheet td.cell-ok input.cell-input { background: var(--green-soft); }
 table.sheet td.cell-bad input.cell-input { background: var(--red-soft); }
+table.sheet td { position: relative; }
 table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: -2px; }
+table.sheet td.fill-preview { background: var(--green-soft); outline: 1px dashed var(--green); outline-offset: -1px; }
+
+/* the drag-fill square, bottom-right of the selected cell */
+.fill-handle {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  background: var(--green);
+  border: 1.5px solid #fff;
+  border-radius: 1px;
+  cursor: crosshair;
+  z-index: 5;
+}
+@media (pointer: coarse) { .fill-handle { width: 14px; height: 14px; right: -6px; bottom: -6px; } }
+
+/* keyboard shortcut hints under the grid */
+.sheet-shortcuts {
+  padding: 0 1rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.9rem;
+}
+.sheet-shortcuts kbd {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  color: var(--ink);
+}
 .cell-error { color: var(--red); font-weight: 600; }
 .neg { color: var(--red); }
 
@@ -512,7 +544,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 1rem;
+  margin: 0.6rem 1rem 0;
   padding: 0.3rem 0.6rem;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -564,7 +596,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 
 /* ---------- tie meter ---------- */
 .tie-meter {
-  margin: 0 1rem 1rem;
+  margin: 0.2rem 1rem 1rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 0.8rem 1rem;
@@ -853,7 +885,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       <line x1="1" y1="17" x2="25" y2="17" stroke="currentColor" stroke-width="2"/>
       <line x1="13" y1="1" x2="13" y2="25" stroke="currentColor" stroke-width="2"/>
     </svg>
-    <span class="brand-name">Ledger<em>School</em></span>
+    <span class="brand-name">Fin<em>Studio</em></span>
   </a>
   <span class="topbar-tag">Learn finance by building it</span>
 </header>
@@ -871,15 +903,15 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 
 <footer class="site-footer">
   <p>
-    LedgerSchool is free and <a href="https://github.com/Rohit-Gorai/finschool" rel="noopener">open source</a>.
-    Spotted a mistake in the numbers? <a href="https://github.com/Rohit-Gorai/finschool/issues" rel="noopener">Report an error</a>.
+    FinStudio is free and <a href="https://github.com/Rohit-Gorai/finstudio" rel="noopener">open source</a>.
+    Spotted a mistake in the numbers? <a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noopener">Report an error</a>.
   </p>
   <p class="footer-fine">Text and exercises use Indian formats (₹, en-IN grouping); the concepts are global. Not investment or tax advice.</p>
 </footer>
 
 <script>
 /* js/engine.js */
-/* LedgerSchool spreadsheet engine.
+/* FinStudio spreadsheet engine.
    Dependency-free. Parses "=B2-B3" style formulas with cell refs, ranges,
    functions, cycle detection, and Indian-format numbers.
    Loaded before app.js; exposes LS.Sheet, LS.fmt, LS.cellAddr helpers. */
@@ -1153,6 +1185,20 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     });
   }
   LS.shiftFormula = shiftFormula;
+
+  /* The row-wise twin, for fill-down and for pasting into a different row.
+     Same rule: $-anchored rows stay put, relative ones move. */
+  function shiftRows(raw, n) {
+    if (!raw || raw.charAt(0) !== "=") return raw;
+    return raw.replace(/(\$?)([A-Za-z]+)(\$?)(\d+)/g, function (m, cAbs, letters, rAbs, digits) {
+      if (rAbs) return m;                       // B$2 — row locked
+      if (!/^[A-Za-z]+$/.test(letters)) return m;
+      var r = parseInt(digits, 10) + n;
+      if (r < 1) return "#REF!";
+      return cAbs + letters + r;
+    });
+  }
+  LS.shiftRows = shiftRows;
 
   /* ================= Sheet ================= */
   // cfg: { cols: <int>, grid: [ [cell, ...], ... ] }
@@ -1605,7 +1651,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         ]
       },
       { t: "where", h: "The first three buckets — assets, liabilities, equity — become the <strong>balance sheet</strong>. The last two — revenue and expenses — become the <strong>income statement</strong>, whose profit lands back in equity. Every statement in this course is one of those two lists, sorted." },
-      { t: "mcq", q: "A customer pays the café ₹500 in advance for tomorrow's office coffee run. Right now, that ₹500 is best described as…", opts: ["Revenue — cash came in", "A liability — the café owes the customer coffee", "Equity — it belongs to the business", "An expense — the coffee will cost money to make"], correct: 1, why: ["Cash came in, but nothing has been <em>earned</em> yet — the coffee hasn't been delivered. Until it is, the café owes the customer either coffee or a refund. That obligation is a liability (called deferred revenue). Revenue is recognised when you deliver, not when cash arrives — a theme you'll meet again in lesson 1410.", "Cash went up (asset), and an obligation to deliver went up (liability). Accountants call it deferred or unearned revenue. When the coffee is delivered tomorrow, the liability disappears and revenue is finally recognised.", "Equity is the owner's residual claim, and nothing has been earned for the owner yet — there's an obligation outstanding first.", "Costs will come later, but the question is about the ₹500 received. Received-but-unearned money is an obligation: a liability."] }
+      { t: "mcq", q: "A customer pays the café ₹500 in advance for tomorrow's office coffee run. Right now, that ₹500 is best described as…", opts: ["Revenue — cash came in", "A liability — the café owes the customer coffee", "Equity — it belongs to the business", "An expense — the coffee will cost money to make"], correct: 1, why: ["Cash came in, but nothing has been <em>earned</em> yet — the coffee hasn't been delivered. Until it is, the café owes the customer either coffee or a refund. That obligation is a liability (called deferred revenue). Revenue is recognised when you deliver, not when cash arrives — a theme you'll meet again in the “Revenue” lesson.", "Cash went up (asset), and an obligation to deliver went up (liability). Accountants call it deferred or unearned revenue. When the coffee is delivered tomorrow, the liability disappears and revenue is finally recognised.", "Equity is the owner's residual claim, and nothing has been earned for the owner yet — there's an obligation outstanding first.", "Costs will come later, but the question is about the ₹500 received. Received-but-unearned money is an obligation: a liability."] }
     ]
   };
 
@@ -1637,7 +1683,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "Equity is " + R(1120000) + " — and you never had to count it, because the equation does it for you."
         }
       },
-      { t: "where", h: "This equation <em>is</em> the balance sheet: assets on one side, liabilities and equity on the other, always equal. You'll build the café's full balance sheet in lesson 1330." },
+      { t: "where", h: "This equation <em>is</em> the balance sheet: assets on one side, liabilities and equity on the other, always equal. You'll build the café's full balance sheet in the “Capstone: build the balance sheet” lesson." },
       { t: "mcq", q: "During FY25 the café's assets grow by ₹2,00,000 while its liabilities fall by ₹50,000. What happened to equity?", opts: ["Up ₹1,50,000", "Up ₹2,50,000", "Down ₹50,000", "Can't tell from this"], correct: 1, why: ["Careful with the sign on liabilities: they <em>fell</em>, which pushes equity up, not down. Equity = assets − liabilities = +2,00,000 − (−50,000) = +2,50,000.", "Equity = assets − liabilities, so ΔEquity = ΔAssets − ΔLiabilities = 2,00,000 − (−50,000) = ₹2,50,000. More stuff, fewer debts — both changes belong to the owner.", "Liabilities falling is good news for the owner — it can't push equity down.", "You can tell — that's the power of the equation. Equity is fully determined by the other two."] }
     ]
   };
@@ -1700,7 +1746,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     title: "The three statements, one story",
     short: "The three statements",
     desc: "Balance sheet, income statement, cash flow statement — what question each answers and how they interlock.",
-    lede: "Companies tell their story in three documents. Each answers one question, and each hands a number to the next. By module 2100 you'll wire all three together; here's the map.",
+    lede: "Companies tell their story in three documents. Each answers one question, and each hands a number to the next. By the “Linking the three statements” module you'll wire all three together; here's the map.",
     body: [
       { t: "def", term: "Balance sheet", h: "<strong>What does the business own and owe right now?</strong> A snapshot at one instant — assets on one side, liabilities and equity on the other, always equal. Dated \"as at 31 March 2025\"." },
       { t: "def", term: "Income statement (P&L)", h: "<strong>Did the business earn a profit this period?</strong> Revenue minus expenses over a stretch of time — \"for the year ended 31 March 2025\". Its bottom line, profit after tax, flows into equity on the balance sheet." },
@@ -1713,7 +1759,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           '<rect class="bx" x="440" y="80" width="190" height="120" rx="8"/><text class="hd" x="535" y="105" text-anchor="middle">Balance sheet</text><text class="tx" x="535" y="127" text-anchor="middle">Assets (incl. cash)</text><text class="tx" x="535" y="145" text-anchor="middle">= Liabilities</text><text class="tx" x="535" y="163" text-anchor="middle">+ Equity (incl. retained</text><text class="tx" x="535" y="181" text-anchor="middle">earnings)</text>' +
           '<path class="ar" d="M195 75 C 320 75, 360 110, 435 118"/><text class="lb" x="300" y="66">PAT → retained earnings</text>' +
           '<path class="ar" d="M195 195 C 320 195, 360 145, 435 132"/><text class="lb" x="300" y="222">closing cash → cash</text></svg>',
-        caption: "The two bridges you'll build by hand in module 2100 (plus a third, depreciation, that links the P&L to PP&E)."
+        caption: "The two bridges you'll build by hand in the “Linking the three statements” module (plus a third, depreciation, that links the P&L to PP&E)."
       },
       { t: "example", h: "<p>For FY25, the café's income statement will show " + R(C.fy25.pl.pat) + " of profit after tax, its cash flow statement will end at " + R(C.fy25.cf.closingCash) + " of closing cash, and its balance sheet will carry both numbers — profit inside retained earnings, cash as the first asset a banker checks. Three statements, one café, zero contradictions.</p>" },
       {
@@ -1724,12 +1770,12 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         items: [
           { text: "The bank loan balance of " + R(C.fy25.bs.loan), bucket: "Balance sheet", why: "A thing owed at an instant — snapshot territory." },
           { text: "Baristas' salaries for the year", bucket: "Income statement", why: "An expense consumed over the period, matched against the revenue it helped earn." },
-          { text: "Cash paid to buy the new espresso machine", bucket: "Cash flow statement", why: "A movement of cash (investing). The machine itself sits on the balance sheet; the P&L only sees it gradually, as depreciation.", whyNot: { "Income statement": "Buying a machine isn't an expense in the year of purchase — the café still owns the machine. The P&L feels it slowly as depreciation (lesson 1120); the cash leaving shows up here, on the cash flow statement." } },
+          { text: "Cash paid to buy the new espresso machine", bucket: "Cash flow statement", why: "A movement of cash (investing). The machine itself sits on the balance sheet; the P&L only sees it gradually, as depreciation.", whyNot: { "Income statement": "Buying a machine isn't an expense in the year of purchase — the café still owns the machine. The P&L feels it slowly as depreciation (see “Depreciation”); the cash leaving shows up here, on the cash flow statement." } },
           { text: "Coffee sales of " + R(C.fy25.pl.revenue), bucket: "Income statement", why: "Revenue earned over the year — the P&L's opening line." },
           { text: "Cash of " + R(C.fy25.bs.cash) + " on 31 March 2025", bucket: "Balance sheet", why: "A snapshot balance — and the number the cash flow statement must arrive at. Same rupees, two statements agreeing." }
         ]
       },
-      { t: "where", h: "Each statement hands a number to the <strong>balance sheet</strong>: the income statement's profit after tax lands in retained earnings, and the cash flow statement's closing cash lands in cash. Those two crossings — plus depreciation — are the three bridges you'll wire together in module 2100." },
+      { t: "where", h: "Each statement hands a number to the <strong>balance sheet</strong>: the income statement's profit after tax lands in retained earnings, and the cash flow statement's closing cash lands in cash. Those two crossings — plus depreciation — are the three bridges you'll wire together in the “Linking the three statements” module." },
       { t: "mcq", q: "Why is the balance sheet dated \"as at\" a single day, while the other two say \"for the year ended\"?", opts: ["Tradition from paper ledgers", "The balance sheet is a snapshot of stocks; the other two measure flows over time", "Because the balance sheet is prepared last", "Auditors require it"], correct: 1, why: ["The phrasing is old, but it encodes something real about what's being measured.", "Assets and liabilities are <em>stocks</em> — amounts that exist at an instant, like water in a tank. Revenue, expenses and cash flows are <em>flows</em> — amounts per period, like water through a pipe. Mixing up stocks and flows is the single most common beginner error in modeling, so the statements label themselves clearly.", "Preparation order doesn't drive the dating — the nature of the measurement does.", "Auditors check the convention, but the reason is conceptual: stocks at an instant vs flows over a period."] }
     ]
   };
@@ -1795,7 +1841,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       { t: "def", term: "Depreciation", h: "Allocating the cost of a long-lived asset over its useful life, so each year's P&L carries a fair share of the asset it used up. It is an <strong>expense without a cash payment</strong> — the cash left when the asset was bought." },
       { t: "def", term: "Net book value (NBV)", h: "Cost minus accumulated depreciation — what remains on the balance sheet. Not the resale price; just the unallocated cost." },
       { t: "formula", title: "Straight-line depreciation", lines: ["Annual depreciation = (Cost − Residual value) ÷ Useful life", "Van: (" + R(400000) + " − 0) ÷ 5 = <b>" + R(80000) + " per year</b>"], note: "We assume zero residual (scrap) value throughout this course, and a full year's charge in the year of purchase — simple and common for small businesses." },
-      { t: "example", h: "<p>The van, bought 1 April 2023 for " + R(400000) + ", life 5 years. Each year the P&L charges " + R(80000) + " and the van's book value steps down by the same amount, hitting zero at the end of FY28. This schedule reappears in lesson 1440 when you build the P&L, so build it well.</p>" },
+      { t: "example", h: "<p>The van, bought 1 April 2023 for " + R(400000) + ", life 5 years. Each year the P&L charges " + R(80000) + " and the van's book value steps down by the same amount, hitting zero at the end of FY28. This schedule reappears in the “Depreciation & EBIT” lesson when you build the P&L, so build it well.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -1822,7 +1868,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "The van glides from " + R(400000) + " to zero over five years, " + R(80000) + " at a time. That yearly " + R(80000) + " is a real expense on the P&L — but not one rupee of cash moves."
         }
       },
-      { t: "where", h: "The annual charge is an <strong>expense on the income statement</strong> (lesson 1440). The running total — accumulated depreciation — is subtracted from PP&E's cost on the <strong>balance sheet</strong>, giving net book value. And because no cash moves, the <strong>cash flow statement</strong> adds it right back (lesson 1520)." },
+      { t: "where", h: "The annual charge is an <strong>expense on the income statement</strong> (see “Depreciation & EBIT”). The running total — accumulated depreciation — is subtracted from PP&E's cost on the <strong>balance sheet</strong>, giving net book value. And because no cash moves, the <strong>cash flow statement</strong> adds it right back (see “CFO (indirect)”)." },
       { t: "mcq", q: "Depreciation is best described as…", opts: ["Cash set aside each year to replace the van", "The fall in the van's market resale price", "This year's share of a cost paid long ago", "A tax trick to reduce profit"], correct: 2, why: ["Nothing is set aside — no cash moves at all. (Well-run businesses do plan for replacement capex, but that's a management decision, not what depreciation records.)", "Book value and market value drift apart immediately — a one-day-old van resells below cost but is barely depreciated. Accounting allocates cost; it doesn't appraise.", "Exactly. The cash left in year one; depreciation is the matching principle spreading that old cost across the five years the van actually serves. Expense recognition follows benefit, not cash.", "It does reduce taxable profit, and tax codes set their own allowed rates — but the concept exists to match cost to benefit, not to game tax."] }
     ]
   };
@@ -1857,7 +1903,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "The café bought " + R(870000) + " of stock — " + R(30000) + " more than it consumed, which is exactly why the storeroom grew from " + R(120000) + " to " + R(150000) + "."
         }
       },
-      { t: "where", h: "Closing inventory is a <strong>current asset on the balance sheet</strong>. COGS is the first cost on the <strong>income statement</strong>, right under revenue (lesson 1420). And the ₹30,000 build-up of stock? Cash spent that isn't yet an expense — the cash flow statement will subtract it in lesson 1520." },
+      { t: "where", h: "Closing inventory is a <strong>current asset on the balance sheet</strong>. COGS is the first cost on the <strong>income statement</strong>, right under revenue (see “COGS & gross profit”). And the ₹30,000 build-up of stock? Cash spent that isn't yet an expense — the cash flow statement will subtract it in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "The café buys ₹50,000 of beans with cash and shelves them. The immediate effect on profit is…", opts: ["Profit falls ₹50,000", "Profit rises ₹50,000", "No effect on profit", "Depends on the coffee price"], correct: 2, why: ["Buying stock is not an expense — nothing has been consumed yet. Profit falls only when the beans are used to make sales.", "Buying inputs never raises profit by itself.", "Cash (asset) becomes inventory (asset) — a pure swap, invisible to the P&L. Only when brewed and sold do the beans become COGS and hit profit. This timing gap between buying and expensing is a defining theme of the cash flow module.", "Selling prices affect revenue later; the purchase itself is profit-neutral today."] }
     ]
   };
@@ -1892,7 +1938,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "Collected " + R(560000) + " against " + R(600000) + " invoiced. Revenue says +6,00,000; the bank says +5,60,000. Both are right — they're answering different questions."
         }
       },
-      { t: "where", h: "Closing receivables are a <strong>current asset on the balance sheet</strong>. The invoiced amount is inside <strong>revenue on the income statement</strong> (lesson 1410). The ₹40,000 gap between them is precisely what the <strong>cash flow statement</strong> subtracts from profit in lesson 1520." },
+      { t: "where", h: "Closing receivables are a <strong>current asset on the balance sheet</strong>. The invoiced amount is inside <strong>revenue on the income statement</strong> (see “Revenue”). The ₹40,000 gap between them is precisely what the <strong>cash flow statement</strong> subtracts from profit in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "On 25 March the café delivers a ₹40,000 catering order, payable 30 April. In the FY25 statements (year ends 31 March), this order appears in…", opts: ["Revenue only", "Revenue and receivables", "Cash only", "Nowhere until the cash arrives"], correct: 1, why: ["Revenue, yes — but the unpaid ₹40,000 must sit somewhere on the balance sheet too. Every entry has two sides.", "Delivered before year-end → recognized in FY25 revenue. Unpaid at year-end → sitting in receivables on the 31 March balance sheet. When cash arrives in April, receivables fall and cash rises — FY26's cash flow, not FY26's revenue.", "No cash has moved by 31 March, so it can't be in cash.", "Accrual accounting recognizes what's <em>earned</em>, not what's collected — otherwise statements could be gamed by simply delaying invoices."] }
     ]
   };
@@ -1906,7 +1952,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     body: [
       { t: "def", term: "Cash & bank balances", h: "Money available now — the till float and the current account. The most liquid asset there is, so it anchors one end of the balance sheet's sorting order." },
       { t: "def", term: "Current vs non-current", h: "An asset is <strong>current</strong> if it's expected to become cash (or be consumed) <strong>within 12 months</strong> — inventory, receivables, cash itself. Everything slower is <strong>non-current</strong> — PP&E, and long-term deposits." },
-      { t: "example", h: "<p>When Priya signed the café's lease she paid the landlord a " + R(C.fy25.bs.deposit) + " refundable <strong>security deposit</strong>. It's the café's money — an asset — but it only comes back when the lease ends, years away. So it's a non-current asset, sitting near PP&E, far from cash. At 31 March 2025 the café's cash is " + R(C.fy25.bs.cash) + " — modest for a business this size, and module 1500 will explain exactly why that's the number.</p>" },
+      { t: "example", h: "<p>When Priya signed the café's lease she paid the landlord a " + R(C.fy25.bs.deposit) + " refundable <strong>security deposit</strong>. It's the café's money — an asset — but it only comes back when the lease ends, years away. So it's a non-current asset, sitting near PP&E, far from cash. At 31 March 2025 the café's cash is " + R(C.fy25.bs.cash) + " — modest for a business this size, and the “The cash flow statement” module will explain exactly why that's the number.</p>" },
       {
         t: "classify",
         tag: "Sort the asset side",
@@ -1936,11 +1982,11 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           checks: [
             { cell: "B5", expect: 450000, message: "B5: total current assets via SUM", mustFormula: true, mustUse: "SUM", mustUseLabel: "the SUM function" }
           ],
-          success: "Current assets " + R(450000) + ". Hold onto this number — it's the top half of the current ratio in lesson 1620."
+          success: "Current assets " + R(450000) + ". Hold onto this number — it's the top half of the current ratio in the “Liquidity” lesson."
         }
       },
-      { t: "where", h: "The <strong>balance sheet</strong> groups assets by these labels: non-current first (PP&E, deposit), then current in order of liquidity. You now know every asset line on the café's balance sheet — module 1200 builds the other side." },
-      { t: "mcq", q: "Why do lenders care so much about the current/non-current split?", opts: ["Non-current assets are worth more", "It shows whether near-term cash coming in can cover near-term bills going out", "Tax rates differ between the two", "It's purely a presentation convention"], correct: 1, why: ["Value isn't the point — timing is. A café rich in vans can still miss payroll on Friday.", "A business dies when it can't pay this month's bills, regardless of how many machines it owns. Matching assets-turning-into-cash against liabilities-coming-due within the same 12 months is the core of liquidity analysis — lesson 1620 turns it into ratios.", "The split has real cash-timing meaning beyond any tax treatment.", "It changes decisions — banks lend or refuse on it — so it's much more than presentation."] }
+      { t: "where", h: "The <strong>balance sheet</strong> groups assets by these labels: non-current first (PP&E, deposit), then current in order of liquidity. You now know every asset line on the café's balance sheet — the “Liabilities” module builds the other side." },
+      { t: "mcq", q: "Why do lenders care so much about the current/non-current split?", opts: ["Non-current assets are worth more", "It shows whether near-term cash coming in can cover near-term bills going out", "Tax rates differ between the two", "It's purely a presentation convention"], correct: 1, why: ["Value isn't the point — timing is. A café rich in vans can still miss payroll on Friday.", "A business dies when it can't pay this month's bills, regardless of how many machines it owns. Matching assets-turning-into-cash against liabilities-coming-due within the same 12 months is the core of liquidity analysis — the “Liquidity” lesson turns it into ratios.", "The split has real cash-timing meaning beyond any tax treatment.", "It changes decisions — banks lend or refuse on it — so it's much more than presentation."] }
     ]
   };
 })();
@@ -1971,7 +2017,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         sheet: {
           id: "s1",
           title: "What did the café pay suppliers in FY25?",
-          hint: "You found purchases (" + R(870000) + ") in lesson 1130. Roll payables forward to find the cash that actually went out: payments = opening + purchases − closing.",
+          hint: "You found purchases (" + R(870000) + ") in the “Inventory” lesson. Roll payables forward to find the cash that actually went out: payments = opening + purchases − closing.",
           grid: [
             ["", { v: "FY25", year: true }],
             ["Opening trade payables", C.fy24.bs.payables],
@@ -1985,7 +2031,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "Paid " + R(850000) + " against " + R(870000) + " purchased. The unpaid " + R(20000) + " is cash the café got to keep a little longer — supplier credit is a quiet, interest-free loan."
         }
       },
-      { t: "where", h: "Trade payables and accrued expenses sit under <strong>current liabilities on the balance sheet</strong>. The expenses they relate to are already on the <strong>income statement</strong>. The timing gap between the two is a working-capital delta the <strong>cash flow statement</strong> adjusts for in lesson 1520." },
+      { t: "where", h: "Trade payables and accrued expenses sit under <strong>current liabilities on the balance sheet</strong>. The expenses they relate to are already on the <strong>income statement</strong>. The timing gap between the two is a working-capital delta the <strong>cash flow statement</strong> adjusts for in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "The café receives ₹60,000 of beans on 45-day credit. The immediate effect is…", opts: ["Expense up ₹60,000, cash down ₹60,000", "Inventory up ₹60,000, payables up ₹60,000", "Inventory up ₹60,000, cash down ₹60,000", "Nothing is recorded until payment"], correct: 1, why: ["No cash has moved, and no expense exists yet — the beans are still an asset on the shelf.", "An asset arrives (inventory ↑) and an obligation arrives with it (payables ↑). The equation grows on both sides. No expense until the beans are consumed; no cash movement until day 45. Three different events, three different dates — accrual accounting keeps them straight.", "Cash is untouched for 45 days — that's the whole point of credit terms.", "Accounting records the obligation the moment goods change hands. Waiting for payment would let a business hide its debts."] }
     ]
   };
@@ -2023,7 +2069,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "note", h: "<strong>One simplification to flag:</strong> a real balance sheet would split the " + R(50000) + " due within the next year out of the loan as a <em>current</em> liability (\"current maturities of long-term debt\"). We keep the loan as a single non-current line so the model stays small — remember the refinement exists." },
-      { t: "where", h: "Interest expense sits low on the <strong>income statement</strong>, after operating profit (lesson 1450). The loan balance is a liability on the <strong>balance sheet</strong>. Drawdowns and repayments of principal appear only in the <strong>cash flow statement</strong>, under financing (lesson 1540)." },
+      { t: "where", h: "Interest expense sits low on the <strong>income statement</strong>, after operating profit (see “Interest, tax & PAT”). The loan balance is a liability on the <strong>balance sheet</strong>. Drawdowns and repayments of principal appear only in the <strong>cash flow statement</strong>, under financing (see “CFF”)." },
       { t: "mcq", q: "In FY25 the café pays the bank " + R(110000) + " in total (" + R(60000) + " interest + " + R(50000) + " principal). How much of that reduces FY25 profit?", opts: [R(110000), R(60000), R(50000), "Nothing — loan payments never touch profit"], correct: 1, why: ["Only part of the payment is a cost of doing business. The principal portion is returning borrowed money — the café's obligation shrinks by exactly what it pays, so nothing is consumed.", "Only the interest — the price of using the bank's money for the year — is an expense. The " + R(50000) + " principal repayment swaps cash for a smaller debt: assets down, liabilities down, equity untouched. Lenders read this split closely: a business can afford its interest and still choke on principal repayments.", "That's the principal — the part that is <em>not</em> an expense.", "Interest genuinely is an expense — money paid for a service (the use of capital) that's fully consumed each year."] }
     ]
   };
@@ -2069,7 +2115,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "where", h: "On a <strong>Schedule III balance sheet</strong> (the Indian statutory format) these appear as: Equity, then Non-current liabilities, then Current liabilities — the whole right-hand side ordered from most patient money to most urgent. The capstone in 1330 assembles it." },
-      { t: "mcq", q: "Why is equity listed with liabilities on the same side of the balance sheet?", opts: ["To make the sheet balance by force", "Both are claims on the assets — they differ in who claims and in what order", "Equity is just a special loan from the owner", "Historical accident"], correct: 1, why: ["The sheet balances by arithmetic, not by force — equity is <em>defined</em> as the residual.", "The left side lists what the business has; the right side lists who has a claim on it. Creditors claim fixed amounts first; the owner claims everything that's left, last. Same side, opposite personalities — and that ranking (debt before equity) is exactly why lenders and owners analyse companies so differently (module 1600).", "A loan has a fixed amount and a due date; equity has neither. The difference is fundamental, not cosmetic.", "The layout encodes real seniority of claims — it's information, not accident."] }
+      { t: "mcq", q: "Why is equity listed with liabilities on the same side of the balance sheet?", opts: ["To make the sheet balance by force", "Both are claims on the assets — they differ in who claims and in what order", "Equity is just a special loan from the owner", "Historical accident"], correct: 1, why: ["The sheet balances by arithmetic, not by force — equity is <em>defined</em> as the residual.", "The left side lists what the business has; the right side lists who has a claim on it. Creditors claim fixed amounts first; the owner claims everything that's left, last. Same side, opposite personalities — and that ranking (debt before equity) is exactly why lenders and owners analyse companies so differently (the “Reading statements: ratios” module).", "A loan has a fixed amount and a due date; equity has neither. The difference is fundamental, not cosmetic.", "The layout encodes real seniority of claims — it's information, not accident."] }
     ]
   };
 })();
@@ -2126,7 +2172,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     lede: "Here is the single most important link in all of financial statements: this year's profit doesn't vanish when the year ends — it lands in equity, in a line called retained earnings. Master this roll-forward and the three statements start snapping together.",
     body: [
       { t: "def", term: "Retained earnings", h: "All the profit the business has ever made, <strong>minus</strong> all it has ever paid out to owners as dividends. It accumulates year after year — the business's earned savings, in claim form." },
-      { t: "formula", title: "The retained earnings bridge", lines: ["Closing RE = Opening RE + <b>Profit after tax</b> − Dividends"], note: "This is bridge #1 of the three-statement link (module 2100): the income statement's bottom line flows into the balance sheet through this exact formula." },
+      { t: "formula", title: "The retained earnings bridge", lines: ["Closing RE = Opening RE + <b>Profit after tax</b> − Dividends"], note: "This is bridge #1 of the three-statement link (the “Linking the three statements” module): the income statement's bottom line flows into the balance sheet through this exact formula." },
       { t: "example", h: "<p>The café entered FY25 with " + R(C.fy24.bs.retained) + " of retained earnings (its FY24 profit, nothing paid out). In FY25 it earned <strong>profit after tax of " + R(C.fy25.pl.pat) + "</strong> — a number you will personally assemble, line by line, in the P&L capstone (1460) — and paid Priya her first dividend of " + R(C.fy25.dividend) + ".</p>" },
       {
         t: "sheet",
@@ -2206,7 +2252,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "where", h: "This statement <em>is</em> the destination — but two of its numbers arrived unexplained: PAT of " + R(180000) + " inside retained earnings, and cash of " + R(100000) + ". The next two modules build the statements that explain them: the income statement (1400) and the cash flow statement (1500)." },
-      { t: "mcq", q: "Your first attempt doesn't tie: assets exceed equity & liabilities by exactly " + R(180000) + ". What did you most likely forget?", opts: ["Depreciation on the PP&E line", "Adding FY25 profit into retained earnings", "The security deposit", "The salaries payable"], correct: 1, why: ["Missing depreciation would make assets too <em>high</em> by " + R(440000) + " — the wrong amount. In tie-debugging, the size of the gap identifies the suspect.", "A gap of exactly PAT (" + R(180000) + ") is the classic signature of an unrolled retained earnings line: the profit's assets all arrived (cash, receivables, machines…) but the matching claim never got recorded. Professional modelers memorise this diagnostic — gap = PAT means check the RE bridge first. You'll use it again in lesson 2130.", "The deposit is " + R(100000) + " — the wrong size, and forgetting an asset would make assets too <em>low</em>.", "That's " + R(30000) + ", and missing a liability would push the gap the same direction but the wrong amount."] }
+      { t: "mcq", q: "Your first attempt doesn't tie: assets exceed equity & liabilities by exactly " + R(180000) + ". What did you most likely forget?", opts: ["Depreciation on the PP&E line", "Adding FY25 profit into retained earnings", "The security deposit", "The salaries payable"], correct: 1, why: ["Missing depreciation would make assets too <em>high</em> by " + R(440000) + " — the wrong amount. In tie-debugging, the size of the gap identifies the suspect.", "A gap of exactly PAT (" + R(180000) + ") is the classic signature of an unrolled retained earnings line: the profit's assets all arrived (cash, receivables, machines…) but the matching claim never got recorded. Professional modelers memorise this diagnostic — gap = PAT means check the RE bridge first. You'll use it again in the “Find the broken link” lesson.", "The deposit is " + R(100000) + " — the wrong size, and forgetting an asset would make assets too <em>low</em>.", "That's " + R(30000) + ", and missing a liability would push the gap the same direction but the wrong amount."] }
     ]
   };
 })();
@@ -2236,13 +2282,13 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Credit sale:    deliver now, collect later  → revenue, <b>receivable ↑</b>",
         "Advance:        collect now, deliver later  → <b>no revenue yet</b>, liability ↑"
       ], note: "Only the middle case creates a receivable; only the last delays revenue. The delivery date, not the bank statement, drives the top line." },
-      { t: "example", h: "<p>FY25 revenue of <strong>" + R(p.revenue) + "</strong> comes from two streams: the counter (walk-in coffee, paid instantly) and corporate catering (invoiced on 30-day terms — the " + R(600000) + " you met in lesson 1140). Both are revenue the moment the coffee is handed over.</p>" },
+      { t: "example", h: "<p>FY25 revenue of <strong>" + R(p.revenue) + "</strong> comes from two streams: the counter (walk-in coffee, paid instantly) and corporate catering (invoiced on 30-day terms — the " + R(600000) + " you met in the “Receivables” lesson). Both are revenue the moment the coffee is handed over.</p>" },
       {
         t: "sheet",
         sheet: {
           id: "s1",
           title: "FY25 revenue, and how much of it was actually collected",
-          hint: "Total revenue in B4 with SUM. Then in B7: cash collected = counter sales (all cash) + catering collections. You worked out catering collections in lesson 1140 using the roll-forward — opening receivables + invoices − closing.",
+          hint: "Total revenue in B4 with SUM. Then in B7: cash collected = counter sales (all cash) + catering collections. You worked out catering collections in the “Receivables” lesson using the roll-forward — opening receivables + invoices − closing.",
           grid: [
             ["", { v: "FY25", year: true }],
             ["Counter sales (cash)", p.revenue - 600000],
@@ -2258,7 +2304,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             { cell: "B7", expect: 2360000, message: "B7: cash collected = counter + (opening AR + catering invoices − closing AR)", mustFormula: true },
             { cell: "B8", expect: 40000, message: "B8: the gap between revenue and cash", mustFormula: true }
           ],
-          success: "Revenue " + R(p.revenue) + ", cash collected " + R(2360000) + ". The " + R(40000) + " gap is exactly the growth in receivables — and exactly what the cash flow statement will subtract in lesson 1520."
+          success: "Revenue " + R(p.revenue) + ", cash collected " + R(2360000) + ". The " + R(40000) + " gap is exactly the growth in receivables — and exactly what the cash flow statement will subtract in the “CFO (indirect)” lesson."
         }
       },
       { t: "where", h: "Revenue is the first line of the <strong>income statement</strong>. Anything invoiced but uncollected sits in receivables on the <strong>balance sheet</strong>. The change in receivables is a working-capital adjustment on the <strong>cash flow statement</strong>." },
@@ -2280,7 +2326,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Gross margin % = Gross profit ÷ Revenue",
         "Café FY25: " + R(p.revenue) + " − " + R(p.cogs) + " = <b>" + R(p.grossProfit) + "</b> (" + P(C.ratios.gmPct) + ")"
       ], note: "The direct/indirect line can be judgment. A barista's wage is arguably direct, but because staffing is fixed week to week the café — like most cafés — reports it as an operating expense. Be consistent, and read others' definitions before comparing." },
-      { t: "example", h: "<p>The café consumed " + R(p.cogs) + " of beans, milk and pastry (lesson 1130) to deliver " + R(p.revenue) + " of coffee. A 65% gross margin is normal for a café: the physical inputs of a latte are cheap; the rent and the barista are what actually cost money.</p>" },
+      { t: "example", h: "<p>The café consumed " + R(p.cogs) + " of beans, milk and pastry (see “Inventory”) to deliver " + R(p.revenue) + " of coffee. A 65% gross margin is normal for a café: the physical inputs of a latte are cheap; the rent and the barista are what actually cost money.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2303,8 +2349,8 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "Gross profit grew from " + R(1300000) + " to " + R(1560000) + " — but margin held at exactly 65%. Growth came from selling more coffee, not from charging more per cup."
         }
       },
-      { t: "where", h: "Gross profit is the first subtotal on the <strong>income statement</strong>. It has no balance-sheet line of its own — but the inventory it consumed came off the <strong>balance sheet</strong>, and the margin it reveals is the first ratio you'll compute in lesson 1610." },
-      { t: "mcq", q: "The café's gross margin falls from 65% to 58% while revenue grows. The most likely cause is…", opts: ["Rent went up", "Bean prices rose and the café didn't raise cup prices", "It bought a second espresso machine", "It repaid part of the loan"], correct: 1, why: ["Rent is an operating expense, below the gross profit line — it can't touch gross margin. That's precisely why the subtotal is useful: it isolates product economics from overheads.", "Gross margin only moves when the relationship between selling price and direct cost changes. Costlier beans absorbed rather than passed on is the textbook cause — and a warning sign, because it means the café lacks the pricing power to defend its margin.", "A machine is capex; it reaches the P&L as depreciation, far below gross profit.", "Loan repayments never touch the income statement at all (lesson 1220), let alone gross margin."] }
+      { t: "where", h: "Gross profit is the first subtotal on the <strong>income statement</strong>. It has no balance-sheet line of its own — but the inventory it consumed came off the <strong>balance sheet</strong>, and the margin it reveals is the first ratio you'll compute in the “Margins” lesson." },
+      { t: "mcq", q: "The café's gross margin falls from 65% to 58% while revenue grows. The most likely cause is…", opts: ["Rent went up", "Bean prices rose and the café didn't raise cup prices", "It bought a second espresso machine", "It repaid part of the loan"], correct: 1, why: ["Rent is an operating expense, below the gross profit line — it can't touch gross margin. That's precisely why the subtotal is useful: it isolates product economics from overheads.", "Gross margin only moves when the relationship between selling price and direct cost changes. Costlier beans absorbed rather than passed on is the textbook cause — and a warning sign, because it means the café lacks the pricing power to defend its margin.", "A machine is capex; it reaches the P&L as depreciation, far below gross profit.", "Loan repayments never touch the income statement at all (see “Borrowings”), let alone gross margin."] }
     ]
   };
 
@@ -2321,7 +2367,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Revenue − COGS = Gross profit",
         "Gross profit − Operating expenses = <b>EBITDA</b>",
         "Café FY25: " + R(p.grossProfit) + " − " + R(p.opex) + " = <b>" + R(p.ebitda) + "</b>"
-      ], note: "EBITDA is popular because it compares two businesses' operations without their debt or tax situations getting in the way. Its danger: it ignores that machines wear out and must be replaced. EBITDA is not cash flow — module 1500 shows why." },
+      ], note: "EBITDA is popular because it compares two businesses' operations without their debt or tax situations getting in the way. Its danger: it ignores that machines wear out and must be replaced. EBITDA is not cash flow — the “The cash flow statement” module shows why." },
       { t: "example", h: "<p>The café's FY25 overheads: rent " + R(p.rent) + " (unchanged — a five-year lease), salaries " + R(p.salaries) + " (up, a third barista was hired), utilities " + R(p.utilities) + ", and marketing " + R(p.marketing) + ". Total " + R(p.opex) + ".</p>" },
       {
         t: "sheet",
@@ -2352,7 +2398,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "note", h: "<strong>Sign convention:</strong> this sheet enters costs as negative numbers and adds them. Real published statements print costs as positives and subtract. Both are fine — but inside a model, all-negative-costs-and-SUM means fewer sign errors. Pick one and never mix." },
-      { t: "where", h: "EBITDA is a subtotal on the <strong>income statement</strong> (though Indian statutory formats don't print it as a named line — analysts compute it). It's the starting point for valuation multiples and the closest P&L line to operating cash flow, which module 1500 builds properly." },
+      { t: "where", h: "EBITDA is a subtotal on the <strong>income statement</strong> (though Indian statutory formats don't print it as a named line — analysts compute it). It's the starting point for valuation multiples and the closest P&L line to operating cash flow, which the “The cash flow statement” module builds properly." },
       { t: "mcq", q: "Two cafés both report EBITDA of ₹5,00,000. Café A owns its equipment outright; Café B leases everything and has a large loan. Which is more profitable?", opts: ["They're identical — EBITDA says so", "Café A, almost certainly", "Café B, almost certainly", "EBITDA alone can't tell you"], correct: 3, why: ["Identical EBITDA is exactly where the number stops being informative. It was designed to strip out the differences that matter here.", "A is a reasonable guess — no interest, and owned assets — but you're inferring below-EBITDA facts EBITDA deliberately excludes. You'd need the full P&L to say.", "B's lease costs sit in opex (so already inside EBITDA), but its interest doesn't. Guessing B is riskier still.", "That's the honest answer, and the lesson. EBITDA excludes interest (B pays a lot, A none) and depreciation (A's owned machines wear out; B's don't appear). Same EBITDA, potentially very different profit after tax — which is why this module keeps going down to PAT."] }
     ]
   };
@@ -2361,15 +2407,15 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     id: "1440-depreciation-pl", code: "1440", minutes: 4,
     title: "Depreciation on the P&L",
     short: "Depreciation & EBIT",
-    desc: "Take the depreciation schedule from lesson 1120 onto the income statement to reach EBIT — operating profit.",
-    lede: "Now the van schedule you built in lesson 1120 comes back. Subtract depreciation from EBITDA and you get EBIT — the last line before financing and government take their cuts.",
+    desc: "Take the depreciation schedule from the “Depreciation” lesson onto the income statement to reach EBIT — operating profit.",
+    lede: "Now the van schedule you built in the “Depreciation” lesson comes back. Subtract depreciation from EBITDA and you get EBIT — the last line before financing and government take their cuts.",
     body: [
       { t: "def", term: "EBIT (operating profit)", h: "<strong>E</strong>arnings <strong>B</strong>efore <strong>I</strong>nterest and <strong>T</strong>ax. EBITDA minus depreciation — profit after recognising that assets wear out, but before how the business is financed. Also called operating profit." },
       { t: "formula", title: "EBITDA to EBIT", lines: [
         "EBIT = EBITDA − Depreciation &amp; amortisation",
         "Café FY25: " + R(p.ebitda) + " − " + R(p.dep) + " = <b>" + R(p.ebit) + "</b>"
       ], note: "Amortisation is the same idea applied to intangible assets (software, a licence). The café has none, so its D&A is pure depreciation." },
-      { t: "example", h: "<p>FY25 depreciation comes straight from the asset register: the fit-out (" + R(60000) + "), the original machine (" + R(60000) + "), the van (" + R(80000) + " — your lesson 1120 schedule), plus a first full year on the " + R(240000) + " of FY25 additions over 6 years (" + R(40000) + "). Total " + R(p.dep) + ", up from " + R(p24.dep) + " in FY24 because of that new equipment.</p>" },
+      { t: "example", h: "<p>FY25 depreciation comes straight from the asset register: the fit-out (" + R(60000) + "), the original machine (" + R(60000) + "), the van (" + R(80000) + " — your the “Depreciation” lesson schedule), plus a first full year on the " + R(240000) + " of FY25 additions over 6 years (" + R(40000) + "). Total " + R(p.dep) + ", up from " + R(p24.dep) + " in FY24 because of that new equipment.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2384,7 +2430,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             ["FY25 additions", 240000, { v: 6, fmt: "plain" }, { input: true, mf: true, fmt: "inr" }],
             ["Total FY25 depreciation", null, null, { input: true, mf: true, fmt: "inr", ph: "=SUM(D2:D5)" }],
             [null, null, null, null],
-            ["EBITDA (from lesson 1430)", null, null, p.ebitda],
+            ["EBITDA (from the “Opex & EBITDA” lesson)", null, null, p.ebitda],
             ["EBIT", null, null, { input: true, mf: true, fmt: "inr", ph: "=D8-D6" }]
           ],
           checks: [
@@ -2398,7 +2444,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "Depreciation " + R(p.dep) + " → EBIT " + R(p.ebit) + ". Every rupee of that charge was traced to a specific asset — that's how a real schedule is built, and it's why your balance sheet's accumulated depreciation will tie."
         }
       },
-      { t: "where", h: "The charge is an expense on the <strong>income statement</strong>. The same number increases accumulated depreciation on the <strong>balance sheet</strong> (reducing net PP&E), and gets added back on the <strong>cash flow statement</strong> because no cash moved. One number, three statements — that's bridge #2 of module 2100." },
+      { t: "where", h: "The charge is an expense on the <strong>income statement</strong>. The same number increases accumulated depreciation on the <strong>balance sheet</strong> (reducing net PP&E), and gets added back on the <strong>cash flow statement</strong> because no cash moved. One number, three statements — that's bridge #2 of the “Linking the three statements” module." },
       { t: "mcq", q: "The café's EBITDA is ₹5,40,000 and EBIT is ₹3,00,000. A friend says \"so it really made ₹5,40,000, the depreciation is just an accounting entry.\" What's wrong with that?", opts: ["Nothing — depreciation isn't cash", "The equipment genuinely wears out and will need replacing with real cash", "Depreciation is a tax, not an expense", "EBITDA is always the wrong number to use"], correct: 1, why: ["It's true that no cash moved this year — but that's a statement about timing, not about whether the cost is real.", "The van really does lose a fifth of its life every year, and in FY29 the café will write a real cheque to replace it. Depreciation is the honest annual cost of that; ignoring it flatters any asset-heavy business. Note the café's steady-state capex (₹2,40,000/yr) happens to equal its depreciation — which is what you'd expect for a business just maintaining itself.", "Depreciation is an expense; it reduces taxable profit but is not itself a tax.", "EBITDA is useful for comparing operations across different financing structures — it's just not profit, and not cash."] }
     ]
   };
@@ -2418,7 +2464,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "<b>Profit after tax</b> = Profit before tax − Tax",
         "Café FY25: " + R(p.ebit) + " − " + R(p.interest) + " = " + R(p.pbt) + "; tax @25% = " + R(p.tax) + "; <b>PAT = " + R(p.pat) + "</b>"
       ], note: "We apply a flat 25% to book profit. Real tax is computed on taxable income, which differs from book profit (depreciation rates alone differ) and creates deferred tax — a genuine complication we deliberately skip. Flag it, don't fake it." },
-      { t: "example", h: "<p>Interest is " + R(p.interest) + " — 10% of the " + R(C.fy24.bs.loan) + " loan balance the café opened FY25 with (lesson 1220). Tax at 25% of " + R(p.pbt) + " is " + R(p.tax) + ". What's left is <strong>" + R(p.pat) + "</strong> — and you should recognise that number: it's exactly the PAT you rolled into retained earnings back in lesson 1320.</p>" },
+      { t: "example", h: "<p>Interest is " + R(p.interest) + " — 10% of the " + R(C.fy24.bs.loan) + " loan balance the café opened FY25 with (see “Borrowings”). Tax at 25% of " + R(p.pbt) + " is " + R(p.tax) + ". What's left is <strong>" + R(p.pat) + "</strong> — and you should recognise that number: it's exactly the PAT you rolled into retained earnings back in the “Retained earnings” lesson.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2439,11 +2485,11 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             { cell: "B6", expect: -60000, message: "B6: tax at 25% of PBT (as a negative, matching the sign convention)", mustFormula: true },
             { cell: "B7", expect: 180000, message: "B7: profit after tax", mustFormula: true }
           ],
-          success: "PAT " + R(p.pat) + " — the same " + R(p.pat) + " you put into retained earnings in lesson 1320, now derived rather than given. The course is starting to close its loops."
+          success: "PAT " + R(p.pat) + " — the same " + R(p.pat) + " you put into retained earnings in the “Retained earnings” lesson, now derived rather than given. The course is starting to close its loops."
         }
       },
-      { t: "where", h: "PAT is the <strong>income statement's</strong> final line. It flows into retained earnings on the <strong>balance sheet</strong> (bridge #1), and it's the starting line of the <strong>cash flow statement</strong> (lesson 1520). No other number appears on all three statements so directly." },
-      { t: "mcq", q: "The café is considering repaying its whole ₹5,50,000 loan next year. Ignoring everything else, what happens to the P&L?", opts: ["PAT falls by ₹5,50,000", "PAT rises because ₹55,000 of interest disappears — partly offset by more tax", "No change — repayment isn't a P&L item, and neither is interest", "PAT rises by exactly ₹55,000"], correct: 1, why: ["Repaying principal never hits the P&L (lesson 1220) — it's a balance sheet and cash flow event only.", "The repayment itself is invisible to the P&L, but the interest it eliminates is not: ₹55,000 less expense → PBT up ₹55,000 → tax up ₹13,750 at 25% → PAT up ₹41,250. Interest saved is never fully kept, because the taxman takes a share of any profit increase. This is the mirror image of the 'tax shield' on debt.", "The repayment isn't, but interest very much is an expense.", "Close, but it forgets tax. A pre-tax saving of ₹55,000 is worth ₹41,250 after 25% tax."] }
+      { t: "where", h: "PAT is the <strong>income statement's</strong> final line. It flows into retained earnings on the <strong>balance sheet</strong> (bridge #1), and it's the starting line of the <strong>cash flow statement</strong> (see “CFO (indirect)”). No other number appears on all three statements so directly." },
+      { t: "mcq", q: "The café is considering repaying its whole ₹5,50,000 loan next year. Ignoring everything else, what happens to the P&L?", opts: ["PAT falls by ₹5,50,000", "PAT rises because ₹55,000 of interest disappears — partly offset by more tax", "No change — repayment isn't a P&L item, and neither is interest", "PAT rises by exactly ₹55,000"], correct: 1, why: ["Repaying principal never hits the P&L (see “Borrowings”) — it's a balance sheet and cash flow event only.", "The repayment itself is invisible to the P&L, but the interest it eliminates is not: ₹55,000 less expense → PBT up ₹55,000 → tax up ₹13,750 at 25% → PAT up ₹41,250. Interest saved is never fully kept, because the taxman takes a share of any profit increase. This is the mirror image of the 'tax shield' on debt.", "The repayment isn't, but interest very much is an expense.", "Close, but it forgets tax. A pre-tax saving of ₹55,000 is worth ₹41,250 after 25% tax."] }
     ]
   };
 
@@ -2452,7 +2498,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     title: "Capstone: the full income statement",
     short: "★ The income statement",
     desc: "Assemble Bombay Bean's complete FY25 income statement from revenue to PAT — which must land on exactly ₹1,80,000.",
-    lede: "Every line you've built in this module, in one statement. There's a hard target: profit after tax must come out at exactly ₹1,80,000, because that's the number already sitting inside the balance sheet you tied in lesson 1330. If it doesn't match, the two statements disagree — and one of them is wrong.",
+    lede: "Every line you've built in this module, in one statement. There's a hard target: profit after tax must come out at exactly ₹1,80,000, because that's the number already sitting inside the balance sheet you tied in the “Capstone: build the balance sheet” lesson. If it doesn't match, the two statements disagree — and one of them is wrong.",
     body: [
       { t: "p", h: "This is how professionals check themselves. You built the balance sheet first and it tied, using a PAT you were <em>given</em>. Now you're deriving that PAT independently from revenue and costs. If the two agree, both are almost certainly right. If they don't, you've found a real error." },
       { t: "formula", title: "The whole statement", lines: [
@@ -2461,7 +2507,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "EBITDA − Depreciation        = EBIT",
         "EBIT − Interest              = Profit before tax",
         "PBT − Tax                    = <b>Profit after tax</b>"
-      ], note: "Costs are entered negative and every subtotal is a SUM — the convention from lesson 1430." },
+      ], note: "Costs are entered negative and every subtotal is a SUM — the convention from the “Opex & EBITDA” lesson." },
       { t: "example", h: "<p>Bombay Bean Coffee Co., year ended 31 March 2025. All the inputs are ones you've derived: revenue " + R(p.revenue) + " (1410), COGS " + R(p.cogs) + " (1420/1130), the four operating costs (1430), depreciation " + R(p.dep) + " (1440), interest " + R(p.interest) + " (1450/1220), tax at 25%.</p>" },
       {
         t: "sheet",
@@ -2503,17 +2549,17 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             {
               custom: function (s) {
                 var pat = s.value("B18");
-                return pat === 180000 ? true : "Until PAT is exactly " + R(180000) + ", this statement contradicts the balance sheet you tied in lesson 1330.";
+                return pat === 180000 ? true : "Until PAT is exactly " + R(180000) + ", this statement contradicts the balance sheet you tied in the “Capstone: build the balance sheet” lesson.";
               },
-              message: "PAT agrees with the retained earnings used in lesson 1320/1330"
+              message: "PAT agrees with the retained earnings used in the “Retained earnings” lesson/1330"
             }
           ],
           success: "PAT " + R(p.pat) + ", a " + P(C.ratios.patPct) + " net margin — derived independently and matching the balance sheet exactly. Two statements built from opposite directions now agree."
         }
       },
-      { t: "note", h: "Look at how the margins narrow down the statement: 65% gross → 22.5% EBITDA → 12.5% EBIT → 7.5% PAT. Of every ₹100 a customer spends, ₹7.50 ends up as the owner's profit. That funnel is the single most useful picture of a business's economics, and lesson 1610 turns it into ratios." },
+      { t: "note", h: "Look at how the margins narrow down the statement: 65% gross → 22.5% EBITDA → 12.5% EBIT → 7.5% PAT. Of every ₹100 a customer spends, ₹7.50 ends up as the owner's profit. That funnel is the single most useful picture of a business's economics, and the “Margins” lesson turns it into ratios." },
       { t: "where", h: "This statement explains one line of the <strong>balance sheet</strong>: the " + R(p.pat) + " that grew retained earnings. It explains nothing about cash — the café earned " + R(p.pat) + " but its bank balance rose only " + R(C.fy25.cf.net) + ". Module 1500 explains that gap, and it's the last big idea in accounting." },
-      { t: "mcq", q: "The café earned " + R(p.pat) + " of profit but its cash only rose " + R(C.fy25.cf.net) + ". Which of these best explains a gap like that?", opts: ["The profit calculation must be wrong", "Profit includes non-cash charges and ignores cash spent on assets, stock, and loan repayment", "The tax was paid twice", "Depreciation removed cash from the bank"], correct: 1, why: ["Both numbers are right — they measure different things. Learning to hold both in your head at once is the point of module 1500.", "Several things drive a wedge: depreciation (₹2,40,000 of expense with no cash outflow, pushing cash <em>above</em> profit), and capex, higher inventory and receivables, loan repayment and the dividend (all real cash out that profit never sees). Netting to +₹40,000 of cash on ₹1,80,000 of profit is entirely normal for a growing business.", "Nothing was paid twice — the tax expense is a single 25% charge.", "Depreciation is precisely the expense that removes <em>no</em> cash. It's the biggest reason cash flow usually exceeds profit, not the reverse."] }
+      { t: "mcq", q: "The café earned " + R(p.pat) + " of profit but its cash only rose " + R(C.fy25.cf.net) + ". Which of these best explains a gap like that?", opts: ["The profit calculation must be wrong", "Profit includes non-cash charges and ignores cash spent on assets, stock, and loan repayment", "The tax was paid twice", "Depreciation removed cash from the bank"], correct: 1, why: ["Both numbers are right — they measure different things. Learning to hold both in your head at once is the point of the “The cash flow statement” module.", "Several things drive a wedge: depreciation (₹2,40,000 of expense with no cash outflow, pushing cash <em>above</em> profit), and capex, higher inventory and receivables, loan repayment and the dividend (all real cash out that profit never sees). Netting to +₹40,000 of cash on ₹1,80,000 of profit is entirely normal for a growing business.", "Nothing was paid twice — the tax expense is a single 25% charge.", "Depreciation is precisely the expense that removes <em>no</em> cash. It's the biggest reason cash flow usually exceeds profit, not the reverse."] }
     ]
   };
 })();
@@ -2543,7 +2589,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Receivables ↑     → revenue, <b>no cash in</b>       → cash &lt; profit",
         "Capex / repayment → cash out, <b>never an expense</b> → cash &lt; profit"
       ], note: "Read the middle column: each line is a timing mismatch between when value moves and when cash moves. That's all the cash flow statement ever fixes." },
-      { t: "example", h: "<p>In FY25 the café earned " + R(p.pat) + " of profit. Its bank balance rose by " + R(cf.net) + ". A gap of " + R(p.pat - cf.net) + " — bigger than the profit itself. Every rupee of that gap has a name, and by lesson 1550 you'll have accounted for all of them.</p>" },
+      { t: "example", h: "<p>In FY25 the café earned " + R(p.pat) + " of profit. Its bank balance rose by " + R(cf.net) + ". A gap of " + R(p.pat - cf.net) + " — bigger than the profit itself. Every rupee of that gap has a name, and by the “Capstone: the full cash flow statement” lesson you'll have accounted for all of them.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2588,7 +2634,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "+ Increase in accrued expenses    <i>(same idea)</i>",
         "= <b>Cash from operations</b>"
       ], note: "The rule that never fails: an <b>asset</b> going up consumes cash; a <b>liability</b> going up releases cash. If you remember only one thing from this module, remember that." },
-      { t: "example", h: "<p>Every input is one you already know. PAT " + R(p.pat) + " (lesson 1460). Depreciation " + R(p.dep) + " (1440). Receivables rose from " + R(bs24.receivables) + " to " + R(bs.receivables) + "; inventory from " + R(bs24.inventory) + " to " + R(bs.inventory) + "; payables from " + R(bs24.payables) + " to " + R(bs.payables) + "; accrued salaries from " + R(bs24.accrued) + " to " + R(bs.accrued) + ".</p>" },
+      { t: "example", h: "<p>Every input is one you already know. PAT " + R(p.pat) + " (see “Capstone: the full income statement”). Depreciation " + R(p.dep) + " (1440). Receivables rose from " + R(bs24.receivables) + " to " + R(bs.receivables) + "; inventory from " + R(bs24.inventory) + " to " + R(bs.inventory) + "; payables from " + R(bs24.payables) + " to " + R(bs.payables) + "; accrued salaries from " + R(bs24.accrued) + " to " + R(bs.accrued) + ".</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2636,7 +2682,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Capex ≈ Depreciation  → <b>maintaining</b> — replacing what wears out",
         "Capex &lt; Depreciation  → <b>shrinking</b> — living off existing assets"
       ], note: "A business that runs capex below depreciation for years is consuming its own capacity. It flatters cash flow now and forces a large catch-up later." },
-      { t: "example", h: "<p>FY25's only investing activity was the " + R(240000) + " second machine and scooter — the FY25 additions from your depreciation schedule in lesson 1440. So CFI is " + R(cf.cfi) + ". Note that FY25 capex of " + R(240000) + " exactly equals FY25 depreciation of " + R(p.dep) + ": the café is holding its capacity steady, not expanding it.</p>" },
+      { t: "example", h: "<p>FY25's only investing activity was the " + R(240000) + " second machine and scooter — the FY25 additions from your depreciation schedule in the “Depreciation & EBIT” lesson. So CFI is " + R(cf.cfi) + ". Note that FY25 capex of " + R(240000) + " exactly equals FY25 depreciation of " + R(p.dep) + ": the café is holding its capacity steady, not expanding it.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2659,11 +2705,11 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             { cell: "B7", expect: 240000, message: "B7: capex as a positive addition to PP&E", mustFormula: true },
             { cell: "B9", expect: 1400000, message: "B9: closing net PP&E — matches the balance sheet's " + R(1400000), mustFormula: true }
           ],
-          success: "CFI " + R(cf.cfi) + ", and net PP&E rolls to exactly " + R(bs.ppeNet) + " — the figure you put on the balance sheet in lesson 1330. Capex and depreciation cancelled, so net PP&E didn't move at all."
+          success: "CFI " + R(cf.cfi) + ", and net PP&E rolls to exactly " + R(bs.ppeNet) + " — the figure you put on the balance sheet in the “Capstone: build the balance sheet” lesson. Capex and depreciation cancelled, so net PP&E didn't move at all."
         }
       },
-      { t: "where", h: "CFI is the second section of the <strong>cash flow statement</strong>. The capex it reports lands in PP&E on the <strong>balance sheet</strong> and then drips onto the <strong>income statement</strong> as depreciation for years afterwards. This roll-forward is bridge #2 of module 2100." },
-      { t: "mcq", q: "A café reports strong CFO but its capex has been half its depreciation for three years. What should you suspect?", opts: ["Excellent capital discipline", "Cash flow is being flattered by under-investment that must be caught up later", "The depreciation rate is definitely wrong", "Nothing — CFO is what matters"], correct: 1, why: ["It can look like discipline for a year. Three years of replacing only half of what wears out is different — the equipment is aging.", "Depreciation is the annual estimate of capacity being consumed. Spending half of it means the asset base is quietly running down, and the espresso machines will need replacing all at once. Today's healthy cash flow is partly borrowed from tomorrow's balance sheet. Comparing capex to depreciation over several years is one of the fastest quality checks in analysis.", "Possible, but under-spending is the far more common explanation — and you'd check the asset ages before blaming the rate.", "CFO matters enormously, but CFO minus capex — free cash flow, lesson 2230 — is what actually funds lenders and owners."] }
+      { t: "where", h: "CFI is the second section of the <strong>cash flow statement</strong>. The capex it reports lands in PP&E on the <strong>balance sheet</strong> and then drips onto the <strong>income statement</strong> as depreciation for years afterwards. This roll-forward is bridge #2 of the “Linking the three statements” module." },
+      { t: "mcq", q: "A café reports strong CFO but its capex has been half its depreciation for three years. What should you suspect?", opts: ["Excellent capital discipline", "Cash flow is being flattered by under-investment that must be caught up later", "The depreciation rate is definitely wrong", "Nothing — CFO is what matters"], correct: 1, why: ["It can look like discipline for a year. Three years of replacing only half of what wears out is different — the equipment is aging.", "Depreciation is the annual estimate of capacity being consumed. Spending half of it means the asset base is quietly running down, and the espresso machines will need replacing all at once. Today's healthy cash flow is partly borrowed from tomorrow's balance sheet. Comparing capex to depreciation over several years is one of the fastest quality checks in analysis.", "Possible, but under-spending is the far more common explanation — and you'd check the asset ages before blaming the rate.", "CFO matters enormously, but CFO minus capex — free cash flow, the “Free cash flow” lesson — is what actually funds lenders and owners."] }
     ]
   };
 
@@ -2681,8 +2727,8 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "= <b>Cash from financing</b>",
         "<i>Interest paid: operating (it's a cost of running the business)</i>",
         "<i>Loan principal: financing (it's the money itself)</i>"
-      ], note: "The interest-vs-principal split from lesson 1220 decides which section each payment lands in. Ind AS permits interest paid in either operating or financing for non-financial companies, provided it's applied consistently — we keep it in operating, inside PAT." },
-      { t: "example", h: "<p>FY25 had two financing events: the café repaid " + R(50000) + " of loan principal (lesson 1220), and paid Priya her first dividend of " + R(C.fy25.dividend) + " (lesson 1320). No new shares, no new borrowing. CFF is " + R(cf.cff) + " — the business returning money to its funders.</p>" },
+      ], note: "The interest-vs-principal split from the “Borrowings” lesson decides which section each payment lands in. Ind AS permits interest paid in either operating or financing for non-financial companies, provided it's applied consistently — we keep it in operating, inside PAT." },
+      { t: "example", h: "<p>FY25 had two financing events: the café repaid " + R(50000) + " of loan principal (see “Borrowings”), and paid Priya her first dividend of " + R(C.fy25.dividend) + " (see “Retained earnings”). No new shares, no new borrowing. CFF is " + R(cf.cff) + " — the business returning money to its funders.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2708,7 +2754,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "CFF " + R(cf.cff) + " and the loan rolls to exactly " + R(bs.loan) + ". Note the dividend appears here — never on the income statement. Dividends are a distribution of profit, not a cost of earning it."
         }
       },
-      { t: "where", h: "CFF is the third section of the <strong>cash flow statement</strong>. Loan movements roll the borrowings line on the <strong>balance sheet</strong>; the dividend reduces retained earnings there too (the '− dividends' in your lesson 1320 roll-forward). The <strong>income statement</strong> sees none of it — only the interest." },
+      { t: "where", h: "CFF is the third section of the <strong>cash flow statement</strong>. Loan movements roll the borrowings line on the <strong>balance sheet</strong>; the dividend reduces retained earnings there too (the '− dividends' in your the “Retained earnings” lesson roll-forward). The <strong>income statement</strong> sees none of it — only the interest." },
       { t: "mcq", q: "Which pairing is correct?", opts: ["Interest paid → financing; dividend paid → financing", "Interest paid → operating; dividend paid → financing", "Interest paid → operating; dividend paid → operating", "Both belong in investing"], correct: 1, why: ["Defensible under Ind AS, which allows interest paid in financing if applied consistently — but it isn't the convention this course (or most teaching models) uses, since interest is already inside PAT.", "Interest is a cost of running the business, already deducted in arriving at PAT, so it sits in operating. A dividend isn't a cost at all — it's profit being handed to the owner, which is a transaction with a capital provider: financing. The give-away is that interest reduces profit and dividends don't.", "A dividend can't be operating — it isn't an expense of earning revenue. It never appears on the income statement.", "Investing is only about long-term assets — buying and selling machines, not dealing with funders."] }
     ]
   };
@@ -2718,13 +2764,13 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     title: "Capstone: the full cash flow statement",
     short: "★ The cash flow statement",
     desc: "Combine CFO, CFI and CFF to derive closing cash — which must equal the ₹1,00,000 on the capstone balance sheet.",
-    lede: "Three sections, one answer. Add them to the opening bank balance and you must land on exactly ₹1,00,000 — the cash line of the balance sheet you tied in lesson 1330. This is the third statement closing the loop.",
+    lede: "Three sections, one answer. Add them to the opening bank balance and you must land on exactly ₹1,00,000 — the cash line of the balance sheet you tied in the “Capstone: build the balance sheet” lesson. This is the third statement closing the loop.",
     body: [
       { t: "p", h: "You now have two independent proofs waiting to meet. The balance sheet said cash was " + R(bs.cash) + ". This statement derives cash from a completely different direction — profit, working capital, capex, financing. When they agree, your model is genuinely consistent." },
       { t: "formula", title: "The whole statement", lines: [
-        "Cash from operations   (lesson 1520)",
-        "+ Cash from investing  (lesson 1530)",
-        "+ Cash from financing  (lesson 1540)",
+        "Cash from operations   (see “CFO (indirect)”)",
+        "+ Cash from investing  (see “CFI & capex”)",
+        "+ Cash from financing  (see “CFF”)",
         "= Net change in cash",
         "+ Opening cash",
         "= <b>Closing cash</b>  → must equal the balance sheet"
@@ -2758,7 +2804,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
             ["Opening cash (1 Apr 2024)", cf.openingCash],
             ["CLOSING CASH", { input: true, mf: true, fmt: "inr", ph: "=B18+B19" }],
             [null, null],
-            ["Balance sheet cash (lesson 1330)", bs.cash]
+            ["Balance sheet cash (see “Capstone: build the balance sheet”)", bs.cash]
           ],
           checks: [
             { cell: "B8", expect: 380000, message: "B8: cash from operations via SUM", mustFormula: true, mustUse: "SUM", mustUseLabel: "the SUM function" },
@@ -2868,7 +2914,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "Quick ratio   = (Current assets − Inventory) ÷ Current liabilities",
         "Café: " + R(r.currentAssets) + " ÷ " + R(r.currentLiabs) + " = <b>" + X(3) + "</b>; quick = <b>" + X(2) + "</b>"
       ], note: "Higher isn't automatically better. A current ratio of 5 can mean cash sitting idle or customers who never pay. For most businesses 1.5–3 is comfortable; the right level depends heavily on the industry." },
-      { t: "example", h: "<p>At 31 March 2025 the café holds " + R(r.currentAssets) + " of current assets (inventory " + R(bs.inventory) + ", receivables " + R(bs.receivables) + ", cash " + R(bs.cash) + " — the total you built in lesson 1150) against " + R(r.currentLiabs) + " of current liabilities (payables " + R(bs.payables) + " and salaries " + R(bs.accrued) + ").</p>" },
+      { t: "example", h: "<p>At 31 March 2025 the café holds " + R(r.currentAssets) + " of current assets (inventory " + R(bs.inventory) + ", receivables " + R(bs.receivables) + ", cash " + R(bs.cash) + " — the total you built in the “Cash & classification” lesson) against " + R(r.currentLiabs) + " of current liabilities (payables " + R(bs.payables) + " and salaries " + R(bs.accrued) + ").</p>" },
       {
         t: "sheet",
         sheet: {
@@ -2908,7 +2954,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           rows: [["Inventory", "₹1,00,000"], ["Receivables", "₹2,00,000"], ["Cash", "₹3,00,000"], ["Current liabilities", "₹4,00,000"], ["Current ratio", "1.5x"], ["Quick ratio", "1.25x", "total"]]
         }
       },
-      { t: "where", h: "Both ratios come entirely from the current sections of the <strong>balance sheet</strong> — which is exactly why that statement bothers to split current from non-current (lesson 1150). The split exists to make this calculation possible." },
+      { t: "where", h: "Both ratios come entirely from the current sections of the <strong>balance sheet</strong> — which is exactly why that statement bothers to split current from non-current (see “Cash & classification”). The split exists to make this calculation possible." },
       { t: "mcq", tag: "Which is healthier?", q: "Both cafés show a current ratio of exactly 1.5x. Which one would you lend to?", opts: ["Brew Lane — it has more current assets in total", "Third Wave — its liquidity doesn't depend on selling stock", "Neither — 1.5x is too low", "They're equally safe; the ratio says so"], correct: 1, why: ["Brew Lane's assets are larger but the wrong kind: ₹6,00,000 of it is beans and pastry. If sales slow, that stock doesn't convert — and unlike Third Wave, Brew Lane has only ₹50,000 of cash to bridge the gap.", "Identical current ratios, completely different risk. Third Wave's quick ratio of 1.25x means it could settle every current liability without selling a single bean. Brew Lane's 0.3x means it's utterly dependent on moving inventory. This is exactly the blind spot the quick ratio was invented to expose — never read the current ratio alone.", "1.5x is a perfectly normal level for many businesses; the composition is what separates these two.", "The ratio is identical, which is precisely why one ratio is never enough."] }
     ]
   };
@@ -3114,7 +3160,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "<b>1.</b> Closing retained earnings = Opening RE + PAT − Dividends",
         "<b>2.</b> Closing PP&amp;E, net       = Opening PP&amp;E + Capex − Depreciation",
         "<b>3.</b> Closing cash             = Opening cash + CFO + CFI + CFF"
-      ], note: "Each is a roll-forward: opening + increases − decreases = closing. You've built all three already — in lessons 1320, 1530 and 1550. Module 2100 just puts them in one sheet." },
+      ], note: "Each is a roll-forward: opening + increases − decreases = closing. You've built all three already — in the “Retained earnings” lesson, 1530 and 1550. Module 2100 just puts them in one sheet." },
       { t: "example", h: "<p>Watch bridge 2 in FY25: PP&E opened at " + R(y24.bs.ppeNet) + ", the café spent " + R(240000) + " on a second machine, and charged " + R(y25.pl.dep) + " of depreciation. Closing: " + R(y25.bs.ppeNet) + " — unchanged, because capex exactly replaced what wore out. The depreciation figure appears on the P&L <em>and</em> reduces this balance <em>and</em> is added back on the cash flow statement. One number, three jobs.</p>" },
       {
         t: "classify",
@@ -3214,7 +3260,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       },
       { t: "note", h: "<strong>Try it:</strong> change FY26 depreciation in D4 to " + R(300000) + " and watch. PP&E falls, retained earnings falls by the same amount, cash doesn't move — and FY26 still ties. If a model doesn't behave that way, a bridge is broken. That's the next lesson." },
       { t: "where", h: "This is the skeleton of every three-statement model in professional finance. Module 2200 adds the missing front end: instead of typing PAT for each year, you'll <em>drive</em> it from assumptions about growth and margin, and let the model compute everything downstream." },
-      { t: "mcq", q: "In your model, why does FY26 cash depend on FY25 cash rather than being computed from scratch?", opts: ["Convenience — it saves typing", "Because cash is a balance that carries over; the statement only ever explains the change", "Because Excel requires it", "It doesn't — either method works identically"], correct: 1, why: ["It does save typing, but the reason is conceptual, not practical.", "Cash is a <em>stock</em> — it persists. The cash flow statement measures a <em>flow</em>, the change during the year. Closing = opening + change is the only way to connect them, which is exactly the stocks-vs-flows distinction from lesson 1040. Every balance sheet line in this model rolls forward the same way; only the flows are computed fresh each year.", "The spreadsheet doesn't care; the accounting does.", "Computing cash from scratch each year would mean re-deriving every transaction since the café opened — and it would silently lose any opening balance."] }
+      { t: "mcq", q: "In your model, why does FY26 cash depend on FY25 cash rather than being computed from scratch?", opts: ["Convenience — it saves typing", "Because cash is a balance that carries over; the statement only ever explains the change", "Because Excel requires it", "It doesn't — either method works identically"], correct: 1, why: ["It does save typing, but the reason is conceptual, not practical.", "Cash is a <em>stock</em> — it persists. The cash flow statement measures a <em>flow</em>, the change during the year. Closing = opening + change is the only way to connect them, which is exactly the stocks-vs-flows distinction from the “The three statements” lesson. Every balance sheet line in this model rolls forward the same way; only the flows are computed fresh each year.", "The spreadsheet doesn't care; the accounting does.", "Computing cash from scratch each year would mean re-deriving every transaction since the café opened — and it would silently lose any opening balance."] }
     ]
   };
 
@@ -3315,7 +3361,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         "DIO = Inventory   ÷ COGS    × 365      → forecast: Inventory   = COGS × DIO ÷ 365",
         "DPO = Payables    ÷ COGS    × 365      → forecast: Payables    = COGS × DPO ÷ 365"
       ], note: "Compute the days from history, assume they hold, then let revenue growth carry working capital along with it. That's how a projected balance sheet stays realistic instead of frozen." },
-      { t: "example", h: "<p>From the café's FY25 statements: receivables " + R(y25.bs.receivables) + " on revenue of " + R(y25.pl.revenue) + " is " + C.ratios.dso.toFixed(1) + " days — consistent with the 30-day catering terms from lesson 1140. Inventory of " + R(y25.bs.inventory) + " against COGS of " + R(y25.pl.cogs) + " is " + C.ratios.dio.toFixed(1) + " days of stock, and the café takes " + C.ratios.dpo.toFixed(1) + " days to pay its roaster.</p>" },
+      { t: "example", h: "<p>From the café's FY25 statements: receivables " + R(y25.bs.receivables) + " on revenue of " + R(y25.pl.revenue) + " is " + C.ratios.dso.toFixed(1) + " days — consistent with the 30-day catering terms from the “Receivables” lesson. Inventory of " + R(y25.bs.inventory) + " against COGS of " + R(y25.pl.cogs) + " is " + C.ratios.dio.toFixed(1) + " days of stock, and the café takes " + C.ratios.dpo.toFixed(1) + " days to pay its roaster.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -3406,7 +3452,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "note", h: "<strong>Why the $ signs matter:</strong> when you copy a formula right, relative references shift (C6 becomes D6 — what you want for last year's revenue) but $B$2 stays anchored on the growth driver. Mixing these up is the most common cause of a model that works in the first column and quietly falls apart in the third. The 'Copy formula right' button in this sheet respects $ exactly as Excel does — try it both ways and watch." },
-      { t: "where", h: "This projected <strong>income statement</strong> feeds everything downstream: PAT drives retained earnings, EBIT drives the free cash flow you'll build next, and both flow into the valuation in lesson 2240." },
+      { t: "where", h: "This projected <strong>income statement</strong> feeds everything downstream: PAT drives retained earnings, EBIT drives the free cash flow you'll build next, and both flow into the valuation in the “DCF & terminal value” lesson." },
       { t: "mcq", q: "Revenue grows 15% a year and operating costs 10%. What happens to EBITDA margin over three years?", opts: ["It stays flat — both are growing", "It rises, because revenue outgrows the costs it doesn't control", "It falls, because costs compound", "It depends on the tax rate"], correct: 1, why: ["Both grow, but at different rates — and the gap compounds in the business's favour.", "This is operating leverage. Gross margin is fixed at 65% by assumption, so gross profit grows at the full 15%, while opex grows at only 10%. EBITDA margin climbs from " + P(y25.pl.ebitda / y25.pl.revenue) + " in FY25 to " + P(y28.pl.ebitda / y28.pl.revenue) + " by FY28. It's also the assumption to challenge hardest — it says the café can grow 15% a year without proportionally more staff, which may not survive contact with reality.", "Costs do compound, but more slowly than revenue does. Compounding at 10% loses to compounding at 15%.", "Tax sits well below EBITDA — it can't affect that margin at all."] }
     ]
   };
@@ -3454,7 +3500,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           success: "FCFF of " + R(rd(y26.fcff)) + ", " + R(rd(y27.fcff)) + " and " + R(rd(y28.fcff)) + ". These three numbers are the entire input to the valuation in the next lesson — everything else you've learned exists to produce them credibly."
         }
       },
-      { t: "note", h: "Notice how much smaller FCFF is than EBITDA (" + R(rd(y26.pl.ebitda)) + " in FY26). The difference is tax, the capex needed to stand still, and the working capital growth consumes. This is the concrete answer to why EBITDA is not cash flow — a point lesson 1430 made in words and this sheet makes in rupees." },
+      { t: "note", h: "Notice how much smaller FCFF is than EBITDA (" + R(rd(y26.pl.ebitda)) + " in FY26). The difference is tax, the capex needed to stand still, and the working capital growth consumes. This is the concrete answer to why EBITDA is not cash flow — a point the “Opex & EBITDA” lesson made in words and this sheet makes in rupees." },
       { t: "where", h: "FCFF is not a line on any published statement — you build it from the <strong>income statement</strong> (EBIT, tax rate), the <strong>cash flow statement</strong> (depreciation, capex) and the <strong>balance sheet</strong> (working capital). It's the payoff for having built all three." },
       { t: "mcq", q: "Why does FCFF use EBIT × (1 − tax) rather than the actual profit after tax?", opts: ["It's an approximation that's easier to compute", "To measure the business before financing, so the valuation doesn't change with the debt mix", "Because PAT includes depreciation", "Tax authorities require it"], correct: 1, why: ["It's actually more work, not less — you're deliberately recomputing tax as if the company had no debt.", "PAT is struck after interest, so it's smaller for an indebted company. If valuation used PAT, the café would appear less valuable simply for having borrowed — which is nonsense, since the loan didn't change how much coffee it sells. FCFF measures the business itself; the debt is dealt with separately, by subtracting net debt at the end (next lesson).", "PAT is after depreciation, which is why the add-back is a separate line in the build.", "This is a valuation convention, not a tax rule — real tax is computed on actual profit after interest."] }
     ]
@@ -3599,8 +3645,283 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         }
       },
       { t: "note", h: "<strong>Change an assumption and watch.</strong> Drop revenue growth in B2 from 15% to 8% and the equity value falls sharply — because slower growth shrinks every projected cash flow <em>and</em> the terminal value built on the last one. That responsiveness is what makes this a model. It's also the warning: a model reflects its assumptions faithfully, including the wrong ones." },
-      { t: "where", h: "This is the end of the chain that started with lesson 1010's five buckets. Assets and liabilities became a balance sheet, revenue and expenses became an income statement, the two became a cash flow statement, the three became a linked model, and the model became a valuation. Every number traceable to a café in Mumbai." },
+      { t: "where", h: "This is the end of the chain that started with the “The five buckets” lesson's five buckets. Assets and liabilities became a balance sheet, revenue and expenses became an income statement, the two became a cash flow statement, the three became a linked model, and the model became a valuation. Every number traceable to a café in Mumbai." },
       { t: "mcq", q: "Priya is offered ₹40,00,000 for the café. Based on your model, what's the most defensible response?", opts: ["Accept — it's a large sum", "Reject — the model says ₹54,65,993", "It's below even the cautious case of ₹43 lakh, so ask what assumptions justify the offer", "Ask for ₹70,00,000, since DCFs are conservative"], correct: 2, why: ["The size of a number in isolation tells you nothing about whether it's a fair price.", "Right direction, wrong confidence. Quoting the model to the rupee invites the buyer to attack your assumptions — and they'd be right to.", "The offer sits below even the cautious scenario (₹43.2 lakh at 13% WACC and 3% terminal growth). That doesn't prove it's too low, but it does convert a haggle into a conversation about assumptions: does the buyer expect slower growth, thinner margins, higher risk? If their reasoning is better than yours, you learn something. If it isn't, you have grounds to hold out.", "There's no reason to think this DCF is conservative — and anchoring on a number you can't justify is the fastest way to lose credibility."] }
+    ]
+  };
+})();
+
+</script>
+<script>
+/* js/lessons/m3000.js */
+/* Module 3000 — Startup finance: the jargon founders actually meet.
+   Same house style as the rest of the course, but the running example is a
+   second company: Chaiwala Cloud, a Bengaluru SaaS startup selling
+   inventory software to kirana shops. Rupees throughout. */
+(function () {
+  "use strict";
+  var LS = (window.LS = window.LS || {});
+  LS.lessons = LS.lessons || {};
+  var R = LS.fmt.inr, P = LS.fmt.pct, X = LS.fmt.x;
+
+  LS.lessons["3010-arr-mrr"] = {
+    id: "3010-arr-mrr", code: "3010", minutes: 5,
+    title: "MRR, ARR and why bookings aren't revenue",
+    short: "MRR & ARR",
+    desc: "The three numbers founders quote most — bookings, MRR and ARR — what each actually means, and why confusing them destroys credibility in a pitch.",
+    lede: "Ask a founder how big their company is and you'll hear ARR. Ask an accountant and you'll hear revenue. They are rarely the same number, and knowing why is the fastest way to sound like you know what you're doing.",
+    body: [
+      { t: "def", term: "MRR — monthly recurring revenue", h: "The predictable subscription revenue the business earns in a month, counting only <strong>recurring</strong> contracts. A one-off setup fee is not MRR. Neither is a consulting project." },
+      { t: "def", term: "ARR — annual recurring revenue", h: "MRR × 12. It is a <strong>run-rate</strong>, not a historical figure: it says \"if today's subscriptions ran unchanged for a year, this is what we'd earn\". It is not what the income statement will show." },
+      { t: "def", term: "Bookings vs revenue vs cash", h: "<strong>Bookings</strong> = contracts signed. <strong>Revenue</strong> = value delivered (recognised over the subscription). <strong>Cash</strong> = money received. A ₹12,00,000 annual contract paid upfront is ₹12,00,000 of bookings and cash on day one, but only ₹1,00,000 of revenue in month one." },
+      { t: "formula", title: "The three numbers", lines: [
+        "MRR  = Σ monthly subscription value of active customers",
+        "ARR  = MRR × 12",
+        "<b>Bookings ≠ Revenue ≠ Cash</b> — three dates, three numbers"
+      ], note: "This is the accrual idea from the “Revenue” lesson wearing startup clothes. Revenue is recognised as the service is delivered; the rest is timing." },
+      { t: "example", h: "<p><strong>Chaiwala Cloud</strong> sells inventory software to kirana shops in Bengaluru. In March it has 180 shops on ₹2,000/month and 20 on ₹5,000/month. It also signed a ₹3,00,000 one-off data-migration project, and one customer prepaid a full year.</p>" },
+      {
+        t: "sheet",
+        sheet: {
+          id: "s1",
+          title: "Chaiwala Cloud's March MRR and ARR",
+          hint: "Multiply customers by price for each tier, total them for MRR, then annualise. The one-off migration fee is deliberately excluded — decide why before you build B7.",
+          grid: [
+            ["", "Customers", "₹ / month", "Monthly value"],
+            ["Standard plan", { v: 180, fmt: "plain" }, 2000, { input: true, mf: true, fmt: "inr", ph: "=B2*C2" }],
+            ["Pro plan", { v: 20, fmt: "plain" }, 5000, { input: true, mf: true, fmt: "inr" }],
+            ["One-off migration project", null, null, 300000],
+            [null, null, null, null],
+            ["MRR (recurring only)", null, null, { input: true, mf: true, fmt: "inr", ph: "=SUM(D2:D3)" }],
+            ["ARR", null, null, { input: true, mf: true, fmt: "inr", ph: "=D6*12" }]
+          ],
+          checks: [
+            { cell: "D2", expect: 360000, message: "D2: standard plan monthly value", mustFormula: true },
+            { cell: "D3", expect: 100000, message: "D3: pro plan monthly value", mustFormula: true },
+            { cell: "D6", expect: 460000, message: "D6: MRR — recurring lines only, not the migration fee", mustFormula: true },
+            { cell: "D7", expect: 5520000, message: "D7: ARR = MRR × 12", mustFormula: true }
+          ],
+          success: "MRR " + R(460000) + ", ARR " + R(5520000) + ". The " + R(300000) + " migration fee is real revenue but it is not recurring — including it would inflate ARR by " + R(3600000) + " for work that happens once."
+        }
+      },
+      { t: "note", h: "<strong>The most common founder mistake:</strong> quoting ARR that includes one-off services. An investor who spots it discounts everything else you say. If you do both recurring and services, report them separately — it reads as competence, not weakness." },
+      { t: "where", h: "MRR and ARR appear on <strong>no financial statement</strong> — they are management metrics. The <strong>income statement</strong> shows revenue actually earned in the period; prepaid subscriptions sit on the <strong>balance sheet</strong> as deferred revenue (a liability) until delivered." },
+      { t: "mcq", q: "On 1 March a customer signs a ₹2,40,000 annual contract and pays it all upfront. What does March's income statement show?", opts: ["₹2,40,000 of revenue", "₹20,000 of revenue", "Nothing until the year ends", "₹2,40,000 of bookings"], correct: 1, why: ["That's the booking and the cash, not the revenue. Recognising it all in March would overstate the month twelvefold.", "One month of a twelve-month service has been delivered, so ₹20,000 is earned. The remaining ₹2,20,000 sits as deferred revenue — a liability, because the company still owes eleven months of software.", "Revenue is recognised as the service is delivered, month by month, not all at the end.", "Bookings are a sales metric — they never appear on the income statement."] }
+    ]
+  };
+
+  LS.lessons["3020-burn-runway"] = {
+    id: "3020-burn-runway", code: "3020", minutes: 5,
+    title: "Burn rate and runway",
+    short: "Burn & runway",
+    desc: "Gross burn, net burn and the number that decides whether a startup lives: how many months of cash are left.",
+    lede: "Every startup has a countdown clock. Runway is how many months until the bank balance hits zero. It is the single most important number a founder tracks, and the first thing an investor asks.",
+    body: [
+      { t: "def", term: "Gross burn", h: "Total cash going <strong>out</strong> each month — salaries, rent, servers, everything. It ignores revenue entirely." },
+      { t: "def", term: "Net burn", h: "Cash out <strong>minus</strong> cash in. The real monthly shrinkage of the bank balance. When it turns negative the company is <em>cash-flow positive</em> and the clock stops." },
+      { t: "def", term: "Runway", h: "Cash in the bank ÷ net burn. How many months until the money runs out at the current rate. Under six months is an emergency; most investors want eighteen after a raise." },
+      { t: "formula", title: "The countdown", lines: [
+        "Net burn = Cash out − Cash in",
+        "<b>Runway (months)</b> = Cash in bank ÷ Net burn",
+        "Default alive: revenue growing fast enough to reach profit before runway ends"
+      ], note: "Runway assumes today's burn continues. Hiring plans, a big renewal, or a slipped collection all move it — which is why founders re-forecast it monthly, not annually." },
+      { t: "example", h: "<p>Chaiwala Cloud holds " + R(9000000) + " after its seed round. Monthly cash out: salaries " + R(1100000) + ", cloud hosting " + R(180000) + ", office " + R(120000) + ", everything else " + R(100000) + ". Cash in from customers: " + R(460000) + " (its MRR, all collected monthly).</p>" },
+      {
+        t: "sheet",
+        sheet: {
+          id: "s1",
+          title: "Chaiwala Cloud's runway",
+          hint: "Total the outflows for gross burn (B7), subtract cash in for net burn (B9), then divide the bank balance by it. The runway cell is formatted as a plain number of months.",
+          grid: [
+            ["", { v: "Per month", year: true }],
+            ["Salaries", 1100000],
+            ["Cloud hosting", 180000],
+            ["Office", 120000],
+            ["Everything else", 100000],
+            [null, null],
+            ["Gross burn", { input: true, mf: true, fmt: "inr", ph: "=SUM(B2:B5)" }],
+            ["Cash in from customers", 460000],
+            ["Net burn", { input: true, mf: true, fmt: "inr", ph: "=B7-B8" }],
+            [null, null],
+            ["Cash in the bank", 9000000],
+            ["Runway (months)", { input: true, mf: true, fmt: "plain", ph: "=B11/B9" }]
+          ],
+          checks: [
+            { cell: "B7", expect: 1500000, message: "B7: gross burn via SUM", mustFormula: true, mustUse: "SUM", mustUseLabel: "the SUM function" },
+            { cell: "B9", expect: 1040000, message: "B9: net burn = gross burn − cash in", mustFormula: true },
+            { cell: "B12", expect: 8.65, message: "B12: runway in months", mustFormula: true, tol: 0.1 }
+          ],
+          success: "Gross burn " + R(1500000) + ", net burn " + R(1040000) + ", runway about 8.7 months. That is below the twelve-month line most boards treat as the point to start raising — a fundraise takes three to six months, so this company should already be talking to investors."
+        }
+      },
+      { t: "note", h: "<strong>Try it:</strong> change cash in (B8) to " + R(1500000) + " and watch net burn hit zero — runway becomes infinite because the company now funds itself. That moment is called <em>default alive</em>, and it is the only permanent solution to the countdown." },
+      { t: "where", h: "Burn is read off the <strong>cash flow statement</strong> — it is essentially negative CFO plus capex. The bank balance is the <strong>balance sheet's</strong> cash line. Runway is the two divided, which is why a founder who can't read a cash flow statement can't forecast their own survival." },
+      { t: "mcq", q: "A startup has ₹60,00,000 in the bank and a net burn of ₹10,00,000 a month. It plans to hire a team that adds ₹5,00,000 a month. What happens to runway?", opts: ["Falls from 6 months to 4", "Falls from 6 months to 5", "Stays at 6 months until they're hired", "Rises, because the team will add revenue"], correct: 0, why: ["Net burn rises to ₹15,00,000, so ₹60,00,000 ÷ ₹15,00,000 = 4 months. Hiring is the fastest way to shorten a runway, which is why headcount plans and fundraising plans are always drawn up together.", "Check the arithmetic: ₹60,00,000 ÷ ₹15,00,000 is 4, not 5.", "The clock re-rates the moment the salaries start, and it's the forward burn that matters for planning — not the historical one.", "They may add revenue eventually, but salaries are certain and immediate while their revenue is neither. Planning on the optimistic version is how startups die."] }
+    ]
+  };
+
+  LS.lessons["3030-cac-ltv"] = {
+    id: "3030-cac-ltv", code: "3030", minutes: 6,
+    title: "CAC, LTV and payback",
+    short: "CAC & LTV",
+    desc: "Unit economics: what a customer costs to win, what they're worth, and how long before you're square.",
+    lede: "Growth is easy if you're willing to lose money on every customer. Unit economics ask the harder question: after paying to acquire a customer, do you ever make it back?",
+    body: [
+      { t: "def", term: "CAC — customer acquisition cost", h: "Total sales and marketing spend in a period ÷ new customers won in that period. Include salaries of the sales team, not just ad spend — leaving them out is the most common way CAC gets flattered." },
+      { t: "def", term: "Churn and customer lifetime", h: "<strong>Monthly churn</strong> is the share of customers who leave each month. Average lifetime = 1 ÷ churn. At 2% monthly churn the average customer stays 50 months." },
+      { t: "def", term: "LTV — lifetime value", h: "The <strong>gross profit</strong> a customer generates over their lifetime, not the revenue. Using revenue instead of gross profit is the second most common way these numbers get flattered." },
+      { t: "formula", title: "Unit economics", lines: [
+        "Lifetime (months) = 1 ÷ monthly churn",
+        "LTV = Monthly revenue per customer × Gross margin × Lifetime",
+        "<b>LTV / CAC</b>  — 3× or better is the usual bar",
+        "<b>CAC payback</b> = CAC ÷ (Monthly revenue × Gross margin), in months"
+      ], note: "LTV/CAC judges whether the business model works at all. CAC payback judges whether you can <em>afford</em> it — a great ratio with a 30-month payback still needs enormous funding to grow." },
+      { t: "example", h: "<p>Chaiwala Cloud spent " + R(1200000) + " on sales and marketing last quarter and won 40 new shops. Its average customer pays " + R(2300) + " a month at an 80% gross margin (software scales well), and 2.5% of customers leave each month.</p>" },
+      {
+        t: "sheet",
+        sheet: {
+          id: "s1",
+          title: "Chaiwala Cloud's unit economics",
+          hint: "CAC in B4, lifetime in B8 (1 ÷ churn), monthly gross profit per customer in B9, then LTV, the ratio and the payback period.",
+          grid: [
+            ["", { v: "Value", year: true }],
+            ["Sales & marketing spend (quarter)", 1200000],
+            ["New customers won", { v: 40, fmt: "plain" }],
+            ["CAC", { input: true, mf: true, fmt: "inr", ph: "=B2/B3" }],
+            [null, null],
+            ["Revenue per customer per month", 2300],
+            ["Gross margin", { v: 0.8, fmt: "pct" }],
+            ["Monthly churn", { v: 0.025, fmt: "pct" }],
+            ["Average lifetime (months)", { input: true, mf: true, fmt: "plain", ph: "=1/B8" }],
+            ["Gross profit per customer per month", { input: true, mf: true, fmt: "inr", ph: "=B6*B7" }],
+            ["LTV", { input: true, mf: true, fmt: "inr", ph: "=B10*B9" }],
+            [null, null],
+            ["LTV / CAC", { input: true, mf: true, fmt: "x", ph: "=B11/B4" }],
+            ["CAC payback (months)", { input: true, mf: true, fmt: "plain", ph: "=B4/B10" }]
+          ],
+          checks: [
+            { cell: "B4", expect: 30000, message: "B4: CAC = spend ÷ new customers", mustFormula: true },
+            { cell: "B9", expect: 40, message: "B9: average lifetime = 1 ÷ churn", mustFormula: true, tol: 0.5 },
+            { cell: "B10", expect: 1840, message: "B10: monthly gross profit per customer", mustFormula: true },
+            { cell: "B11", expect: 73600, message: "B11: LTV = monthly gross profit × lifetime", mustFormula: true, tol: 50 },
+            { cell: "B13", expect: 2.45, message: "B13: LTV / CAC", mustFormula: true, tol: 0.05 },
+            { cell: "B14", expect: 16.3, message: "B14: CAC payback in months", mustFormula: true, tol: 0.3 }
+          ],
+          success: "LTV/CAC of about " + X(2.45) + " and a 16-month payback. Below the 3× bar and slower than the 12-month payback most investors like — this business works, but not yet comfortably. Halve churn to 1.25% and LTV/CAC doubles to roughly 4.9×."
+        }
+      },
+      { t: "note", h: "<strong>Why churn dominates everything:</strong> lifetime is 1 ÷ churn, so cutting churn from 2.5% to 1.25% doesn't improve LTV a bit — it <em>doubles</em> it. Retention is almost always a cheaper lever than acquisition, and it compounds." },
+      { t: "where", h: "None of these appear on a financial statement. CAC comes from the <strong>income statement's</strong> sales and marketing line divided by a number only the company knows; LTV uses the gross margin from that same statement. They are the bridge between accounting and strategy." },
+      { t: "mcq", q: "A founder reports LTV/CAC of 8× using revenue rather than gross profit, on a business with 40% gross margin. What is the real ratio?", opts: ["8×", "3.2×", "20×", "Can't tell"], correct: 1, why: ["That's the flattered figure. LTV must be built from gross profit, because the cost of serving the customer is real money that never reaches the owner.", "Multiply by the gross margin: 8 × 0.40 = 3.2×. Still above the 3× bar, but a very different business from the one the 8× implied — and an investor will do this arithmetic in their head during the meeting.", "That would be dividing by the margin rather than multiplying — the wrong direction entirely.", "You can tell precisely, given the gross margin, which is exactly why investors ask for it."] }
+    ]
+  };
+
+  LS.lessons["3040-cap-table"] = {
+    id: "3040-cap-table", code: "3040", minutes: 6,
+    title: "Cap tables, dilution and valuation",
+    short: "Cap table & dilution",
+    desc: "Pre-money, post-money, ESOP pools and what actually happens to a founder's ownership when they raise.",
+    lede: "A founder owns 100% of nothing, then a shrinking share of something bigger. Understanding exactly how much shrinks — and when — is the difference between a good deal and a painful surprise.",
+    body: [
+      { t: "def", term: "Pre-money and post-money", h: "<strong>Pre-money</strong> is what the company is agreed to be worth <em>before</em> the new money arrives. <strong>Post-money</strong> = pre-money + investment. The investor's stake is their cheque ÷ <strong>post</strong>-money — a distinction worth crores." },
+      { t: "def", term: "Dilution", h: "Existing shareholders' percentages shrink because new shares are issued. Your <em>number</em> of shares is unchanged; the denominator grew. Dilution is not theft — it's the price of the capital." },
+      { t: "def", term: "ESOP pool", h: "Shares set aside for employees. Investors usually require the pool to be created <strong>pre-money</strong>, which means the founders — not the new investor — pay for it in dilution. This single term is worth negotiating hard." },
+      { t: "formula", title: "The arithmetic of a round", lines: [
+        "Post-money = Pre-money + Investment",
+        "Investor % = Investment ÷ <b>Post</b>-money",
+        "Founder's new % = Founder's old % × (Pre-money ÷ Post-money)"
+      ], note: "\"₹8 crore on ₹32 crore\" almost always means ₹8 crore invested at a ₹32 crore <em>pre</em>-money, i.e. a ₹40 crore post and 20% sold. If it's quoted post-money it's 25%. Always ask which." },
+      { t: "example", h: "<p>Chaiwala Cloud's two founders own 100% between them (60/40). They raise " + R(8000000) + " at a " + R(32000000) + " pre-money valuation, and the investor requires a 10% ESOP pool created before the round.</p>" },
+      {
+        t: "sheet",
+        sheet: {
+          id: "s1",
+          title: "What the founders actually keep",
+          hint: "Post-money in B4, then the investor's share. The ESOP pool is 10% of the post-money company, so founders are diluted by both. Compute each founder's final stake in B10 and B11.",
+          grid: [
+            ["", { v: "Value", year: true }],
+            ["Pre-money valuation", 32000000],
+            ["Investment", 8000000],
+            ["Post-money valuation", { input: true, mf: true, fmt: "inr", ph: "=B2+B3" }],
+            [null, null],
+            ["Investor's stake", { input: true, mf: true, fmt: "pct", ph: "=B3/B4" }],
+            ["ESOP pool", { v: 0.10, fmt: "pct" }],
+            ["Left for the founders", { input: true, mf: true, fmt: "pct", ph: "=1-B6-B7" }],
+            [null, null],
+            ["Founder A (was 60%)", { input: true, mf: true, fmt: "pct", ph: "=0.6*B8" }],
+            ["Founder B (was 40%)", { input: true, mf: true, fmt: "pct", ph: "=0.4*B8" }],
+            ["Founder A's stake in rupees", { input: true, mf: true, fmt: "inr", ph: "=B10*B4" }]
+          ],
+          checks: [
+            { cell: "B4", expect: 40000000, message: "B4: post-money = pre + investment", mustFormula: true },
+            { cell: "B6", expect: 0.20, message: "B6: investor's stake = investment ÷ post-money", mustFormula: true, tol: 0.002 },
+            { cell: "B8", expect: 0.70, message: "B8: what's left for the founders after investor and ESOP", mustFormula: true, tol: 0.002 },
+            { cell: "B10", expect: 0.42, message: "B10: Founder A's diluted stake", mustFormula: true, tol: 0.002 },
+            { cell: "B11", expect: 0.28, message: "B11: Founder B's diluted stake", mustFormula: true, tol: 0.002 },
+            { cell: "B12", expect: 16800000, message: "B12: Founder A's stake at the post-money valuation", mustFormula: true, tol: 1000 }
+          ],
+          success: "Founder A goes from 60% to 42%, Founder B from 40% to 28% — but A's stake is now worth " + R(16800000) + ", where 60% of a pre-round company with no capital was worth far less. That's the trade: a smaller slice of a bigger, better-funded pie."
+        }
+      },
+      { t: "note", h: "<strong>The ESOP trap:</strong> because the pool was created pre-money, the founders absorbed all 10% of it. Had it been created post-money, the investor would have shared that dilution and the founders would have kept about 46.7% and 31.1%. Same headline valuation, materially different outcome — this is why term sheets are read line by line." },
+      { t: "where", h: "The cap table is the detail behind <strong>share capital</strong> on the balance sheet. The valuation itself appears nowhere in the accounts — a company's books record what was paid in, never what the business is currently thought to be worth." },
+      { t: "mcq", q: "An investor offers \"₹5 crore at a ₹20 crore valuation\". If that's a post-money figure rather than pre-money, what changes?", opts: ["Nothing — same thing", "The investor gets 25% instead of 20%", "The investor gets 20% instead of 25%", "The founders get more"], correct: 2, why: ["The wording changes the ownership split by a fifth — it is never the same thing.", "Check the direction: post-money ₹20 crore means the investor's ₹5 crore buys 5/20 = 25%. Pre-money ₹20 crore means a ₹25 crore post, so 5/25 = 20%. Post-money is the <em>worse</em> deal for founders.", "Post-money ₹20 crore → 5 ÷ 20 = 25% to the investor. Pre-money ₹20 crore → post is ₹25 crore, so 5 ÷ 25 = 20%. Reading \"post\" when the founder assumed \"pre\" costs them five percentage points, which on this round is ₹1.25 crore of value.", "Founders get less under a post-money reading, not more."] }
+    ]
+  };
+
+  LS.lessons["3050-startup-glossary"] = {
+    id: "3050-startup-glossary", code: "3050", minutes: 7,
+    title: "The startup jargon decoder",
+    short: "★ Jargon decoder",
+    desc: "Every term founders meet in pitches, term sheets and board meetings — SAFE, liquidation preference, Rule of 40, TAM, down round — in plain English.",
+    lede: "Startup finance has its own dialect, and most of it is ordinary finance wearing a costume. Here is the whole vocabulary, decoded — and a sandbox for the two numbers investors compute fastest.",
+    body: [
+      { t: "h2", text: "Money coming in" },
+      { t: "def", term: "SAFE / convertible note", h: "Money now, shares later. The investor hands over cash today and converts to equity at the <em>next</em> priced round, usually at a discount. It avoids agreeing a valuation while the company is too young to have one — but the dilution is real and arrives later, often larger than founders expect." },
+      { t: "def", term: "Valuation cap", h: "A ceiling on the valuation at which a SAFE converts. If you raise a seed at a ₹40 crore valuation but the SAFE had a ₹20 crore cap, that investor converts as though the company were worth ₹20 crore — so they get twice the shares." },
+      { t: "def", term: "Bridge round", h: "A small raise to reach the next milestone when runway is short. Usually a signal that the last round's plan didn't land on schedule." },
+      { t: "def", term: "Down round", h: "Raising at a lower valuation than the previous round. Painful and heavily dilutive, but far better than running out of cash." },
+
+      { t: "h2", text: "Terms that decide who gets paid" },
+      { t: "def", term: "Liquidation preference", h: "Who gets paid first when the company is sold. A <strong>1× non-participating</strong> preference means the investor takes their money back <em>or</em> their ownership share, whichever is larger — the founder-friendly standard. <strong>Participating</strong> means they take their money back <em>and</em> their share, which can leave founders with very little in a modest exit." },
+      { t: "def", term: "Vesting and cliff", h: "Founders and employees earn their shares over time — typically four years with a one-year <strong>cliff</strong>, meaning nothing vests until month twelve, then a quarter vests at once. It protects everyone from a co-founder who leaves in month three with a quarter of the company." },
+      { t: "def", term: "Pro-rata rights", h: "An investor's right to buy enough of the next round to keep their percentage. Harmless individually; collectively it can crowd out new investors." },
+
+      { t: "h2", text: "Numbers investors ask for" },
+      { t: "def", term: "TAM, SAM, SOM", h: "<strong>TAM</strong> — everyone who could ever buy. <strong>SAM</strong> — the slice you can actually serve. <strong>SOM</strong> — what you can realistically win in a few years. Founders inflate TAM; investors discount it. Build it bottom-up (customers × price) rather than quoting an industry report." },
+      { t: "def", term: "Net revenue retention (NRR)", h: "What last year's customers are worth this year, including upgrades, downgrades and churn — but excluding new customers. Above 100% means the existing base grows on its own, which is the strongest signal a SaaS business can show." },
+      { t: "def", term: "Rule of 40", h: "Growth rate % + profit margin % should exceed 40. It formalises the trade-off: burning cash is acceptable if you're growing fast, and slow growth is acceptable if you're profitable. Being bad at both is not." },
+      { t: "def", term: "Burn multiple", h: "Net burn ÷ net new ARR. How many rupees you burn to add one rupee of recurring revenue. Under 1× is exceptional; above 3× suggests growth is being bought rather than earned." },
+      { t: "def", term: "Product-market fit", h: "Deliberately unquantified, but the usual proxies are retention that flattens rather than decaying to zero, organic growth, and customers who would be genuinely upset if you shut down." },
+      {
+        t: "sheet",
+        sheet: {
+          id: "s1",
+          title: "The two numbers an investor computes in their head",
+          hint: "Rule of 40 adds growth and margin — note the margin is negative, so adding it subtracts. Burn multiple divides net burn by the ARR you added.",
+          grid: [
+            ["", { v: "Chaiwala Cloud", year: true }],
+            ["ARR growth this year", { v: 1.20, fmt: "pct" }],
+            ["EBITDA margin", { v: -0.55, fmt: "pct" }],
+            ["Rule of 40 score", { input: true, mf: true, fmt: "pct", ph: "=B2+B3" }],
+            [null, null],
+            ["Net burn this year", 12480000],
+            ["ARR at the start of the year", 2500000],
+            ["ARR at the end of the year", 5520000],
+            ["Net new ARR", { input: true, mf: true, fmt: "inr", ph: "=B8-B7" }],
+            ["Burn multiple", { input: true, mf: true, fmt: "x", ph: "=B6/B9" }]
+          ],
+          checks: [
+            { cell: "B4", expect: 0.65, message: "B4: Rule of 40 = growth + margin", mustFormula: true, tol: 0.005 },
+            { cell: "B9", expect: 3020000, message: "B9: net new ARR added this year", mustFormula: true },
+            { cell: "B10", expect: 4.13, message: "B10: burn multiple = net burn ÷ net new ARR", mustFormula: true, tol: 0.05 }
+          ],
+          success: "A Rule of 40 score of 65 is strong — the growth comfortably justifies the losses. But a burn multiple above 4× says each rupee of new ARR costs more than four rupees of cash, which is expensive growth. Both are true at once, which is why investors look at both."
+        }
+      },
+      { t: "note", h: "<strong>Reading the two together:</strong> Rule of 40 asks \"is the trade-off defensible?\" and burn multiple asks \"how efficiently is the growth bought?\" A company can pass the first and fail the second — usually a sign that growth is coming from heavy discounting or expensive paid acquisition rather than from the product." },
+      { t: "where", h: "These metrics are computed <em>from</em> the statements you already know how to build: growth and margin from the <strong>income statement</strong>, burn from the <strong>cash flow statement</strong>, cash and equity from the <strong>balance sheet</strong>. Startup finance isn't a different subject — it's the same three statements with a different vocabulary." },
+      { t: "mcq", q: "A SaaS company grows ARR 30% and runs a −5% EBITDA margin. Another grows 10% and makes a +35% margin. Which passes the Rule of 40?", opts: ["Only the first", "Only the second", "Both — they score 25 and 45", "Neither"], correct: 1, why: ["The first scores 30 − 5 = 25, which is below 40. Fast growth alone isn't enough if the losses are large relative to it.", "The first scores 25 and fails; the second scores 10 + 35 = 45 and passes. The rule deliberately rewards either engine — rapid growth or real profitability — and penalises being mediocre at both.", "The arithmetic gives 25 and 45, so only one clears the bar.", "The second clears it comfortably at 45."] }
     ]
   };
 })();
@@ -3623,6 +3944,10 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       {
         title: "Level 2 · Analysis & modeling",
         modules: ["1600", "2100", "2200"]
+      },
+      {
+        title: "Level 3 · Startup finance",
+        modules: ["3000"]
       }
     ],
     modules: {
@@ -3670,6 +3995,11 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         title: "Modeling & valuation",
         blurb: "Drivers, a projected P&L, free cash flow, a DCF with terminal value, and a capstone that values the café.",
         lessons: ["2210-drivers", "2220-project-pl", "2230-fcff", "2240-dcf", "2250-valuation-capstone"]
+      },
+      "3000": {
+        title: "Startup finance & jargon",
+        blurb: "MRR and ARR, burn and runway, CAC and LTV, cap tables and dilution — the vocabulary founders and their investors actually use.",
+        lessons: ["3010-arr-mrr", "3020-burn-runway", "3030-cac-ltv", "3040-cap-table", "3050-startup-glossary"]
       }
     }
   };
@@ -3699,7 +4029,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         { q: "A café buys a coffee grinder for cash. Which two things change?", opts: ["An asset rises and an asset falls", "An asset rises and a liability rises", "An expense rises and equity rises", "Nothing changes until it's used"], correct: 0, why: ["Cash (an asset) becomes a grinder (an asset). The equation doesn't move at all — value changed shape, not amount.", "Nothing was borrowed — the café paid cash.", "Buying an asset isn't an expense, and equity only moves when value is earned or consumed.", "The transaction is recorded the moment it happens; the grinder is on the books immediately."] },
         { q: "Assets are ₹8,00,000 and equity is ₹5,00,000. What are liabilities?", opts: ["₹13,00,000", "₹3,00,000", "₹5,00,000", "Not enough information"], correct: 1, why: ["That's assets plus equity — but equity is part of the claims side, not another asset.", "Rearranging assets = liabilities + equity gives liabilities = 8,00,000 − 5,00,000 = ₹3,00,000.", "That's the equity figure repeated.", "The accounting equation fully determines the third number from any two."] },
         { q: "Money a customer owes the café for a delivered catering order is…", opts: ["A liability, because it's unpaid", "An asset, because it's a right to receive cash", "Revenue only, with no balance sheet effect", "Equity"], correct: 1, why: ["It's unpaid <em>to</em> the café, not <em>by</em> it. Direction matters.", "A trade receivable — the café controls a legal right to future cash, which is exactly what an asset is.", "Revenue is recognised, but the unpaid amount must also sit on the balance sheet. Every entry has two sides.", "Equity is the owner's residual claim, not a specific customer debt."] },
-        { q: "Which statement answers \"did the business make a profit this year?\"", opts: ["Balance sheet", "Income statement", "Cash flow statement", "All three equally"], correct: 1, why: ["The balance sheet is a snapshot of what's owned and owed at one instant — it shows accumulated profit inside equity, but not this year's performance.", "Revenue minus expenses over a period is precisely what the income statement reports.", "That one answers where the cash went, which is a different question — and often a very different answer.", "Each answers a distinct question; conflating them is the mistake this course spends module 1000 preventing."] },
+        { q: "Which statement answers \"did the business make a profit this year?\"", opts: ["Balance sheet", "Income statement", "Cash flow statement", "All three equally"], correct: 1, why: ["The balance sheet is a snapshot of what's owned and owed at one instant — it shows accumulated profit inside equity, but not this year's performance.", "Revenue minus expenses over a period is precisely what the income statement reports.", "That one answers where the cash went, which is a different question — and often a very different answer.", "Each answers a distinct question; conflating them is the mistake this course spends the “Foundations” module preventing."] },
         { q: "The café pays ₹30,000 of rent for the month just ended. The effect on equity is…", opts: ["No change — cash just moved", "Equity falls ₹30,000", "Equity rises ₹30,000", "Equity falls only if the café is loss-making"], correct: 1, why: ["Cash fell and nothing was received in exchange that the café still owns — that consumption has to land somewhere, and it lands in equity.", "Rent is an expense: value consumed. Expenses reduce profit, and profit belongs to the owner, so equity falls by the same ₹30,000 the assets did. The equation stays balanced.", "Expenses never increase equity.", "Every expense reduces equity regardless of whether the business is overall profitable."] }
       ]
     },
@@ -3770,7 +4100,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         { q: "You increase depreciation by ₹10,000 in a linked model (ignore tax). Cash…", opts: ["falls ₹10,000", "rises ₹10,000", "doesn't move", "falls ₹7,500"], correct: 2, why: ["Depreciation removes no cash — that's its defining feature.", "Cash doesn't rise either; the two effects cancel exactly.", "PAT falls ₹10,000 but the cash flow statement adds back ₹10,000 more depreciation, so CFO is unchanged. Meanwhile PP&E and retained earnings both fall ₹10,000, and the sheet still ties. This self-correcting behaviour is the sign of a correctly linked model.", "There's no tax effect to consider — the question says to ignore tax."] },
         { q: "A model is out by exactly the dividend paid. Check first…", opts: ["The depreciation schedule", "The retained earnings roll-forward", "The capex line", "The revenue forecast"], correct: 1, why: ["A depreciation error would leave a gap the size of depreciation.", "The dividend appears in only one balance-sheet formula — retained earnings — and it's easy to forget because it never appears on the income statement. Gap size names the culprit before you read a formula.", "Capex errors leave a gap the size of capex.", "A revenue error would flow through PAT and produce a differently-sized gap."] },
         { q: "A model is out by exactly twice the capex figure. That usually means…", opts: ["Capex was omitted", "A sign was flipped", "Capex was recorded in two places", "Depreciation equals capex"], correct: 1, why: ["Omitting it leaves a gap of one times capex, not two.", "Adding an amount where you should subtract it moves the total by twice that amount — the sum you wrongly added plus the sum you failed to subtract. A doubled gap is the signature of a sign error.", "Possible, but a flipped sign is far more common and produces exactly this pattern.", "That relationship affects net PP&E but wouldn't create a gap at all."] },
-        { q: "Why does each year's closing cash depend on the previous year's closing cash?", opts: ["To save typing", "Because cash is a stock and the statement measures only the change", "Because spreadsheets require it", "It doesn't — each year stands alone"], correct: 1, why: ["Convenient, but the reason is conceptual.", "Cash persists; the cash flow statement measures a flow, the change during the period. Closing = opening + change is the only way to connect a stock to a flow — the same distinction lesson 1040 introduced.", "The spreadsheet doesn't care; the accounting does.", "Computing cash afresh each year would mean re-deriving every transaction since the business opened."] }
+        { q: "Why does each year's closing cash depend on the previous year's closing cash?", opts: ["To save typing", "Because cash is a stock and the statement measures only the change", "Because spreadsheets require it", "It doesn't — each year stands alone"], correct: 1, why: ["Convenient, but the reason is conceptual.", "Cash persists; the cash flow statement measures a flow, the change during the period. Closing = opening + change is the only way to connect a stock to a flow — the same distinction the “The three statements” lesson introduced.", "The spreadsheet doesn't care; the accounting does.", "Computing cash afresh each year would mean re-deriving every transaction since the business opened."] }
       ]
     },
     "2200": {
@@ -3782,6 +4112,16 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         { q: "In a terminal value using Gordon growth, the growth rate g must be…", opts: ["Higher than the WACC", "Below the WACC, and no higher than long-run economic growth", "Equal to the forecast-period growth rate", "Zero"], correct: 1, why: ["If g exceeded the WACC the formula would return a negative or infinite value — it breaks down entirely.", "The denominator (WACC − g) requires g < WACC, and economic sense requires g to be modest: a business growing faster than the economy forever would eventually become the economy. 3–5% is the usual range.", "Forecast-period growth is usually much higher — it reflects a specific growth phase that can't continue indefinitely.", "Zero is permissible but unnecessarily conservative; modest perpetual growth is standard."] },
         { q: "Most of a DCF's value typically comes from the terminal value. This means…", opts: ["The forecast years don't matter", "The answer is highly sensitive to assumptions about the distant future", "The model is wrong", "You should use a shorter forecast"], correct: 1, why: ["They matter — they set the base the terminal value is calculated from.", "When most of the value rests on one formula and one long-run growth assumption, small changes in that assumption move the answer a lot. This is why a DCF should be presented as a range with its assumptions stated, never as a single confident figure.", "It's a structural feature of the method, not an error.", "A shorter forecast would increase the terminal value's share, not reduce it."] }
       ]
+    },
+    "3000": {
+      title: "Startup finance",
+      questions: [
+        { q: "A customer signs a ₹6,00,000 annual contract on 1 April and pays it all upfront. April's revenue is…", opts: ["₹6,00,000", "₹50,000", "Nothing until March", "₹6,00,000 of bookings"], correct: 1, why: ["That's the booking and the cash. Recognising a year of service in one month overstates April twelvefold.", "One month of twelve has been delivered, so ₹50,000 is earned. The other ₹5,50,000 sits as deferred revenue — a liability, because eleven months of software are still owed.", "Revenue is recognised as the service is delivered, month by month.", "Bookings measure contracts signed and never appear on the income statement."] },
+        { q: "A startup holds ₹80,00,000, spends ₹14,00,000 a month and collects ₹4,00,000. Its runway is…", opts: ["About 5.7 months", "About 8 months", "About 20 months", "About 5 months"], correct: 1, why: ["That divides by gross burn and ignores the ₹4,00,000 coming in.", "Net burn is ₹14,00,000 − ₹4,00,000 = ₹10,00,000, so ₹80,00,000 ÷ ₹10,00,000 = 8 months. Runway always uses net burn, because revenue genuinely slows the countdown.", "That would need a ₹4,00,000 net burn — it confuses cash in with net burn.", "Check the arithmetic against net rather than gross burn."] },
+        { q: "LTV should be built from gross profit rather than revenue because…", opts: ["It's more conservative for its own sake", "The cost of serving the customer is real money the owner never keeps", "Tax rules require it", "Revenue isn't measurable"], correct: 1, why: ["Conservatism isn't the reason — accuracy is.", "Serving a customer costs something (hosting, support, payment fees). Only the gross profit is available to repay acquisition cost and eventually reach the owner. Using revenue inflates LTV by exactly one divided by the gross margin.", "This is a management metric with no tax treatment at all.", "Revenue per customer is one of the easiest things to measure."] },
+        { q: "\"₹10 crore at a ₹40 crore pre-money\" means the investor ends up owning…", opts: ["25%", "20%", "40%", "10%"], correct: 1, why: ["25% would be the answer if ₹40 crore were the post-money figure — a materially worse deal for the founders.", "Post-money is ₹40 + ₹10 = ₹50 crore, so the investor owns 10 ÷ 50 = 20%. The investor's stake is always their cheque divided by the POST-money value.", "40% is the pre-money valuation in crores, not a percentage.", "10 is the cheque in crores, not the ownership."] },
+        { q: "A company grows ARR 25% with a −20% EBITDA margin. Does it pass the Rule of 40?", opts: ["Yes — 45", "No — 5", "Yes — 25", "The rule doesn't apply to losses"], correct: 1, why: ["The margin is negative, so it subtracts: 25 − 20 = 5, not 45.", "25 + (−20) = 5, far below 40. The company is neither growing fast enough to justify the losses nor close to profitable — the exact combination the rule is designed to flag.", "That ignores the margin entirely.", "The rule is built for loss-making growth companies; a negative margin is precisely what it weighs against growth."] }
+      ]
     }
   };
 
@@ -3790,7 +4130,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     var quiz = LS.quizzes[code];
     var ui = LS.ui, el = ui.el, esc = ui.esc;
     if (!quiz) { location.hash = "#/"; return; }
-    ui.setMeta("Quiz · " + code + " " + quiz.title + " · LedgerSchool",
+    ui.setMeta("Quiz · " + code + " " + quiz.title + " · FinStudio",
       "Five questions on module " + code + ", " + quiz.title + ", with explanations for every option.");
 
     var page = el("div", "page");
@@ -4077,7 +4417,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     var ref = LS.reference[id];
     var ui = LS.ui, el = ui.el, esc = ui.esc;
     if (!ref) { location.hash = "#/"; return; }
-    ui.setMeta(ref.title + " · LedgerSchool reference", ref.lede);
+    ui.setMeta(ref.title + " · FinStudio reference", ref.lede);
 
     var page = el("div", "page");
     page.appendChild(el("p", "lesson-kicker", "Reference"));
@@ -4167,7 +4507,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     // brand
     g.fillStyle = INK;
     g.font = "600 30px Georgia, 'Times New Roman', serif";
-    g.fillText("LedgerSchool", 64, 84);
+    g.fillText("FinStudio", 64, 84);
     g.fillStyle = "#8A959D";
     g.font = "18px system-ui, -apple-system, sans-serif";
     g.fillText("learn finance by building it", 254, 84);
@@ -4249,7 +4589,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     btn.addEventListener("click", function () {
       try {
         var a = document.createElement("a");
-        a.download = "ledgerschool-balance-sheet-ties.png";
+        a.download = "finstudio-balance-sheet-ties.png";
         a.href = canvas.toDataURL("image/png");
         document.body.appendChild(a);
         a.click();
@@ -4267,7 +4607,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 </script>
 <script>
 /* js/app.js */
-/* LedgerSchool app: hash router, sidebar, progress store, lesson renderer.
+/* FinStudio app: hash router, sidebar, progress store, lesson renderer.
    Adding a lesson = one object in a module file + one manifest entry;
    nothing in this file changes per lesson. */
 (function () {
@@ -4277,7 +4617,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 
   /* ================= progress store (localStorage, degrades to memory) ================= */
   var store = (function () {
-    var KEY = "ledgerschool-progress-v1";
+    var KEY = "finstudio-progress-v1";
     var mem = null;
     function load() {
       if (mem) return mem;
@@ -4403,7 +4743,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         var prog = moduleProgress(mc);
         var head = el("a", "side-module-head");
         head.href = "#/module/" + mc;
-        head.innerHTML = '<span class="side-code">' + mc + '</span><span>' + esc(m.title) + '</span>' +
+        head.innerHTML = '<span class="side-module-title">' + esc(m.title) + '</span>' +
           '<span class="side-progress">' + prog.done + "/" + prog.total + "</span>";
         wrap.appendChild(head);
         var ul = el("ul", "side-lessons");
@@ -4414,7 +4754,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           var a = el("a");
           a.href = "#/" + id;
           if (hash.kind === "lesson" && hash.id === id) a.className = "active";
-          a.innerHTML = '<span class="side-code">' + lesson.code + '</span><span>' + esc(lesson.short || lesson.title) + '</span>' +
+          a.innerHTML = '<span class="side-lesson-title">' + esc(lesson.short || lesson.title) + '</span>' +
             (store.isDone(id) ? '<span class="side-done" aria-label="completed">✓</span>' : "");
           li.appendChild(a);
           ul.appendChild(li);
@@ -4425,7 +4765,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
           qa.href = "#/quiz/" + mc;
           if (hash.kind === "quiz" && hash.id === mc) qa.className = "active";
           var sc = store.quiz(mc);
-          qa.innerHTML = '<span class="side-code">✎</span><span>Module quiz</span>' +
+          qa.innerHTML = '<span class="side-lesson-title">Module quiz</span>' +
             (sc != null ? '<span class="side-done">' + sc + "/5</span>" : "");
           qli.appendChild(qa);
           ul.appendChild(qli);
@@ -4442,7 +4782,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         var li = el("li"), a = el("a");
         a.href = "#/ref/" + rid;
         if (hash.kind === "ref" && hash.id === rid) a.className = "active";
-        a.innerHTML = '<span class="side-code">§</span><span>' + esc(LS.reference[rid].title) + "</span>";
+        a.innerHTML = '<span class="side-lesson-title">' + esc(LS.reference[rid].title) + "</span>";
         li.appendChild(a);
         rul.appendChild(li);
       });
@@ -4627,45 +4967,161 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     return wrap;
   }
 
-  /* ================= sheet keyboard + fill-right ================= */
-  // Arrows move between editable cells, Enter commits and drops down,
-  // Esc restores the cell's previous contents.
-  LS.sheetKeys = function (e, input, sheet, inputs, commit) {
+  /* ================= spreadsheet interaction =================
+     Behaves the way Excel and Google Sheets do, because that is what a
+     learner's muscle memory expects:
+
+       Tab / Shift+Tab   next / previous cell
+       Enter / Shift+Ent  down / up, committing first
+       Arrows             move once the caret is at the edge of the text
+       F2                 put the caret at the end instead of replacing
+       Delete / Backspace clear the cell without entering it
+       Ctrl/Cmd + C X V   copy, cut, paste — references shift like Excel
+       Ctrl/Cmd + D / R   fill down / fill right from the cell above / left
+       Ctrl/Cmd + Z / Y   undo / redo
+  */
+  var clipboard = { raw: "", from: null };
+
+  LS.sheetKeys = function (e, api) {
+    var input = api.input, sheet = api.sheet, inputs = api.inputs;
     var here = LS.cellAddr.parseAddr(input.dataset.addr);
     if (!here) return;
-    function go(dc, dr) {
-      // walk until we find an editable cell (skips labels and locked numbers)
-      for (var i = 1; i <= 40; i++) {
-        var a = LS.cellAddr.addr(here.c + dc * i, here.r + dr * i);
-        if (inputs[a]) { commit(input); inputs[a].focus(); return true; }
-        if (here.c + dc * i < 1 || here.r + dr * i < 1) return false;
+    var mod = e.ctrlKey || e.metaKey;
+
+    // Walk to the next editable cell in a direction, skipping labels and
+    // locked figures the way tabbing through a protected sheet does.
+    function seek(dc, dr) {
+      for (var i = 1; i <= 60; i++) {
+        var c = here.c + dc * i, r = here.r + dr * i;
+        if (c < 1 || r < 1) return null;
+        if (c > sheet.cols + 2 && dc > 0) return null;
+        if (r > sheet.rows + 2 && dr > 0) return null;
+        var a = LS.cellAddr.addr(c, r);
+        if (inputs[a]) return a;
       }
-      return false;
+      return null;
     }
+    function go(dc, dr) {
+      var a = seek(dc, dr);
+      if (!a) return false;
+      api.commit(input);
+      inputs[a].focus();
+      return true;
+    }
+    function setCell(addr, raw) {
+      if (!inputs[addr]) return false;
+      api.pushUndo();
+      sheet.setRaw(addr, raw);
+      api.save(addr, raw);
+      inputs[addr].value = raw;
+      api.refresh();
+      return true;
+    }
+
     var k = e.key;
-    if (k === "Enter") { e.preventDefault(); if (!go(0, 1)) { commit(input); input.blur(); } return; }
+
+    /* ---- clipboard ---- */
+    if (mod && (k === "c" || k === "C")) {
+      api.commit(input);
+      clipboard = { raw: sheet.raw(input.dataset.addr), from: input.dataset.addr };
+      api.say("Copied " + input.dataset.addr + (clipboard.raw ? ": " + clipboard.raw : " (empty)"));
+      e.preventDefault();
+      return;
+    }
+    if (mod && (k === "x" || k === "X")) {
+      api.commit(input);
+      clipboard = { raw: sheet.raw(input.dataset.addr), from: input.dataset.addr };
+      setCell(input.dataset.addr, "");
+      api.say("Cut " + input.dataset.addr);
+      e.preventDefault();
+      return;
+    }
+    if (mod && (k === "v" || k === "V")) {
+      e.preventDefault();
+      if (!clipboard.from) { api.say("Nothing copied yet — press Ctrl+C on a cell first."); return; }
+      var to = input.dataset.addr;
+      // Excel shifts relative references by how far the cell moved
+      var src = LS.cellAddr.parseAddr(clipboard.from);
+      var raw = LS.shiftFormula(clipboard.raw, here.c - src.c);
+      raw = LS.shiftRows ? LS.shiftRows(raw, here.r - src.r) : raw;
+      setCell(to, raw);
+      api.say("Pasted into " + to + (raw ? ": " + raw : ""));
+      return;
+    }
+
+    /* ---- fill down / fill right, the Excel shortcuts ---- */
+    if (mod && (k === "d" || k === "D")) {
+      e.preventDefault();
+      var above = LS.cellAddr.addr(here.c, here.r - 1);
+      if (!sheet.cell(above)) { api.say("Nothing above to fill from."); return; }
+      var src2 = sheet.raw(above);
+      var filled = LS.shiftRows ? LS.shiftRows(src2, 1) : src2;
+      setCell(input.dataset.addr, filled);
+      api.say("Filled down from " + above + (filled ? ": " + filled : ""));
+      return;
+    }
+    if (mod && (k === "r" || k === "R")) {
+      e.preventDefault();
+      var left = LS.cellAddr.addr(here.c - 1, here.r);
+      if (!sheet.cell(left)) { api.say("Nothing to the left to fill from."); return; }
+      var raw3 = LS.shiftFormula(sheet.raw(left), 1);
+      setCell(input.dataset.addr, raw3);
+      api.say("Filled right from " + left + (raw3 ? ": " + raw3 : ""));
+      return;
+    }
+
+    /* ---- undo / redo ---- */
+    if (mod && (k === "z" || k === "Z")) { e.preventDefault(); api.undo(); return; }
+    if (mod && (k === "y" || k === "Y")) { e.preventDefault(); api.redo(); return; }
+
+    /* ---- clearing ---- */
+    if ((k === "Delete" || k === "Backspace") && input.value === "") {
+      e.preventDefault();
+      setCell(input.dataset.addr, "");
+      return;
+    }
+
+    /* ---- navigation ---- */
+    if (k === "Tab") {
+      e.preventDefault();
+      go(e.shiftKey ? -1 : 1, 0);
+      return;
+    }
+    if (k === "Enter") {
+      e.preventDefault();
+      if (!go(0, e.shiftKey ? -1 : 1)) { api.commit(input); input.blur(); }
+      return;
+    }
     if (k === "Escape") {
       e.preventDefault();
       input.value = sheet.raw(input.dataset.addr);
       input.select();
       return;
     }
-    // let the caret move inside a cell that's being edited
+    if (k === "F2") {
+      // Excel's edit mode: keep the contents, drop the caret at the end
+      e.preventDefault();
+      var v = input.value;
+      input.setSelectionRange(v.length, v.length);
+      return;
+    }
+
     var atStart = input.selectionStart === 0 && input.selectionEnd === 0;
     var atEnd = input.selectionStart === input.value.length && input.selectionEnd === input.value.length;
+    var whole = input.selectionStart === 0 && input.selectionEnd === input.value.length;
     if (k === "ArrowDown") { e.preventDefault(); go(0, 1); }
     else if (k === "ArrowUp") { e.preventDefault(); go(0, -1); }
-    else if (k === "ArrowRight" && (atEnd || !input.value)) { e.preventDefault(); go(1, 0); }
-    else if (k === "ArrowLeft" && (atStart || !input.value)) { e.preventDefault(); go(-1, 0); }
+    else if (k === "ArrowRight" && (whole || atEnd || !input.value)) { e.preventDefault(); go(1, 0); }
+    else if (k === "ArrowLeft" && (whole || atStart || !input.value)) { e.preventDefault(); go(-1, 0); }
   };
 
-  // "Copy formula right" — the button that teaches what fill-right does.
+  // "Copy formula right" button — the same rewrite, shown to the learner.
   LS.copyRight = function (sheet, from, inputs) {
     var raw = sheet.raw(from);
     if (!raw || raw.charAt(0) !== "=") return null;
     var here = LS.cellAddr.parseAddr(from);
     var to = LS.cellAddr.addr(here.c + 1, here.r);
-    if (!inputs[to]) return { addr: to, raw: raw, note: to + " isn't an editable cell — nothing to copy into." , skipped: true };
+    if (!inputs[to]) return { addr: to, raw: raw, note: to + " isn't an editable cell — nothing to copy into.", skipped: true };
     var shifted = LS.shiftFormula(raw, 1);
     sheet.setRaw(to, shifted);
     inputs[to].value = shifted;
@@ -4699,6 +5155,22 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     table.setAttribute("role", "grid");
     var inputs = {}; // addr -> input element
     var selected = null;
+    var undoStack = [], redoStack = [];
+
+    function snapshot() {
+      var s = {};
+      Object.keys(inputs).forEach(function (a) { s[a] = sheet.raw(a); });
+      return s;
+    }
+    function restore(s) {
+      Object.keys(s).forEach(function (a) {
+        sheet.setRaw(a, s[a]);
+        if (ctx) store.saveCell(ctx.lessonId, itemId, a, s[a]);
+        if (inputs[a]) inputs[a].value = s[a];
+      });
+      refreshDisplays();
+    }
+    function pushUndo() { undoStack.push(snapshot()); if (undoStack.length > 50) undoStack.shift(); redoStack = []; }
 
     // header row: corner + A B C ...
     var thr = el("tr");
@@ -4742,6 +5214,75 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     scroll.appendChild(table);
     block.appendChild(scroll);
 
+    /* Drag-fill handle — the small square at a selected cell's corner.
+       Dragging it down or right copies the formula into the cells passed
+       over, shifting references exactly as Excel does. */
+    var handle = el("div", "fill-handle");
+    handle.title = "Drag to fill down or right";
+    handle.setAttribute("aria-hidden", "true");
+    function attachHandle(td, addr) {
+      handle.dataset.addr = addr;
+      td.appendChild(handle);
+    }
+    handle.addEventListener("mousedown", function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var from = handle.dataset.addr;
+      if (!from) return;
+      var src = LS.cellAddr.parseAddr(from);
+      var raw = sheet.raw(from);
+      var painted = [];
+
+      function cellUnder(x, y) {
+        var elx = document.elementFromPoint(x, y);
+        while (elx && elx.tagName !== "TD") elx = elx.parentElement;
+        if (!elx) return null;
+        var inp = elx.querySelector("input.cell-input");
+        return inp ? inp.dataset.addr : null;
+      }
+      function preview(ev2) {
+        var target = cellUnder(ev2.clientX, ev2.clientY);
+        painted.forEach(function (a) { if (inputs[a]) inputs[a].parentElement.classList.remove("fill-preview"); });
+        painted = [];
+        if (!target) return;
+        var t = LS.cellAddr.parseAddr(target);
+        if (!t) return;
+        // one axis at a time, like a real fill
+        var dc = t.c - src.c, dr = t.r - src.r;
+        if (Math.abs(dr) >= Math.abs(dc)) dc = 0; else dr = 0;
+        var steps = Math.abs(dr) || Math.abs(dc);
+        var sc = dc === 0 ? 0 : (dc > 0 ? 1 : -1);
+        var sr = dr === 0 ? 0 : (dr > 0 ? 1 : -1);
+        for (var i = 1; i <= steps; i++) {
+          var a = LS.cellAddr.addr(src.c + sc * i, src.r + sr * i);
+          if (!inputs[a]) continue;
+          inputs[a].parentElement.classList.add("fill-preview");
+          painted.push(a);
+        }
+      }
+      function finish(ev2) {
+        document.removeEventListener("mousemove", preview);
+        document.removeEventListener("mouseup", finish);
+        preview(ev2);
+        if (!painted.length) { msg.textContent = "Drag over the cells you want to fill."; return; }
+        pushUndo();
+        painted.forEach(function (a) {
+          var t = LS.cellAddr.parseAddr(a);
+          var out = LS.shiftFormula(raw, t.c - src.c);
+          out = LS.shiftRows(out, t.r - src.r);
+          sheet.setRaw(a, out);
+          if (ctx) store.saveCell(ctx.lessonId, itemId, a, out);
+          inputs[a].value = out;
+          inputs[a].parentElement.classList.remove("fill-preview");
+        });
+        msg.textContent = "Filled " + painted.length + " cell" + (painted.length > 1 ? "s" : "") + " from " + from + ".";
+        painted = [];
+        refreshDisplays();
+      }
+      document.addEventListener("mousemove", preview);
+      document.addEventListener("mouseup", finish);
+    });
+
     function rowContext(sheet, r) {
       var lbl = sheet.value("A" + r);
       return typeof lbl === "string" && lbl ? ", " + lbl : "";
@@ -4768,6 +5309,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       var raw = input.value.trim();
       // if the user re-focused and saw the formatted value, don't treat re-blur as an edit
       if (raw === displayOf(sheet, a) && !input.dataset.dirty) return;
+      pushUndo();
       sheet.setRaw(a, raw);
       if (ctx) store.saveCell(ctx.lessonId, itemId, a, raw);
       delete input.dataset.dirty;
@@ -4791,10 +5333,32 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         fbRaw.textContent = sheet.raw(selected);
         Array.prototype.forEach.call(tbody.querySelectorAll("td.cell-selected"), function (x) { x.classList.remove("cell-selected"); });
         td.classList.add("cell-selected");
+        attachHandle(td, input.dataset.addr);
       });
       input.addEventListener("input", function () { input.dataset.dirty = "1"; fbRaw.textContent = input.value; });
       input.addEventListener("blur", function () { commit(input); input.value = displayOf(sheet, input.dataset.addr); });
-      input.addEventListener("keydown", function (e) { if (LS.sheetKeys) LS.sheetKeys(e, input, sheet, inputs, commit); });
+      input.addEventListener("keydown", function (e) {
+        if (!LS.sheetKeys) return;
+        LS.sheetKeys(e, {
+          input: input, sheet: sheet, inputs: inputs, commit: commit,
+          refresh: refreshDisplays,
+          save: function (a, raw) { if (ctx) store.saveCell(ctx.lessonId, itemId, a, raw); },
+          say: function (t) { msg.textContent = t; },
+          pushUndo: pushUndo,
+          undo: function () {
+            if (!undoStack.length) { msg.textContent = "Nothing to undo."; return; }
+            redoStack.push(snapshot());
+            restore(undoStack.pop());
+            msg.textContent = "Undone.";
+          },
+          redo: function () {
+            if (!redoStack.length) { msg.textContent = "Nothing to redo."; return; }
+            undoStack.push(snapshot());
+            restore(redoStack.pop());
+            msg.textContent = "Redone.";
+          }
+        });
+      });
     }
 
     /* tie meter — one pair, or one row per projected year */
@@ -4875,6 +5439,19 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     bar.appendChild(msg);
     block.appendChild(bar);
 
+    var legend = el("div", "sheet-shortcuts");
+    legend.innerHTML = [
+      "<span><kbd>Tab</kbd> next cell</span>",
+      "<span><kbd>Enter</kbd> down</span>",
+      "<span><kbd>F2</kbd> edit</span>",
+      "<span><kbd>Ctrl</kbd>+<kbd>D</kbd> fill down</span>",
+      "<span><kbd>Ctrl</kbd>+<kbd>R</kbd> fill right</span>",
+      "<span><kbd>Ctrl</kbd>+<kbd>C</kbd>/<kbd>V</kbd> copy &amp; paste</span>",
+      "<span><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</span>",
+      "<span>or drag the green square</span>"
+    ].join("");
+    block.appendChild(legend);
+
     var results = el("ul", "check-results");
     results.setAttribute("aria-live", "polite");
     block.appendChild(results);
@@ -4933,7 +5510,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   }
 
   function renderHome() {
-    setMeta("LedgerSchool — Learn finance by building it",
+    setMeta("FinStudio — Learn finance by building it",
       "Free, text-only finance school. Learn accounting, the three statements, ratios and modeling by building every number in a live spreadsheet.");
     var page = el("div", "page");
     var hero = el("div", "hero");
@@ -4954,7 +5531,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
         var prog = moduleProgress(mc);
         var a = el("a", "module-card");
         a.href = "#/module/" + mc;
-        a.innerHTML = '<span class="mc-code">' + mc + "</span><h3>" + esc(m.title) + "</h3><p>" + esc(m.blurb) + "</p>" +
+        a.innerHTML = "<h3>" + esc(m.title) + "</h3><p>" + esc(m.blurb) + "</p>" +
           '<div class="progress-track"><div class="progress-fill" style="width:' + (prog.total ? Math.round(prog.done / prog.total * 100) : 0) + '%"></div></div>' +
           '<div class="mc-meta"><span>' + prog.done + "/" + prog.total + " lessons</span><span>~" + moduleMinutes(mc) + " min</span></div>";
         cards.appendChild(a);
@@ -4986,9 +5563,9 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   function renderModule(code) {
     var m = LS.manifest.modules[code];
     if (!m) return renderHome();
-    setMeta(code + " " + m.title + " · LedgerSchool", m.blurb);
+    setMeta(m.title + " · FinStudio", m.blurb);
     var page = el("div", "page");
-    page.appendChild(el("p", "lesson-kicker", "Module " + code));
+    page.appendChild(el("p", "lesson-kicker", esc(m.level || "Course module")));
     page.appendChild(el("h1", null, esc(m.title)));
     page.appendChild(el("p", "lesson-lede", esc(m.blurb)));
     var prog = moduleProgress(code);
@@ -5001,7 +5578,7 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
       var lesson = LS.lessons[id];
       var li = el("li"), a = el("a");
       a.href = "#/" + id;
-      a.innerHTML = '<span class="ll-code">' + lesson.code + "</span><span>" + esc(lesson.title) + "</span>" +
+      a.innerHTML = "<span>" + esc(lesson.title) + "</span>" +
         (store.isDone(id) ? '<span class="ll-done">✓</span>' : "") +
         '<span class="ll-min">' + (lesson.minutes || 4) + " min</span>";
       li.appendChild(a);
@@ -5020,12 +5597,12 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   function renderLesson(id) {
     var lesson = LS.lessons[id];
     if (!lesson) return renderHome();
-    setMeta(lesson.code + " " + lesson.title + " · LedgerSchool", lesson.desc || lesson.lede || "");
+    setMeta(lesson.title + " · FinStudio", lesson.desc || lesson.lede || "");
     var ctx = { lessonId: id, onItemDone: null };
     var page = el("div", "page");
     var mc = moduleOf(id);
     page.appendChild(el("p", "lesson-kicker",
-      '<a href="#/module/' + mc + '" style="text-decoration:none">' + mc + " · " + esc(LS.manifest.modules[mc].title) + "</a>" +
+      '<a href="#/module/' + mc + '">' + esc(LS.manifest.modules[mc].title) + "</a>" +
       ' <span class="kicker-min">· ' + (lesson.minutes || 4) + " min</span>"));
     page.appendChild(el("h1", null, esc(lesson.title)));
     if (lesson.lede) page.appendChild(el("p", "lesson-lede", lesson.lede));
@@ -5053,11 +5630,11 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
     var prev = el("span"), next = el("span");
     if (at > 0) {
       var p = LS.lessons[order[at - 1]];
-      prev.innerHTML = '<a href="#/' + order[at - 1] + '"><span class="nav-label">← Previous</span>' + p.code + " " + esc(p.short || p.title) + "</a>";
+      prev.innerHTML = '<a href="#/' + order[at - 1] + '"><span class="nav-label">← Previous</span>' + esc(p.short || p.title) + "</a>";
     }
     if (at >= 0 && at < order.length - 1) {
       var n = LS.lessons[order[at + 1]];
-      next.innerHTML = '<a href="#/' + order[at + 1] + '" style="text-align:right;display:block"><span class="nav-label">Next →</span>' + n.code + " " + esc(n.short || n.title) + "</a>";
+      next.innerHTML = '<a href="#/' + order[at + 1] + '" style="text-align:right;display:block"><span class="nav-label">Next →</span>' + esc(n.short || n.title) + "</a>";
     }
     nav.appendChild(prev); nav.appendChild(next);
     page.appendChild(nav);
