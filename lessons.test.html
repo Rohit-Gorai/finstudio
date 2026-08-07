@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LedgerSchool curriculum tests</title>
+<style>
+  :root { --paper:#FBF9F3; --ink:#182530; --green:#1E6B4E; --red:#B23A2F; --line:#DCD3BE; }
+  body { background: var(--paper); color: var(--ink); font: 15px/1.6 "Public Sans", system-ui, sans-serif; margin: 0; padding: 2rem 1.2rem 4rem; }
+  .wrap { max-width: 64rem; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; font-size: 1.6rem; margin: 0 0 .2rem; }
+  .sub { color: #51606B; margin: 0 0 1.4rem; }
+  #summary { font-weight: 700; font-size: 1.15rem; padding: .9rem 1.1rem; border-radius: 8px; margin-bottom: 1.4rem; border: 1px solid var(--line); }
+  #summary.pass { background: #E3EEE8; color: var(--green); border-color: #C7DCD1; }
+  #summary.fail { background: #F6E4E1; color: var(--red); border-color: #E2BDB7; }
+  h2 { font-family: Georgia, serif; font-size: 1.05rem; margin: 1.6rem 0 .4rem; border-bottom: 1px solid var(--line); padding-bottom: .25rem; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { display: flex; gap: .6rem; padding: .16rem 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .82rem; align-items: baseline; }
+  li .i { flex: none; font-weight: 700; }
+  li.ok .i { color: var(--green); }
+  li.bad, li.bad .i { color: var(--red); }
+  .detail { color: var(--red); }
+  code { background: #F4EFE3; padding: 0 .25rem; border-radius: 3px; }
+  footer { margin-top: 2.4rem; color: #8A959D; font-size: .85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>LedgerSchool curriculum tests</h1>
+  <p class="sub">Solves every sandbox with the intended formulas and asserts that every check passes — so no lesson can ship with an unreachable answer or a mis-referenced cell. Also audits lesson structure, MCQs and the manifest.</p>
+  <div id="summary">Running…</div>
+  <div id="out"></div>
+  <footer>Every sheet in the course must appear in <code>SOLUTIONS</code> below. Adding a lesson with a sandbox and no solution fails the suite on purpose.</footer>
+</div>
+
+<script src="../js/engine.js"></script>
+<script src="../js/lessons/company.js"></script>
+<script src="../js/lessons/m1000.js"></script>
+<script src="../js/lessons/m1100.js"></script>
+<script src="../js/lessons/m1200.js"></script>
+<script src="../js/lessons/m1300.js"></script>
+<script src="../js/lessons/m1400.js"></script>
+<script src="../js/lessons/m1500.js"></script>
+<script src="../js/lessons/m1600.js"></script>
+<script src="../js/lessons/m2100.js"></script>
+<script src="../js/lessons/m2200.js"></script>
+<script src="../js/lessons/manifest.js"></script>
+<script src="../js/quizzes.js"></script>
+<script src="../js/reference.js"></script>
+<script>
+(function () {
+  "use strict";
+  var out = document.getElementById("out");
+  var pass = 0, fail = 0, group = null;
+  function section(name) {
+    var h = document.createElement("h2"); h.textContent = name; out.appendChild(h);
+    group = document.createElement("ul"); out.appendChild(group);
+  }
+  function record(ok, label, detail) {
+    var li = document.createElement("li");
+    li.className = ok ? "ok" : "bad";
+    var i = document.createElement("span"); i.className = "i"; i.textContent = ok ? "PASS" : "FAIL";
+    var t = document.createElement("span"); t.textContent = label;
+    li.appendChild(i); li.appendChild(t);
+    if (!ok && detail) { var d = document.createElement("span"); d.className = "detail"; d.textContent = " — " + detail; li.appendChild(d); }
+    group.appendChild(li);
+    ok ? pass++ : fail++;
+  }
+
+  /* =========================================================
+     The intended solution for every sandbox in the course.
+     lessonId → { cellAddress: rawInput }
+     ========================================================= */
+  var SOLUTIONS = {
+    "1020-accounting-equation": { B4: "=B2-B3" },
+    "1030-two-sides": {
+      B4: "0", D5: "-30000",
+      B6: "=SUM(B2:B5)", C6: "=SUM(C2:C5)", D6: "=SUM(D2:D5)",
+      B8: "=B6-(C6+D6)"
+    },
+    "1110-ppe": { B5: "=SUM(B2:B4)" },
+    "1120-depreciation": {
+      C2: "=$B$2/5", D2: "=B2-C2",
+      B3: "=D2", C3: "=$B$2/5", D3: "=B3-C3",
+      C6: "=$B$2/5", D6: "=B6-C6"
+    },
+    "1130-inventory": { B5: "=B4+B3-B2" },
+    "1140-receivables": { B5: "=B2+B3-B4" },
+    "1150-cash-deposit": { B5: "=SUM(B2:B4)" },
+    "1210-payables": { B5: "=B2+B3-B4" },
+    "1220-borrowings": { B4: "=B3*B2", B6: "=B2-B5" },
+    "1230-right-hand-side": { B5: "=SUM(B2:B4)" },
+    "1310-share-capital": { B4: "=B2*B3" },
+    "1320-retained-earnings": { B5: "=B2+B3-B4" },
+    "1330-balance-sheet": {
+      B5: "=B3+B4", B10: "=SUM(B5:B9)",
+      B13: "=120000+180000-50000", B17: "=SUM(B12:B16)"
+    },
+    "1410-revenue": { B4: "=SUM(B2:B3)", B7: "=B2+(B5+B3-B6)", B8: "=B4-B7" },
+    "1420-cogs": { B4: "=B2-B3", C4: "=C2-C3", B5: "=B4/B2", C5: "=C4/C2" },
+    "1430-opex-ebitda": { B4: "=B2+B3", B9: "=SUM(B5:B8)", B10: "=B4+B9", B11: "=B10/B2" },
+    "1440-depreciation-pl": {
+      D2: "=B2/C2", D3: "=B3/C3", D4: "=B4/C4", D5: "=B5/C5",
+      D6: "=SUM(D2:D5)", D9: "=D8-D6"
+    },
+    "1450-interest-tax": { B4: "=B2+B3", B6: "=-B4*B5", B7: "=B4+B6" },
+    "1460-pl-capstone": {
+      B5: "=B2+B3", B10: "=SUM(B6:B9)", B11: "=B5+B10", B13: "=B11+B12",
+      B15: "=B13+B14", B17: "=-B15*B16", B18: "=B15+B17", B20: "=B18/B2"
+    },
+    "1510-profit-not-cash": { D2: "=B2+C2", D3: "=B3+C3", D4: "=B4+C4" },
+    "1520-cfo": {
+      D3: "=240000", D4: "=B4-C4", D5: "=B5-C5", D6: "=C6-B6", D7: "=C7-B7",
+      D9: "=SUM(D2:D7)"
+    },
+    "1530-cfi": { B4: "=SUM(B2:B3)", B7: "=-B2", B9: "=SUM(B6:B8)" },
+    "1540-cff": { B5: "=SUM(B2:B4)", B8: "=B3", B9: "=B7+B8" },
+    "1550-cf-capstone": {
+      B8: "=SUM(B3:B7)", B12: "=SUM(B10:B11)", B16: "=SUM(B14:B15)",
+      B18: "=B8+B12+B16", B20: "=B18+B19"
+    },
+    "1610-margins": {
+      B7: "=B3/B2", C7: "=C3/C2", B8: "=B4/B2", C8: "=C4/C2", B9: "=B5/B2", C9: "=C5/C2"
+    },
+    "1620-liquidity": { B5: "=SUM(B2:B4)", B8: "=SUM(B6:B7)", B10: "=B5/B8", B11: "=(B5-B2)/B8" },
+    "1630-leverage": { B4: "=SUM(B2:B3)", B10: "=B5/B4", B11: "=B7/B8" },
+    "1640-returns": {
+      B8: "=B4/B6", B9: "=B3/(B6+B7)",
+      B11: "=B4/B2", B12: "=B2/B5", B13: "=B5/B6", B14: "=B11*B12*B13"
+    },
+    "2120-linked-model": {
+      B17: "=SUM(B12:B16)", B24: "=SUM(B19:B23)",
+      C12: "=B12+C5-C4", C16: "=B16+C3+C4+C6-C5-C7-C8", C20: "=B20+C3-C7", C21: "=B21-C8",
+      C17: "=SUM(C12:C16)", C24: "=SUM(C19:C23)",
+      D12: "=C12+D5-D4", D16: "=C16+D3+D4+D6-D5-D7-D8", D20: "=C20+D3-D7", D21: "=C21-D8",
+      D17: "=SUM(D12:D16)", D24: "=SUM(D19:D23)"
+    },
+    // the learner only has to repair the one broken formula (C18)
+    "2130-broken-link": { C18: "=B18+C3-C7" },
+    "2210-drivers": {
+      B7: "=B4/B2*365", B8: "=B5/B3*365", B9: "=B6/B3*365",
+      B11: "=B2*1.15", B12: "=B11*B7/365"
+    },
+    "2220-project-pl": {
+      C6: "=B6*(1+$B$2)", C7: "=-C6*(1-$B$3)", C8: "=SUM(C6:C7)", C9: "=B9*(1+$B$4)",
+      C10: "=SUM(C8:C9)", C12: "=SUM(C10:C11)", C14: "=SUM(C12:C13)", C15: "=C14*0.75",
+      D6: "=C6*(1+$B$2)", D7: "=-D6*(1-$B$3)", D8: "=SUM(D6:D7)", D9: "=C9*(1+$B$4)",
+      D10: "=SUM(D8:D9)", D12: "=SUM(D10:D11)", D14: "=SUM(D12:D13)", D15: "=D14*0.75",
+      E6: "=D6*(1+$B$2)", E7: "=-E6*(1-$B$3)", E8: "=SUM(E6:E7)", E9: "=D9*(1+$B$4)",
+      E10: "=SUM(E8:E9)", E12: "=SUM(E10:E11)", E14: "=SUM(E12:E13)", E15: "=E14*0.75"
+    },
+    "2230-fcff": {
+      B4: "=B2*(1-B3)", B8: "=SUM(B4:B7)",
+      C4: "=C2*(1-C3)", C8: "=SUM(C4:C7)",
+      D4: "=D2*(1-D3)", D8: "=SUM(D4:D7)"
+    },
+    "2240-dcf": {
+      C7: "=1/(1+$B$2)^C5", D7: "=1/(1+$B$2)^D5", E7: "=1/(1+$B$2)^E5",
+      C8: "=C6*C7", D8: "=D6*D7", E8: "=E6*E7",
+      B10: "=SUM(C8:E8)", B11: "=E6*(1+B3)/(B2-B3)", B12: "=B11*E7",
+      B13: "=B10+B12", B15: "=B13+B14"
+    },
+    "2250-valuation-capstone": {
+      C10: "=B10*(1+$B$2)", C11: "=-C10*(1-$B$3)", C12: "=B12*(1+$B$4)",
+      C14: "=SUM(C10:C13)", C15: "=C14*(1-$B$5)", C19: "=SUM(C15:C18)",
+      C20: "=1/(1+$B$6)^C9", C21: "=C19*C20",
+      D10: "=C10*(1+$B$2)", D11: "=-D10*(1-$B$3)", D12: "=C12*(1+$B$4)",
+      D14: "=SUM(D10:D13)", D15: "=D14*(1-$B$5)", D19: "=SUM(D15:D18)",
+      D20: "=1/(1+$B$6)^D9", D21: "=D19*D20",
+      E10: "=D10*(1+$B$2)", E11: "=-E10*(1-$B$3)", E12: "=D12*(1+$B$4)",
+      E14: "=SUM(E10:E13)", E15: "=E14*(1-$B$5)", E19: "=SUM(E15:E18)",
+      E20: "=1/(1+$B$6)^E9", E21: "=E19*E20",
+      B23: "=SUM(C21:E21)", B24: "=E19*(1+B7)/(B6-B7)", B25: "=B24*E20",
+      B26: "=B23+B25", B28: "=B26+B27"
+    }
+  };
+
+  /* ---------------- solve every sandbox ---------------- */
+  function allLessonIds() {
+    var ids = [];
+    LS.manifest.levels.forEach(function (lv) {
+      lv.modules.forEach(function (mc) { ids = ids.concat(LS.manifest.modules[mc].lessons); });
+    });
+    return ids;
+  }
+  var ids = allLessonIds();
+
+  section("Every sandbox is solvable and every check passes");
+  ids.forEach(function (id) {
+    var lesson = LS.lessons[id];
+    if (!lesson) return;
+    (lesson.body || []).forEach(function (b) {
+      if (b.t !== "sheet") return;
+      var sol = SOLUTIONS[id];
+      if (!sol) { record(false, id + " — sandbox", "no solution defined in the test file"); return; }
+      var sheet = new LS.Sheet(b.sheet);
+      Object.keys(sol).forEach(function (addr) {
+        var cell = sheet.cell(addr);
+        if (!cell) { record(false, id + " " + addr, "solution targets a cell that does not exist"); return; }
+        if (cell.ro) { record(false, id + " " + addr, "solution targets a read-only cell"); return; }
+        sheet.setRaw(addr, sol[addr]);
+      });
+      var results = sheet.runChecks(b.sheet.checks || []);
+      var bad = results.filter(function (r) { return !r.ok; });
+      record(bad.length === 0, id + " — " + (b.sheet.checks || []).length + " checks",
+        bad.map(function (r) { return r.message + " (" + (r.detail || "failed") + ")"; }).join("; "));
+    });
+  });
+
+  section("Sandbox structure");
+  ids.forEach(function (id) {
+    var lesson = LS.lessons[id];
+    if (!lesson) return;
+    (lesson.body || []).forEach(function (b) {
+      if (b.t !== "sheet") return;
+      var sheet = new LS.Sheet(b.sheet);
+      var problems = [];
+      (b.sheet.checks || []).forEach(function (ck) {
+        if (!ck.cell) return;
+        var cell = sheet.cell(ck.cell);
+        if (!cell) problems.push(ck.cell + " does not exist");
+        else if (cell.ro) problems.push(ck.cell + " is not editable");
+      });
+      // every editable cell should be covered by a check, or it's busywork
+      var checked = {};
+      (b.sheet.checks || []).forEach(function (ck) { if (ck.cell) checked[ck.cell] = true; });
+      // every empty editable cell must be part of the intended solution —
+      // no cell the learner is left to guess at
+      var sol = SOLUTIONS[id] || {};
+      Object.keys(sheet.cells).forEach(function (a) {
+        var c = sheet.cells[a];
+        if (!c.ro && !sol[a] && !(c.raw && c.raw.length)) problems.push(a + " is editable and empty but has no intended solution");
+      });
+      // mutation test: every cell the learner fills must be load-bearing.
+      // Blank it and at least one check has to start failing.
+      Object.keys(sol).forEach(function (a) {
+        var s2 = new LS.Sheet(b.sheet);
+        Object.keys(sol).forEach(function (k) { s2.setRaw(k, sol[k]); });
+        s2.setRaw(a, "");
+        var stillPassing = s2.runChecks(b.sheet.checks || []).every(function (r) { return r.ok; });
+        if (stillPassing) problems.push(a + " can be left blank with every check still passing");
+      });
+      // tie targets must exist
+      if (b.sheet.tie) {
+        var prs = b.sheet.tie.pairs || [{ a: b.sheet.tie.a, le: b.sheet.tie.le }];
+        prs.forEach(function (pr) {
+          if (!sheet.cell(pr.a)) problems.push("tie cell " + pr.a + " missing");
+          if (!sheet.cell(pr.le)) problems.push("tie cell " + pr.le + " missing");
+        });
+      }
+      record(problems.length === 0, id + " — sandbox wiring", problems.join("; "));
+    });
+  });
+
+  section("Tie meters actually read zero when solved");
+  ids.forEach(function (id) {
+    var lesson = LS.lessons[id];
+    if (!lesson) return;
+    (lesson.body || []).forEach(function (b) {
+      if (b.t !== "sheet" || !b.sheet.tie) return;
+      var sheet = new LS.Sheet(b.sheet);
+      var sol = SOLUTIONS[id] || {};
+      Object.keys(sol).forEach(function (a) { sheet.setRaw(a, sol[a]); });
+      var prs = b.sheet.tie.pairs || [{ a: b.sheet.tie.a, le: b.sheet.tie.le, label: "pair" }];
+      var bad = [];
+      prs.forEach(function (pr) {
+        var x = sheet.value(pr.a), y = sheet.value(pr.le);
+        if (typeof x !== "number" || typeof y !== "number") bad.push((pr.label || pr.a) + " not numeric");
+        else if (Math.abs(x - y) > 0.5) bad.push((pr.label || pr.a) + " out by " + Math.round(x - y));
+      });
+      record(bad.length === 0, id + " — tie meter", bad.join("; "));
+    });
+  });
+
+  section("MCQs and classification exercises");
+  ids.forEach(function (id) {
+    var lesson = LS.lessons[id];
+    if (!lesson) return;
+    var problems = [];
+    (lesson.body || []).forEach(function (b, i) {
+      if (b.t === "mcq") {
+        if (!b.q) problems.push("block " + i + " has no question");
+        if (!b.opts || b.opts.length < 2) problems.push("block " + i + " needs at least 2 options");
+        if (typeof b.correct !== "number" || b.correct < 0 || b.correct >= (b.opts || []).length)
+          problems.push("block " + i + " has an out-of-range correct index");
+        if (!b.why && !b.explain) problems.push("block " + i + " has no explanation");
+        if (b.why && b.why.length !== (b.opts || []).length)
+          problems.push("block " + i + " explains " + b.why.length + " of " + b.opts.length + " options");
+        (b.why || []).forEach(function (w, j) {
+          if (!w || String(w).trim().length < 20) problems.push("block " + i + " option " + j + " explanation is too thin");
+        });
+      }
+      if (b.t === "classify") {
+        if (!b.buckets || b.buckets.length < 2) problems.push("classify block " + i + " needs buckets");
+        (b.items || []).forEach(function (it, j) {
+          if ((b.buckets || []).indexOf(it.bucket) < 0)
+            problems.push("classify item " + j + " has bucket '" + it.bucket + "' not in the bucket list");
+          if (!it.why) problems.push("classify item " + j + " has no explanation");
+          Object.keys(it.whyNot || {}).forEach(function (k) {
+            if ((b.buckets || []).indexOf(k) < 0) problems.push("classify item " + j + " whyNot names unknown bucket '" + k + "'");
+          });
+        });
+      }
+    });
+    record(problems.length === 0, id + " — questions", problems.join("; "));
+  });
+
+  section("Lesson metadata & manifest");
+  (function () {
+    var seenCodes = {};
+    ids.forEach(function (id) {
+      var lesson = LS.lessons[id];
+      var problems = [];
+      if (!lesson) { record(false, id, "listed in the manifest but no lesson object exists"); return; }
+      if (lesson.id !== id) problems.push("lesson.id '" + lesson.id + "' does not match its manifest key");
+      if (!lesson.code || !/^\d{4}$/.test(lesson.code)) problems.push("missing or malformed code");
+      if (id.indexOf(lesson.code) !== 0) problems.push("id does not start with its code");
+      if (seenCodes[lesson.code]) problems.push("duplicate code " + lesson.code);
+      seenCodes[lesson.code] = true;
+      if (!lesson.title) problems.push("no title");
+      if (!lesson.desc) problems.push("no meta description");
+      if (!lesson.lede) problems.push("no lede");
+      if (!lesson.minutes) problems.push("no estimated minutes");
+      if (!lesson.body || !lesson.body.length) problems.push("empty body");
+      var kinds = (lesson.body || []).map(function (b) { return b.t; });
+      if (kinds.indexOf("where") < 0) problems.push("no 'where this number goes' block");
+      if (kinds.indexOf("mcq") < 0) problems.push("no MCQ");
+      if (kinds.indexOf("sheet") < 0 && kinds.indexOf("classify") < 0) problems.push("no interactive exercise");
+      var text = JSON.stringify(lesson);
+      if (/lorem ipsum|TODO|FIXME|placeholder/i.test(text)) problems.push("contains placeholder text");
+      record(problems.length === 0, id, problems.join("; "));
+    });
+    record(Object.keys(LS.lessons).length === ids.length,
+      "every lesson object is reachable from the manifest",
+      "manifest lists " + ids.length + ", " + Object.keys(LS.lessons).length + " objects defined");
+  })();
+
+  section("Module quizzes");
+  (function () {
+    var modules = [];
+    LS.manifest.levels.forEach(function (lv) { modules = modules.concat(lv.modules); });
+    modules.forEach(function (mc) {
+      var quiz = LS.quizzes[mc];
+      if (!quiz) { record(false, "module " + mc, "has no end-of-module quiz"); return; }
+      var problems = [];
+      if (quiz.questions.length !== 5) problems.push("has " + quiz.questions.length + " questions, expected 5");
+      quiz.questions.forEach(function (q, i) {
+        if (!q.q) problems.push("Q" + (i + 1) + " has no question text");
+        if (!q.opts || q.opts.length < 2) problems.push("Q" + (i + 1) + " needs options");
+        if (typeof q.correct !== "number" || q.correct < 0 || q.correct >= (q.opts || []).length)
+          problems.push("Q" + (i + 1) + " correct index out of range");
+        if (!q.why || q.why.length !== (q.opts || []).length)
+          problems.push("Q" + (i + 1) + " must explain every option");
+        (q.why || []).forEach(function (w, j) {
+          if (!w || String(w).trim().length < 20) problems.push("Q" + (i + 1) + " option " + (j + 1) + " explanation too thin");
+        });
+        var seen = {};
+        (q.opts || []).forEach(function (o) {
+          if (seen[o]) problems.push("Q" + (i + 1) + " has duplicate option text");
+          seen[o] = true;
+        });
+      });
+      record(problems.length === 0, "quiz " + mc + " — " + quiz.title, problems.join("; "));
+    });
+  })();
+
+  section("Reference section");
+  (function () {
+    var need = ["balance-sheet", "income-statement", "cash-flow", "formulas"];
+    need.forEach(function (k) { record(!!LS.reference[k], "reference page '" + k + "' exists"); });
+    Object.keys(LS.reference).forEach(function (k) {
+      var ref = LS.reference[k], problems = [];
+      if (!ref.title) problems.push("no title");
+      if (!ref.lede) problems.push("no lede");
+      (ref.groups || []).forEach(function (g) {
+        if (!g.heading) problems.push("a group has no heading");
+        (g.lines || []).forEach(function (ln) {
+          if (!LS.lessons[ln.lesson]) problems.push("'" + ln.item + "' points at missing lesson " + ln.lesson);
+          var sentences = String(ln.def).split(/\.\s/).length;
+          if (sentences < 2) problems.push("'" + ln.item + "' definition should be two sentences");
+          if (String(ln.def).length < 60) problems.push("'" + ln.item + "' definition is too thin");
+        });
+        (g.items || []).forEach(function (it) {
+          if (!LS.lessons[it.lesson]) problems.push("formula '" + it.name + "' points at missing lesson " + it.lesson);
+          if (!it.fx || !it.fx.length) problems.push("formula '" + it.name + "' has no formula lines");
+        });
+      });
+      record(problems.length === 0, "reference/" + k, problems.join("; "));
+    });
+    // every statement line the course teaches should be findable in the reference
+    var refText = JSON.stringify(LS.reference).toLowerCase();
+    ["retained earnings", "trade receivables", "trade payables", "inventory", "depreciation",
+     "ebitda", "profit after tax", "cash from operations", "terminal value", "free cash flow"
+    ].forEach(function (term) {
+      record(refText.indexOf(term) >= 0, "reference covers '" + term + "'");
+    });
+  })();
+
+  section("Company dataset self-audit");
+  LS.C.verify().forEach(function (a) { record(a.ok, a.name); });
+
+  var sum = document.getElementById("summary");
+  sum.className = fail === 0 ? "pass" : "fail";
+  sum.textContent = fail === 0 ? "All " + pass + " assertions passed."
+    : fail + " of " + (pass + fail) + " assertions FAILED.";
+  document.title = (fail === 0 ? "PASS " : "FAIL ") + pass + "/" + (pass + fail) + " — curriculum tests";
+  window.__testResult = { pass: pass, fail: fail };
+})();
+</script>
+</body>
+</html>

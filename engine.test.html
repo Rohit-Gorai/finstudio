@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LedgerSchool engine tests</title>
+<style>
+  :root { --paper:#FBF9F3; --ink:#182530; --green:#1E6B4E; --red:#B23A2F; --line:#DCD3BE; }
+  body { background: var(--paper); color: var(--ink); font: 15px/1.6 "Public Sans", system-ui, sans-serif; margin: 0; padding: 2rem 1.2rem 4rem; }
+  .wrap { max-width: 60rem; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; font-size: 1.6rem; margin: 0 0 .2rem; }
+  .sub { color: #51606B; margin: 0 0 1.4rem; }
+  #summary { font-weight: 700; font-size: 1.15rem; padding: .9rem 1.1rem; border-radius: 8px; margin-bottom: 1.4rem; border: 1px solid var(--line); }
+  #summary.pass { background: #E3EEE8; color: var(--green); border-color: #C7DCD1; }
+  #summary.fail { background: #F6E4E1; color: var(--red); border-color: #E2BDB7; }
+  h2 { font-family: Georgia, serif; font-size: 1.05rem; margin: 1.6rem 0 .4rem; border-bottom: 1px solid var(--line); padding-bottom: .25rem; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { display: flex; gap: .6rem; padding: .16rem 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .84rem; align-items: baseline; }
+  li .i { flex: none; font-weight: 700; }
+  li.ok .i { color: var(--green); }
+  li.bad { color: var(--red); }
+  li.bad .i { color: var(--red); }
+  .detail { color: var(--red); }
+  code { background: #F4EFE3; padding: 0 .25rem; border-radius: 3px; }
+  footer { margin-top: 2.4rem; color: #8A959D; font-size: .85rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>LedgerSchool engine tests</h1>
+  <p class="sub">Zero dependencies, no test runner. Open this file directly in a browser (<code>file://</code> works) or serve it — assertions run on load.</p>
+  <div id="summary">Running…</div>
+  <div id="out"></div>
+  <footer>Covers the formula engine, number formats, checks, reference shifting, and the consistency of every number in the Bombay Bean Coffee Co. dataset.</footer>
+</div>
+
+<script src="../js/engine.js"></script>
+<script src="../js/lessons/company.js"></script>
+<script>
+(function () {
+  "use strict";
+  var out = document.getElementById("out");
+  var pass = 0, fail = 0, group = null;
+
+  function section(name) {
+    var h = document.createElement("h2");
+    h.textContent = name;
+    out.appendChild(h);
+    group = document.createElement("ul");
+    out.appendChild(group);
+  }
+  function record(ok, label, detail) {
+    var li = document.createElement("li");
+    li.className = ok ? "ok" : "bad";
+    var i = document.createElement("span");
+    i.className = "i"; i.textContent = ok ? "PASS" : "FAIL";
+    var t = document.createElement("span");
+    t.textContent = label;
+    li.appendChild(i); li.appendChild(t);
+    if (!ok && detail) {
+      var d = document.createElement("span");
+      d.className = "detail"; d.textContent = "— " + detail;
+      li.appendChild(d);
+    }
+    group.appendChild(li);
+    ok ? pass++ : fail++;
+  }
+  function eq(actual, expected, label) {
+    var ok = actual === expected ||
+      (typeof actual === "number" && typeof expected === "number" && Math.abs(actual - expected) < 1e-9);
+    record(ok, label, ok ? "" : "got " + JSON.stringify(actual) + ", expected " + JSON.stringify(expected));
+  }
+  function ok(cond, label, detail) { record(!!cond, label, detail); }
+
+  // helper: build a one-off sheet and read a cell
+  function sheetOf(grid) { return new LS.Sheet({ grid: grid }); }
+  function calc(formula, extra) {
+    var grid = [[{ v: 10, input: true }, { v: 20, input: true }, { v: 30, input: true }],
+                [{ v: 1, input: true }, { v: 2, input: true }, { v: 3, input: true }],
+                [{ v: formula, input: true }, null, null]];
+    if (extra) extra(grid);
+    var s = sheetOf(grid);
+    return s.value("A3");
+  }
+
+  /* ---------------------------------------------------------- */
+  section("Number parsing (what a learner can type)");
+  eq(LS.parseNumber("1500"), 1500, 'plain "1500"');
+  eq(LS.parseNumber("1,50,000"), 150000, 'en-IN grouping "1,50,000"');
+  eq(LS.parseNumber("₹2,400"), 2400, 'rupee symbol "₹2,400"');
+  eq(LS.parseNumber("(500)"), -500, 'accountant negative "(500)"');
+  eq(LS.parseNumber("(₹1,200)"), -1200, 'negative with symbol "(₹1,200)"');
+  eq(LS.parseNumber("-750"), -750, 'minus sign "-750"');
+  eq(LS.parseNumber("12%"), 0.12, 'percent input "12%" → 0.12');
+  eq(LS.parseNumber("7.5%"), 0.075, 'percent input "7.5%" → 0.075');
+  eq(LS.parseNumber("2.5"), 2.5, "decimals");
+  eq(LS.parseNumber("  40  "), 40, "surrounding whitespace");
+  eq(LS.parseNumber("abc"), null, "text is not a number");
+  eq(LS.parseNumber(""), null, "empty is not a number");
+
+  section("Number formatting (en-IN, negatives in parentheses)");
+  eq(LS.fmt.inr(1950000), "₹19,50,000", "inr uses Indian digit grouping");
+  eq(LS.fmt.inr(-150000), "(₹1,50,000)", "negative inr in parentheses");
+  eq(LS.fmt.inr(0), "₹0", "zero");
+  eq(LS.fmt.pct(0.225), "22.5%", "pct");
+  eq(LS.fmt.pct(0.65), "65%", "pct drops a trailing .0");
+  eq(LS.fmt.x(5), "5x", "x multiples");
+  eq(LS.fmt.x(1.44), "1.44x", "x with decimals");
+  eq(LS.fmt.days(30.4), "30.4 days", "days");
+  eq(LS.fmt.plain(100000), "1,00,000", "plain grouping, no symbol");
+  eq(LS.fmt.cell(180000, "inr"), "₹1,80,000", "cell dispatches on fmt");
+  eq(LS.fmt.cell("Revenue", "inr"), "Revenue", "text passes through");
+
+  section("Arithmetic & operators");
+  eq(calc("=2+3"), 5, "addition");
+  eq(calc("=10-4"), 6, "subtraction");
+  eq(calc("=6*7"), 42, "multiplication");
+  eq(calc("=20/4"), 5, "division");
+  eq(calc("=2^10"), 1024, "exponent");
+  eq(calc("=2+3*4"), 14, "precedence: * before +");
+  eq(calc("=(2+3)*4"), 20, "parentheses override precedence");
+  eq(calc("=-5+2"), -3, "unary minus");
+  eq(calc("=10%"), 0.1, "percent postfix operator");
+  eq(calc("=1200*12%"), 144, "percent inside a formula");
+  eq(calc("=150000+50000"), 200000, "large numbers inside a formula");
+  eq(calc("=SUM(150000,50000)"), 200000, "inside a formula a comma separates arguments, Excel-style");
+  ok(calc("=5/0").err === "#DIV/0!", "divide by zero → #DIV/0!");
+
+  section("Cell references & ranges");
+  eq(calc("=A1"), 10, "single ref");
+  eq(calc("=A1+B1"), 30, "two refs");
+  eq(calc("=B1-A2"), 19, "refs across rows");
+  eq(calc("=a1+b1"), 30, "lowercase refs work");
+  eq(calc("=$A$1+B1"), 30, "absolute refs evaluate the same");
+  eq(calc("=SUM(A1:C1)"), 60, "SUM over a horizontal range");
+  eq(calc("=SUM(A1:A2)"), 11, "SUM over a vertical range");
+  eq(calc("=SUM(A1:C2)"), 66, "SUM over a rectangular range");
+  eq(calc("=SUM(A1,B1,5)"), 35, "SUM over mixed arguments");
+  eq(calc("=SUM(A1:C1)/3"), 20, "range feeding arithmetic");
+  ok(calc("=Z9").err === undefined, "reference to an undefined cell is blank, not an error");
+  eq(calc("=Z9+5"), 5, "blank cell counts as zero");
+
+  section("Functions");
+  eq(calc("=AVERAGE(A1:C1)"), 20, "AVERAGE");
+  eq(calc("=MIN(A1:C1)"), 10, "MIN");
+  eq(calc("=MAX(A1:C1)"), 30, "MAX");
+  eq(calc("=ABS(-40)"), 40, "ABS");
+  eq(calc("=ABS(A2-B1)"), 19, "ABS of an expression");
+  eq(calc("=ROUND(2.567,2)"), 2.57, "ROUND to 2 decimals");
+  eq(calc("=ROUND(2.5,0)"), 3, "ROUND half away from zero");
+  eq(calc("=ROUND(-2.5,0)"), -3, "ROUND negative half away from zero");
+  eq(calc("=ROUND(12345.6,0)"), 12346, "ROUND to whole");
+  eq(calc("=IF(A1>5,100,200)"), 100, "IF true branch");
+  eq(calc("=IF(A1>50,100,200)"), 200, "IF false branch");
+  eq(calc("=IF(A1=10,A2,B2)"), 1, "IF returning a ref");
+  eq(calc("=SUM(A1:C1)-AVERAGE(A1:C1)"), 40, "functions composed");
+  ok(calc("=NOPE(1)").err === "#NAME?", "unknown function → #NAME?");
+  ok(calc("=2+").err === "#NAME?", "truncated formula errors instead of throwing");
+  ok(calc("=((2+3)").err === "#NAME?", "unbalanced parentheses error");
+
+  section("Cycle detection");
+  (function () {
+    var s = sheetOf([[{ v: "=A2", input: true }], [{ v: "=A1", input: true }]]);
+    ok(s.value("A1") && s.value("A1").err === "#CYCLE!", "A1→A2→A1 is caught as #CYCLE!");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: "=A1", input: true }]]);
+    ok(s.value("A1") && s.value("A1").err === "#CYCLE!", "a cell referencing itself is caught");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: "=A2*2", input: true }], [{ v: "=A3+1", input: true }], [{ v: 5, input: true }]]);
+    eq(s.value("A1"), 12, "a deep non-circular chain still evaluates");
+  })();
+
+  section("Recalculation after edits");
+  (function () {
+    var s = sheetOf([[{ v: 100, input: true }], [{ v: "=A1*2", input: true }]]);
+    eq(s.value("A2"), 200, "initial value");
+    s.setRaw("A1", "150");
+    eq(s.value("A2"), 300, "dependent cell recalculates after setRaw");
+    s.setRaw("A1", "=50+25");
+    eq(s.value("A2"), 150, "recalculates when the source becomes a formula");
+  })();
+  (function () {
+    var s = sheetOf([["Label", 500]]);
+    s.setRaw("B1", "999");
+    eq(s.value("B1"), 500, "read-only cells reject writes");
+  })();
+
+  section("Formula detection & mustFormula enforcement");
+  (function () {
+    var s = sheetOf([[{ v: 10, input: true }], [{ v: "=A1*2", input: true }]]);
+    ok(s.isFormula("A2") === true, "isFormula sees =A1*2");
+    ok(s.isFormula("A1") === false, "isFormula rejects a literal");
+    var checks = [{ cell: "A2", expect: 20, message: "A2 doubles A1", mustFormula: true }];
+    ok(s.runChecks(checks)[0].ok === true, "a correct formula passes");
+    s.setRaw("A2", "20");
+    var r = s.runChecks(checks)[0];
+    ok(r.ok === false, "the right value hardcoded FAILS when mustFormula is set");
+    ok(/formula/i.test(r.detail || ""), "…and the message tells the learner to use a formula");
+    s.setRaw("A2", "19");
+    ok(s.runChecks(checks)[0].ok === false, "a wrong value fails");
+    s.setRaw("A2", "");
+    ok(/empty/i.test(s.runChecks(checks)[0].detail || ""), "an empty cell reports as empty");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: 1, input: true }], [{ v: 2, input: true }], [{ v: 3, input: true }],
+                     [{ v: "=A1+A2+A3", input: true }]]);
+    var checks = [{ cell: "A4", expect: 6, message: "total", mustFormula: true, mustUse: "SUM", mustUseLabel: "SUM" }];
+    ok(s.runChecks(checks)[0].ok === false, "mustUse rejects the right answer built the long way");
+    s.setRaw("A4", "=SUM(A1:A3)");
+    ok(s.runChecks(checks)[0].ok === true, "mustUse accepts SUM");
+    s.setRaw("A4", "=sum(a1:a3)");
+    ok(s.runChecks(checks)[0].ok === true, "mustUse is case-insensitive");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: "=1/0", input: true }]]);
+    var r = s.runChecks([{ cell: "A1", expect: 1, message: "x" }])[0];
+    ok(r.ok === false && /#DIV\/0!/.test(r.detail || ""), "a checked cell showing an error reports the error");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: 100, input: true }], [{ v: 100, input: true }]]);
+    var r = s.runChecks([{
+      custom: function (sh) { return sh.value("A1") === sh.value("A2") || "the two must match"; },
+      message: "custom: the sheet ties"
+    }])[0];
+    ok(r.ok === true, "a custom check can pass");
+    s.setRaw("A2", "90");
+    var r2 = s.runChecks([{
+      custom: function (sh) { return sh.value("A1") === sh.value("A2") || "the two must match"; },
+      message: "custom: the sheet ties"
+    }])[0];
+    ok(r2.ok === false && r2.detail === "the two must match", "a custom check returns its own message");
+  })();
+  (function () {
+    var s = sheetOf([[{ v: 100.4, input: true }]]);
+    ok(s.runChecks([{ cell: "A1", expect: 100, message: "x" }])[0].ok === true, "default tolerance allows rupee rounding");
+    ok(s.runChecks([{ cell: "A1", expect: 100, message: "x", tol: 0 }])[0].ok === false, "tol:0 demands exactness");
+  })();
+
+  section("Fill-right (relative reference shifting)");
+  eq(LS.shiftFormula("=B2*2", 1), "=C2*2", "one column across");
+  eq(LS.shiftFormula("=B2+B3", 1), "=C2+C3", "every relative ref moves");
+  eq(LS.shiftFormula("=SUM(B2:B5)", 1), "=SUM(C2:C5)", "ranges shift too");
+  eq(LS.shiftFormula("=$B2*C3", 1), "=$B2*D3", "$-anchored columns stay put");
+  eq(LS.shiftFormula("=B$2*2", 1), "=C$2*2", "an anchored row still shifts its column");
+  eq(LS.shiftFormula("=B2*2", 2), "=D2*2", "two columns across");
+  eq(LS.shiftFormula("=SUM(A1:C1)/AVERAGE(A2:C2)", 1), "=SUM(B1:D1)/AVERAGE(B2:D2)", "function names are left alone");
+  eq(LS.shiftFormula("1000", 1), "1000", "a literal is unchanged");
+  eq(LS.shiftFormula("=Z9+1", 1), "=AA9+1", "Z rolls over to AA");
+
+  section("Address helpers");
+  eq(LS.cellAddr.numToCol(1), "A", "1 → A");
+  eq(LS.cellAddr.numToCol(26), "Z", "26 → Z");
+  eq(LS.cellAddr.numToCol(27), "AA", "27 → AA");
+  eq(LS.cellAddr.colToNum("A"), 1, "A → 1");
+  eq(LS.cellAddr.colToNum("AA"), 27, "AA → 27");
+  eq(LS.cellAddr.addr(3, 7), "C7", "addr(3,7) → C7");
+  eq(LS.cellAddr.parseAddr("C7").c, 3, "parseAddr column");
+  eq(LS.cellAddr.parseAddr("C7").r, 7, "parseAddr row");
+  eq(LS.cellAddr.parseAddr("nope"), null, "parseAddr rejects nonsense");
+
+  section("A realistic lesson sheet (the 1330 capstone, solved)");
+  (function () {
+    var C = LS.C;
+    var s = sheetOf([
+      ["", { v: "31 Mar 2025", year: true }],
+      ["Gross PP&E", C.fy25.bs.ppeGross],
+      ["Less: accumulated depreciation", -C.fy25.bs.accDep],
+      ["PP&E, net", { v: "=B2+B3", input: true }],
+      ["Security deposit", C.fy25.bs.deposit],
+      ["Inventory", C.fy25.bs.inventory],
+      ["Trade receivables", C.fy25.bs.receivables],
+      ["Cash", C.fy25.bs.cash],
+      ["TOTAL ASSETS", { v: "=SUM(B4:B8)", input: true }],
+      ["Share capital", C.fy25.bs.capital],
+      ["Retained earnings", { v: "=120000+180000-50000", input: true }],
+      ["Term loan", C.fy25.bs.loan],
+      ["Trade payables", C.fy25.bs.payables],
+      ["Salaries payable", C.fy25.bs.accrued],
+      ["TOTAL E&L", { v: "=SUM(B10:B14)", input: true }]
+    ]);
+    eq(s.value("B4"), 1400000, "net PP&E computes");
+    eq(s.value("B9"), 1950000, "total assets = ₹19,50,000");
+    eq(s.value("B15"), 1950000, "total equity & liabilities = ₹19,50,000");
+    eq(s.value("B9") - s.value("B15"), 0, "the balance sheet ties to the rupee");
+    var label = s.value("A9");
+    ok(label === "TOTAL ASSETS", "text labels survive as text");
+  })();
+
+  section("Bombay Bean Coffee Co. — dataset self-audit");
+  LS.C.verify().forEach(function (a) { ok(a.ok, a.name); });
+
+  /* ---------------------------------------------------------- */
+  var sum = document.getElementById("summary");
+  sum.className = fail === 0 ? "pass" : "fail";
+  sum.textContent = fail === 0
+    ? "All " + pass + " assertions passed."
+    : fail + " of " + (pass + fail) + " assertions FAILED.";
+  document.title = (fail === 0 ? "PASS " : "FAIL ") + pass + "/" + (pass + fail) + " — engine tests";
+  window.__testResult = { pass: pass, fail: fail };
+})();
+</script>
+</body>
+</html>

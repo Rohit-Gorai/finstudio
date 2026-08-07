@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found · LedgerSchool</title>
+<meta name="description" content="That page doesn't exist. Head back to the LedgerSchool syllabus.">
+<meta name="robots" content="noindex">
+<!-- Deliberately self-contained: GitHub Pages serves this file for unmatched
+     paths at ANY depth, so relative asset links would resolve inconsistently
+     and absolute ones break on a project site served from /<repo>/.
+     Inlining the handful of styles it needs makes it correct everywhere. -->
+<style>
+  :root {
+    --paper: #FBF9F3; --paper-2: #F4EFE3; --paper-3: #ECE5D3;
+    --ink: #182530; --ink-soft: #51606B; --ink-faint: #5E6870;
+    --green: #1E6B4E; --red: #B23A2F; --line: #DCD3BE; --line-soft: #EAE3D2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Public Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+  .topbar {
+    display: flex; align-items: center; gap: .55rem;
+    padding: .55rem 1.1rem; background: var(--ink); color: var(--paper);
+    border-bottom: 3px solid var(--green);
+  }
+  .topbar a { display: inline-flex; align-items: center; gap: .55rem; color: var(--paper); text-decoration: none; }
+  .brand-name { font-family: Georgia, "Times New Roman", serif; font-weight: 600; font-size: 1.25rem; }
+  .brand-name em { font-style: normal; color: #6FBF9A; }
+  .oops { max-width: 34rem; margin: 3.4rem auto; padding: 0 1.4rem; text-align: center; }
+  .code {
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 3.6rem; font-weight: 600; color: var(--green); margin: 0; line-height: 1;
+  }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 1.7rem; margin: .5rem 0 .6rem; }
+  p { margin: .85rem 0; }
+  .ledger {
+    margin: 2rem auto; max-width: 24rem; background: #fff;
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(24,37,48,.06), 0 4px 14px rgba(24,37,48,.05);
+  }
+  .ledger .cap {
+    padding: .55rem .9rem; background: var(--paper-2); border-bottom: 1px solid var(--line);
+    font-family: Georgia, serif; font-weight: 600; font-size: .95rem; text-align: left;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  td { padding: .42rem .9rem; border-bottom: 1px solid var(--line-soft); text-align: left; }
+  td.num {
+    text-align: right; white-space: nowrap;
+    font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; font-size: .88rem;
+  }
+  tr:last-child td { border-bottom: none; border-top: 2px solid var(--ink); font-weight: 700; }
+  tr:last-child td.num { color: var(--red); }
+  .btn {
+    display: inline-block; font-weight: 600; font-size: .95rem; padding: .5rem 1.2rem;
+    border-radius: 6px; background: var(--green); color: var(--paper);
+    border: 1px solid var(--green); text-decoration: none;
+  }
+  .btn:hover { background: #17553E; }
+  .small { font-size: .9rem; color: var(--ink-soft); }
+  .small a { color: var(--green); }
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a id="brand" href="/">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" style="color:#6FBF9A">
+      <rect x="1" y="1" width="24" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="1" y1="9" x2="25" y2="9" stroke="currentColor" stroke-width="2"/>
+      <line x1="1" y1="17" x2="25" y2="17" stroke="currentColor" stroke-width="2"/>
+      <line x1="13" y1="1" x2="13" y2="25" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    <span class="brand-name">Ledger<em>School</em></span>
+  </a>
+</header>
+
+<main class="oops">
+  <p class="code">404</p>
+  <h1>This page doesn't tie.</h1>
+  <p>There's nothing at this address. It may have moved, or the link may have been mistyped.</p>
+
+  <div class="ledger">
+    <div class="cap">Reconciliation</div>
+    <table>
+      <tbody>
+        <tr><td>Pages you expected</td><td class="num">1</td></tr>
+        <tr><td>Pages found</td><td class="num">0</td></tr>
+        <tr><td>Difference</td><td class="num">(1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><a class="btn" id="home" href="/">Back to the syllabus</a></p>
+  <p class="small"><a id="first" href="/#/1010-five-buckets">Start at lesson 1010</a> · <a id="fx" href="/#/ref/formulas">Formula sheet</a></p>
+</main>
+
+<script>
+// Point the links at the site root, which is /<repo>/ on a GitHub Pages
+// project site and / on a user site or custom domain. A path with more than
+// one segment means we're inside a project; one segment means we're already
+// at the root and the bad path is the only segment.
+(function () {
+  var parts = location.pathname.split("/").filter(Boolean);
+  var base = parts.length > 1 ? "/" + parts[0] + "/" : "/";
+  var set = function (id, suffix) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute("href", base + suffix);
+  };
+  set("brand", ""); set("home", "");
+  set("first", "#/1010-five-buckets");
+  set("fx", "#/ref/formulas");
+})();
+</script>
+</body>
+</html>

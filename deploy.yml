@@ -1,0 +1,72 @@
+name: Build and deploy to Pages
+
+# Manual for now, on purpose. The repository root still holds the v1 vanilla
+# site, which is what Pages currently serves via "deploy from a branch" and
+# what visitors see today. Running this workflow switches the live site to
+# the built React app, so the flip stays a deliberate choice until the
+# curriculum port is finished (milestone 10).
+#
+# To enable continuous deployment later, uncomment the `push` trigger and
+# set Settings → Pages → Source to "GitHub Actions".
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deploys at once; don't cancel one in flight.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        # VITE_BASE must match the Pages path: /<repo>/ for a project site,
+        # / for a user site or custom domain.
+        run: npm run build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
+
+      - name: Keep the v1 site reachable at /v1/
+        run: |
+          mkdir -p dist/v1
+          cp -r index.html css js favicon.svg dist/v1/
+          cp -r tests dist/v1/tests
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
