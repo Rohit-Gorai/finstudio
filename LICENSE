@@ -1,3 +1,18 @@
+FinStudio — Licence
+===================
+
+This project has two parts under two different licences. Please read both.
+
+
+1. THE SOFTWARE  —  MIT Licence
+-------------------------------
+
+Applies to the source code only: the spreadsheet engine, the router and
+renderers, the design system, the build configuration and the test
+harnesses. In this repository that means the contents of `js/engine.js`,
+`js/app.js`, `js/quizzes.js`, `js/reference.js`, `js/sharecard.js`,
+`css/`, `src/`, `tests/`, and the build and workflow configuration.
+
 MIT License
 
 Copyright (c) 2026 Rohit Gorai
@@ -19,3 +34,48 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+2. THE COURSE CONTENT  —  All Rights Reserved
+---------------------------------------------
+
+Copyright (c) 2026 Rohit Gorai. All rights reserved.
+
+Applies to the educational material: every lesson, explanation, worked
+example, exercise, sandbox, check, multiple-choice question and its
+explanations, quiz, reference page, formula sheet, and the company
+datasets (Bombay Bean Coffee Co. and Chaiwala Cloud). In this repository
+that means the contents of `js/lessons/`, `src/content/`, and the lesson
+text within any file.
+
+This material is NOT covered by the MIT licence above.
+
+You MAY:
+  - read, study and learn from it, free of charge
+  - link to any page of the site
+  - quote brief passages with clear attribution to Rohit Gorai and a link
+    back to the source page
+
+You MAY NOT, without prior written permission:
+  - copy, reproduce, republish, mirror or redistribute the content, in
+    whole or in substantial part
+  - translate or adapt it, or create derivative courses from it
+  - use it in any commercial or competing product, course or publication
+  - use it to train, fine-tune or evaluate machine-learning models
+  - remove or obscure the author credit or copyright notices
+
+Permission requests: open an issue at
+https://github.com/Rohit-Gorai/finstudio/issues
+
+
+3. Note on the two-part arrangement
+-----------------------------------
+
+The split is deliberate. The spreadsheet engine and site framework are
+genuinely useful to other developers and are given away freely. The
+curriculum represents the substantial original work of the author and is
+reserved.
+
+If you prefer a single licence covering everything, replace this file — but
+be aware that an unmodified MIT licence would grant everyone the right to
+copy the lessons, which is precisely what section 2 is written to prevent.

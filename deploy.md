@@ -1,4 +1,4 @@
-# Deploying LedgerSchool to GitHub Pages
+# Deploying FinStudio to GitHub Pages
 
 The site is plain static files with no build step, so Pages can serve the repository
 root directly. Nothing to install, no Actions workflow, no `dist/`.
