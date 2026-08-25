@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F5F5F7">
+<meta name="theme-color" content="#182530">
 <title>FinStudio — Learn finance by building it</title>
-<meta name="description" content="Free, text-only finance school. Learn accounting, the three financial statements, ratios and financial modeling by building every number yourself in a live spreadsheet.">
+<meta name="description" content="Free, practice-first finance school. Learn accounting, financial statements, analysis, modelling, valuation, investment banking, private equity, markets and startup finance by building the numbers yourself.">
 <meta property="og:title" content="FinStudio — Learn finance by building it">
-<meta property="og:description" content="Free W3Schools-style finance course. Every lesson ends in a live spreadsheet where you build the number yourself — and the balance sheet has to tie.">
+<meta property="og:description" content="A W3Schools-style finance learning platform where every concept leads to practice, modelling and feedback.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FinStudio">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -20,27 +20,23 @@
 <header class="topbar" id="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#/" aria-label="FinStudio home">
-      <svg class="brand-mark" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
-        <rect width="32" height="32" rx="7.6" fill="var(--ink)"/>
-        <path fill="#FFFFFF" d="M9.4 7.6h13.2v3.7h-9.4v3.6h6.9v3.7h-6.9v5.8H9.4z"/>
-        <rect x="18.3" y="19.3" width="5" height="5" rx="1.4" fill="var(--accent)"/>
-      </svg>
+      <span class="brand-mark-wrap" aria-hidden="true"><span class="brand-mark-letter">F</span></span>
       <span class="brand-name">Fin<em>Studio</em></span>
     </a>
 
     <nav class="topnav" aria-label="Primary">
       <a href="#/1010-five-buckets">Learn</a>
-      <a href="#/" data-scroll="curriculum">Curriculum</a>
+      <a href="#/curriculum">Curriculum</a>
       <a href="#/ref/formulas">Formulas</a>
       <a href="#/glossary">Glossary</a>
     </nav>
 
     <div class="topbar-actions">
+      <a class="search-link" href="#/curriculum" aria-label="Browse the FinStudio curriculum"><span aria-hidden="true">⌕</span><span>Explore</span></a>
       <button class="nav-toggle" id="navToggle" aria-label="Open syllabus" aria-expanded="false" aria-controls="sidebar">
-        <span class="bars" aria-hidden="true"></span>
-        <span>Syllabus</span>
+        <span class="bars" aria-hidden="true"></span><span>Syllabus</span>
       </button>
-      <a class="btn btn-primary btn-small" href="#/1010-five-buckets">Start learning</a>
+      <a class="btn btn-primary btn-small" href="#/1010-five-buckets">Start learning <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </header>
@@ -50,63 +46,63 @@
     <!-- built by app.js from the lessons manifest -->
   </nav>
   <div class="sidebar-scrim" id="sidebarScrim" hidden></div>
-
-  <main class="content" id="main" tabindex="-1">
-    <!-- routed views render here -->
-  </main>
+  <main class="content" id="main" tabindex="-1"></main>
 </div>
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <p class="footer-statement">Every number, <span>built by you.</span></p>
+    <div class="footer-top">
+      <div class="footer-brand-block">
+        <a class="footer-brand" href="#/" aria-label="FinStudio home"><span class="footer-mark">F</span><span>Fin<em>Studio</em></span></a>
+        <p>Every number, <strong>built by you.</strong></p>
+        <span class="footer-tagline">A practice-first finance school.</span>
+      </div>
+      <a class="footer-cta" href="#/curriculum">Explore the full curriculum <span aria-hidden="true">→</span></a>
+    </div>
 
     <div class="footer-cols">
       <div class="footer-col">
         <h4>Learn</h4>
-        <a href="#/1010-five-buckets">Start at lesson 1010</a>
+        <a href="#/curriculum">Full curriculum</a>
+        <a href="#/1010-five-buckets">Start at Foundations</a>
         <a href="#/module/1300">Balance sheet</a>
         <a href="#/module/1400">Income statement</a>
         <a href="#/module/1500">Cash flow</a>
-        <a href="#/module/2200">Modelling &amp; valuation</a>
+      </div>
+      <div class="footer-col">
+        <h4>Build</h4>
+        <a href="#/module/2100">Three-statement modelling</a>
+        <a href="#/module/2200">Valuation</a>
+        <a href="#/curriculum">Investment banking</a>
+        <a href="#/curriculum">Private equity &amp; LBO</a>
+        <a href="#/curriculum">Startup finance</a>
       </div>
       <div class="footer-col">
         <h4>Reference</h4>
         <a href="#/ref/formulas">Formula sheet</a>
-        <a href="#/glossary">Glossary</a>
-      </div>
-      <div class="footer-col">
-        <h4>About</h4>
-        <a href="https://github.com/Rohit-Gorai/finstudio" rel="noopener">Source on GitHub</a>
-        <a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noopener">Report an error</a>
+        <a href="#/glossary">Finance glossary</a>
+        <a href="#/curriculum">Learning roadmap</a>
+        <a href="https://github.com/Rohit-Gorai/finstudio" rel="noopener noreferrer">Source on GitHub</a>
       </div>
       <div class="footer-col">
         <h4>Notes</h4>
         <span>Educational content only</span>
         <span>Not investment, accounting or tax advice</span>
         <span>Indian formats (₹, en-IN); concepts are global</span>
+        <a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noopener noreferrer">Report an error</a>
       </div>
     </div>
 
-    <p class="footer-credit">Designed and developed by <strong>Rohit Gorai</strong></p>
-    <p class="footer-copy"><span aria-hidden="true">©</span> <span id="copyYear">2026</span> Rohit Gorai. All rights reserved.</p>
-    <p class="footer-fine">
-      All lessons, exercises, worked examples and datasets on this site are original work and are
-      protected by copyright. You are welcome to learn from them and to link to any page.
-      Copying, reproducing, republishing or redistributing the content — in whole or in part,
-      including for AI training or for any commercial or competing course — is not permitted
-      without written permission.
-    </p>
+    <div class="footer-bottom">
+      <p>Designed and developed by <strong>Rohit Gorai</strong></p>
+      <p><span aria-hidden="true">©</span> <span id="copyYear">2026</span> Rohit Gorai · FinStudio</p>
+    </div>
   </div>
 </footer>
 
 <script>
-  // keep the copyright year current without a build step
-  (function () {
-    var y = document.getElementById("copyYear");
-    if (y) y.textContent = String(new Date().getFullYear());
-  })();
+  (function () { var y = document.getElementById("copyYear"); if (y) y.textContent = String(new Date().getFullYear()); })();
 </script>
-
 <script src="js/engine.js"></script>
 <script src="js/lessons/company.js"></script>
 <script src="js/lessons/m1000.js"></script>
