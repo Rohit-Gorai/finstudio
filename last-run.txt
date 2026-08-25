@@ -1,35 +1,19 @@
 
-Formula calculation
+The ported lessons validate
 
-References: relative, absolute, mixed
+Every sandbox is solvable with the intended formulas
 
-Copying formulas and the fill handle
+Mutation: blanking any answer cell must fail a check
 
-Paste values, paste TSV
+Mutation: the right number, typed in, must still fail (§17)
 
-Cross-sheet references
+The figures tie to the rest of the curriculum
 
-Circular references and errors
+The sandboxes are live models, not static answers
 
-Dependency graph and recalculation
+Every practice question in every lesson can be answered
 
-Function library
-
-Number formats
-
-Undo and redo
-
-Insert and delete rows and columns
-
-Serialisation
-
-Autocomplete
-
-§48 end-to-end: build a 5-year model, then change an assumption
-
-§32 grader: formulas, not just outputs
-
-Performance
+The three ported lessons form a graph
 
 ──────────────────────────────────────────────────────────
-All 175 assertions passed.
+All 116 assertions passed.

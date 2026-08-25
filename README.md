@@ -1,144 +1,131 @@
-# FinStudio learning architecture
+# Step 2 done: three lessons ported, plus the porter
 
-## What's built
+## The grid decision, since it was blocking
 
-Three files, no dependencies, headless, tested. **110 assertions passing**
-(`node tests/learn.test.mjs`). Nothing existing was touched: the 38 lessons,
-451 v1 assertions and the 175 sheet-engine assertions are all still green.
+**Build it, staged.** Reasons, in order of weight:
 
-| File | What it is |
+1. The engine is already ours and is 16 KB. Bolting a 400 KB+ grid onto it to
+   get selection rectangles inverts the weight of the product.
+2. `mustFormula` grading, cell-level hints and the tie meter all need the grid
+   to know about *lesson state*, not just cell state. With Univer that means
+   fighting a plugin API; with our own grid it is a property on a cell.
+3. Your design system is authored, not adapted. Overriding a third-party
+   grid's styling to match it is the kind of work that is never quite done.
+
+The staging is the part that matters: **a plain non-virtualized grid first.**
+Every sandbox in the curriculum is under 25 rows. Virtualization is a
+performance answer to a problem none of the current lessons have, and building
+it early means debugging selection-during-scroll before knowing whether the
+API is right. Non-virtualized first, virtualize when a lesson needs it.
+
+## What was built this round
+
+### The porter (`js/learn/port.js`)
+
+Converts a v1 lesson object into the v2 schema: prose blocks, formulas, worked
+examples, MCQs, and — the useful part — v1 sheet grids into v2 workbooks and v1
+checks into v2 check specs. It does **not** invent content. What v1 never had,
+it reports as a gap.
+
+Run across all 38 lessons, it says:
+
+```
+Ported 38 lessons. Meeting the brief in full: 0
+
+  38/38  explanation.beginner / intermediate / advanced   §42
+  38/38  visualization                                    §12
+  38/38  whyItMatters                                     §33
+  38/38  commonMistakes                                   §34
+  38/38  realWorld                                        §35
+  38/38  takeaways                                        §36
+  38/38  challenge                                        §2 MASTER
+  38/38  prerequisites                                    §41
+  38/38  practice tiers                                   §11
+  32/38  practice variety                                 §10
+   6/38  sandbox check (v1 custom closure can't cross)
+```
+
+That is the honest map of the remaining work on existing content. The
+mechanical half is done and free; the authored half is roughly 2–3 hours per
+lesson, ~100 hours for all 38.
+
+### Three lessons hand-finished
+
+`1620-liquidity`, `1330-balance-sheet`, `2240-dcf` — chosen because they are a
+ratio lesson, a capstone with a tie check, and the hardest modelling lesson in
+the curriculum. If the schema survives those three it will survive the rest.
+
+Each now carries everything the brief asks for: three explanation levels, an
+interactive visualization spec, worked example, why-it-matters, common
+mistakes, real-world uses, all four practice tiers with a mix of question
+types, the sandbox, a debugging challenge, and takeaways.
+
+The `1330` lesson is one of the six whose v1 `custom` check could not be
+carried across mechanically. Its tie check is rewritten as a v2 spec that
+reports the *size* of the difference — which is the debugging clue the lesson
+teaches.
+
+### Tests — 116 assertions
+
+`node tests/ported.test.mjs`. The important ones:
+
+- **Every sandbox is solved** with the intended formulas and all checks pass.
+- **Blank any answer cell** → a check must fail. (Catches a check that isn't
+  actually testing anything.)
+- **Hardcode the correct answer** in any answer cell → the check must still
+  fail. §17, verified per cell rather than asserted once.
+- The figures tie across lessons: liquidity's current assets equal the balance
+  sheet's inventory + receivables + cash, computed from both workbooks.
+- The DCF sandbox is a live model — raising WACC lowers enterprise value.
+- **The anchor lesson is tested as a lesson:** filling `=1/(1+B2)^C5` across
+  produces `=1/(1+D2)^E5` and a wrong factor; filling `=1/(1+$B$2)^C5` produces
+  `=1/(1+$B$2)^E5` and the right one. The thing 2240 teaches is demonstrated
+  by the engine, not just asserted in prose.
+- Every practice question accepts its own intended answer.
+
+## Two bugs the port found
+
+Worth naming, because they are the reason this step existed.
+
+**A duplicate key in my own reference lesson.** `ebitda.js` had `summary`
+twice — the one-line blurb near the top and the §36 takeaways array at the
+bottom. The second silently overwrote the first. Had thirty lessons been
+authored against that shape first, thirty would have had to be edited. The
+takeaways field is now `takeaways`.
+
+**The level lookup was wrong.** The porter mapped module codes (`1600`) but
+lessons carry lesson codes (`1620`), so every ported lesson silently defaulted
+to `statements`. Liquidity is `analysis`; the DCF is `valuation`.
+
+Neither would have been visible without porting real lessons. That is exactly
+what the step was for.
+
+## Two lessons still show one gap, on purpose
+
+`ebitda` and `1330-balance-sheet` still report `prerequisites` as missing. That
+is correct: their real prerequisites are lessons that have not been ported yet
+(revenue, COGS, opex; modules 1100–1300). The test asserts prerequisites are
+the *only* outstanding gap rather than silencing the report — a gap report you
+switch off when it is inconvenient is not a gap report.
+
+## Suite status
+
+| Suite | Assertions |
 |---|---|
-| `js/learn/practice.js` | The practice engine. Ten question types, partial credit, progressive hints, three mastery tracks. |
-| `js/learn/curriculum.js` | Schema validator, prerequisite graph, progress rollup, career paths, search, next-lesson recommendation. |
-| `js/learn/lessons/ebitda.js` | One lesson authored end-to-end through the whole loop, as the shape every other lesson gets written against. |
+| v1 engine (`tests/engine.test.html`) | 151 ✅ |
+| v1 curriculum (`tests/lessons.test.html`) | 300 ✅ |
+| v2 sheet engine | 175 ✅ |
+| Learning architecture | 111 ✅ |
+| Ported lessons | 116 ✅ |
+| **Total** | **853 ✅** |
 
-### The practice engine (§9–§11, §17, §34)
+## Next
 
-All ten question types the brief asks for, and none of them are
-multiple-choice-with-extra-steps:
-
-`numeric` · `formula` · `mcq` · `multi` · `match` · `order` · `scenario` ·
-`interpretation` · `debug` · `sheet`
-
-Partial credit is where the teaching happens:
-
-- Type `540000` where a formula was wanted → **0.5**, "Correct output, but you
-  haven't built the calculation. Type it as a formula so it updates when the
-  inputs change." That is §17, working.
-- Type `=1560000-1020000` → fails, and names the cell it should have read.
-- Type `30` where `30%` was wanted → **0.5**, flagged as a scale error rather
-  than marked wrong.
-- Get four of five scenario lines right → **0.8**, and it names the two to
-  look at again.
-- Point at the cell that *displays* the error rather than the cell that
-  *causes* it → **0.5**, "that cell is wrong too, but it's wrong because of
-  another one upstream."
-
-Hints come one rung at a time and the worked solution only after the ladder is
-exhausted (§34). Hints cost credit — solving cold scores 1.0, solving after
-three hints scores 0.55 — so the progress numbers mean something.
-
-`sheet` questions delegate to the v2 spreadsheet engine, so a hardcoded number
-cannot pass a question whose point was the formula.
-
-### The curriculum engine (§18–§20, §40–§41, §46, §48)
-
-Lessons are data; everything else is derived from them:
-
-- **Prerequisite graph** — full upstream chain, what a lesson unlocks,
-  topological learning order, and **cycle detection** (a prerequisite loop
-  makes the skill tree unrenderable and the recommender infinite; it's caught
-  at author time).
-- **Readiness** (§41) — lists which prerequisites are met, and is explicitly
-  `blocking: false`. It warns; it never gates.
-- **Progress** (§18) — three tracks, concept / practice / modelling, rolled up
-  per level. A track never attempted reports `null`, not zero, so a lesson
-  without a sandbox isn't held permanently incomplete.
-- **Recommendation** (§6) — resume an unfinished lesson first, else the first
-  ready unstarted one, else the first with gaps. Returns *why*.
-- **Career paths** (§46) — six paths that automatically pull in prerequisites
-  from other levels, in dependency order.
-- **Search** (§20) — returns learn + practice + build for each hit, not just
-  the article.
-- **Validation** — §11 is enforced in code: a lesson with no practice problems
-  is invalid and says so.
-
-### The reference lesson
-
-`ebitda.js` is the §8 template filled in properly: three difficulty levels of
-explanation (§42), formula with variables, an interactive waterfall spec, a
-worked example on the café's real FY25 numbers, six practice problems across
-all four mandatory tiers (§11), a sandbox exercise with cell-level hints (§15),
-a debugging challenge, why-it-matters (§33), three common mistakes (§34),
-four real-world uses (§35) and a summary (§36).
-
-Authoring a lesson is now filling in that object. No rendering code changes.
-
----
-
-## The number you should look at before anything else
-
-I counted the topics this brief names across its eleven levels.
-
-**209 topics.**
-
-Each one, per your own §8/§11/§33–36/§42, needs: three explanation levels, a
-formula, an interactive visualization, a worked example, at least four practice
-problems, why-it-matters, common mistakes, real-world context, and a summary.
-
-The EBITDA lesson above took me a focused pass to write, and it is the *easy*
-kind — a concept I can state precisely with numbers that already exist in your
-dataset. Verified finance content at that depth runs 3–6 hours per topic once
-you include checking the arithmetic and writing distractors that teach.
-
-| At | Hours | Weeks at 35h |
-|---|---|---|
-| 3h/topic | 627 | ~18 |
-| 4h/topic | 836 | ~24 |
-| 6h/topic | 1,254 | ~36 |
-
-**That is the product.** Not the design system, not the spreadsheet engine, not
-the skill tree. Those are all real work and I've now built most of them, but
-they are the container. FinStudio becomes the best place to learn finance on
-the strength of 209 well-written lessons, and there is no architecture that
-shortcuts writing them.
-
-The good news is that the architecture now makes that work *additive*: every
-lesson you author lights up the skill tree, the search index, the progress
-rollup and the career paths without further code.
-
----
-
-## What I'd actually do next, in order
-
-You have four briefs in flight and one unanswered question that blocks two of
-them. My honest sequencing:
-
-1. **Answer the grid question** (build vs adopt, from the last session). The
-   spreadsheet UI is the single biggest remaining code item and it's stalled.
-2. **Port three existing lessons** onto the v2 engine and this schema —
-   `1620-liquidity`, `1330-balance-sheet`, `2240-dcf`. Three is enough to find
-   the schema's flaws while they're still cheap to fix.
-3. **Author ten Level-0 lessons.** You have nothing below the accounting
-   equation right now, and §7's Level 0 is where the "beginner can learn
-   without external resources" claim lives or dies.
-4. **Then** build the dashboard, skill tree and onboarding. Every one of them
-   is a view over data that already works — and they'll look empty and sad
-   against 38 lessons, but convincing against 60.
-
-Building the dashboard before there is a curriculum to put in it is the
-appealing mistake here. The engine renders progress fine; it just needs
-something to be progress *through*.
-
----
-
-## Not built
-
-The UI for any of this. No dashboard, no skill tree, no practice widgets, no
-split-screen learn-and-build layout, no onboarding flow. The engines expose
-everything those need and are tested; none of it is drawn.
-
-Also not built: the AI tutor (§16). It needs a serverless function — never an
-API key in a static client — and it should come after the hint ladder has been
-used by real learners, because the deterministic hints in `practice.js` already
-handle the common cases and are free, instant and never wrong.
+1. **Build the grid**, non-virtualized, against these three lessons. They
+   exercise every feature it needs: SUM ranges, anchored fills across columns,
+   a tie meter, per-cell hints, multiple number formats.
+2. **Port the remaining 35** — mechanical part is one command, authored part is
+   the ~100 hours above.
+3. **Author Level 0.** Still the biggest hole in the product: there is nothing
+   below the accounting equation, and "a beginner can learn finance here" lives
+   or dies on it.
