@@ -1,0 +1,35 @@
+
+Formula calculation
+
+References: relative, absolute, mixed
+
+Copying formulas and the fill handle
+
+Paste values, paste TSV
+
+Cross-sheet references
+
+Circular references and errors
+
+Dependency graph and recalculation
+
+Function library
+
+Number formats
+
+Undo and redo
+
+Insert and delete rows and columns
+
+Serialisation
+
+Autocomplete
+
+§48 end-to-end: build a 5-year model, then change an assumption
+
+§32 grader: formulas, not just outputs
+
+Performance
+
+──────────────────────────────────────────────────────────
+All 175 assertions passed.
