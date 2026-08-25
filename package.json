@@ -1,9 +1,9 @@
 {
-  "name": "finschool",
+  "name": "finstudio",
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "FinSchool — the W3Schools of Finance. Interactive finance lessons with a live spreadsheet sandbox.",
+  "description": "FinStudio — learn finance by building it with interactive lessons and a live spreadsheet sandbox.",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
@@ -26,7 +26,7 @@
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
     "clsx": "^2.1.1",
-    "jsdom": "^30.0.1",
+    "jsdom": "^30.1.0",
     "lucide-react": "^1.29.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3",
