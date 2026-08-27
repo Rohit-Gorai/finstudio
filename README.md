@@ -1,131 +1,102 @@
-# Step 2 done: three lessons ported, plus the porter
+# Level 0 is finished. Here is what that means and what it cost.
 
-## The grid decision, since it was blocking
+## The headline
 
-**Build it, staged.** Reasons, in order of weight:
+**Level 0 — Finance Foundations — is 100% covered. 22 of 22 topics.**
 
-1. The engine is already ours and is 16 KB. Bolting a 400 KB+ grid onto it to
-   get selection rectangles inverts the weight of the product.
-2. `mustFormula` grading, cell-level hints and the tie meter all need the grid
-   to know about *lesson state*, not just cell state. With Univer that means
-   fighting a plugin API; with our own grid it is a property on a cell.
-3. Your design system is authored, not adapted. Overriding a third-party
-   grid's styling to match it is the kind of work that is never quite done.
-
-The staging is the part that matters: **a plain non-virtualized grid first.**
-Every sandbox in the curriculum is under 25 rows. Virtualization is a
-performance answer to a problem none of the current lessons have, and building
-it early means debugging selection-during-scroll before knowing whether the
-API is right. Non-virtualized first, virtualize when a lesson needs it.
-
-## What was built this round
-
-### The porter (`js/learn/port.js`)
-
-Converts a v1 lesson object into the v2 schema: prose blocks, formulas, worked
-examples, MCQs, and — the useful part — v1 sheet grids into v2 workbooks and v1
-checks into v2 check specs. It does **not** invent content. What v1 never had,
-it reports as a gap.
-
-Run across all 38 lessons, it says:
+Every one of those topics has a lesson carrying: three explanation levels, a
+worked example, why-it-matters, common mistakes, real-world career context,
+four practice tiers, a **sandbox exercise on the real spreadsheet engine**, a
+debugging or reasoning challenge, and end-of-lesson takeaways.
 
 ```
-Ported 38 lessons. Meeting the brief in full: 0
+  L0  ██████████ 100%   22/22  Finance Foundations
+  L1  ░░░░░░░░░░   5%    1/21  Accounting Foundations
+  L2  ██░░░░░░░░  18%    6/33  Financial Statements
+  L3  █░░░░░░░░░  11%    2/18  Financial Analysis
+  L4  █░░░░░░░░░  10%    3/29  Financial Modeling
+  L5  ███░░░░░░░  25%    7/28  Valuation
+  L6–L10                 0/76
 
-  38/38  explanation.beginner / intermediate / advanced   §42
-  38/38  visualization                                    §12
-  38/38  whyItMatters                                     §33
-  38/38  commonMistakes                                   §34
-  38/38  realWorld                                        §35
-  38/38  takeaways                                        §36
-  38/38  challenge                                        §2 MASTER
-  38/38  prerequisites                                    §41
-  38/38  practice tiers                                   §11
-  32/38  practice variety                                 §10
-   6/38  sandbox check (v1 custom closure can't cross)
+  TOTAL ██░░░░░░░░ 18%   41/227 topics
 ```
 
-That is the honest map of the remaining work on existing content. The
-mechanical half is done and free; the authored half is roughly 2–3 hours per
-lesson, ~100 hours for all 38.
+That counter is produced by `tests/coverage.test.mjs`, which reads the roadmap
+the site actually publishes and checks it against the authored lessons. It is
+not a claim; it is a build output.
 
-### Three lessons hand-finished
+## Your two requirements, made enforceable
 
-`1620-liquidity`, `1330-balance-sheet`, `2240-dcf` — chosen because they are a
-ratio lesson, a capstone with a tie check, and the hardest modelling lesson in
-the curriculum. If the schema survives those three it will survive the rest.
+**"A practice problem for each topic without any fail."** The coverage gate
+refuses to count a topic as covered unless its lesson has all four practice
+tiers *and* a sandbox exercise with checks. A lesson that is explanation-only
+does not register, however good the prose is.
 
-Each now carries everything the brief asks for: three explanation levels, an
-interactive visualization spec, worked example, why-it-matters, common
-mistakes, real-world uses, all four practice tiers with a mix of question
-types, the sandbox, a debugging challenge, and takeaways.
+**"That one can practice it in our Excel-level sandbox."** Every sandbox is
+verified two ways on every run:
 
-The `1330` lesson is one of the six whose v1 `custom` check could not be
-carried across mechanically. Its tie check is rewritten as a v2 spec that
-reports the *size* of the difference — which is the debugging clue the lesson
-teaches.
+```
+Sandboxes verified solvable: 26
+Guarded cells tested: 132
+Hardcoding the right answer passed anyway: 0
+Blanking a cell left every check passing: 0
+```
 
-### Tests — 116 assertions
+The first line means each sandbox is solved with its intended formulas and all
+checks pass — no exercise ships that cannot actually be completed. The rest is
+mutation testing: for all 132 answer cells, typing the *correct number* instead
+of the formula is rejected, and blanking any cell breaks at least one check.
+There are no holes.
 
-`node tests/ported.test.mjs`. The important ones:
+## What the content actually is
 
-- **Every sandbox is solved** with the intended formulas and all checks pass.
-- **Blank any answer cell** → a check must fail. (Catches a check that isn't
-  actually testing anything.)
-- **Hardcode the correct answer** in any answer cell → the check must still
-  fail. §17, verified per cell rather than asserted once.
-- The figures tie across lessons: liquidity's current assets equal the balance
-  sheet's inventory + receivables + cash, computed from both workbooks.
-- The DCF sandbox is a live model — raising WACC lowers enterprise value.
-- **The anchor lesson is tested as a lesson:** filling `=1/(1+B2)^C5` across
-  produces `=1/(1+D2)^E5` and a wrong factor; filling `=1/(1+$B$2)^C5` produces
-  `=1/(1+$B$2)^E5` and the right one. The thing 2240 teaches is demonstrated
-  by the engine, not just asserted in prose.
-- Every practice question accepts its own intended answer.
+Roughly **40,000 words** across 26 lessons, 3,000 lines for Level 0 alone.
 
-## Two bugs the port found
+Written for someone who has never opened a financial statement — a tea stall, a
+salary, a savings account — before the café's lakhs arrive in Level 1. The
+sandboxes build real things:
 
-Worth naming, because they are the reason this step existed.
+- **Bank or cart?** — return on capital versus a safe rate
+- **Break-even** — contribution per cup, fixed costs, the volume needed to survive
+- **From profit to cash** — the bridge that explains why a profitable year drained ₹1,00,000
+- **Simple against compound** — the ^ operator, and a ₹3,72,750 gap after 20 years
+- **Nominal against real** — savings that double in rupees while buying 264 fewer cups
+- **Should Anil buy the cart?** — discount factors, present values, NPV, and the rate at which the decision flips
+- **What is the café really earning?** — economic profit after charging for capital and forgone salary
 
-**A duplicate key in my own reference lesson.** `ebitda.js` had `summary`
-twice — the one-line blurb near the top and the §36 takeaways array at the
-bottom. The second silently overwrote the first. Had thirty lessons been
-authored against that shape first, thirty would have had to be edited. The
-takeaways field is now `takeaways`.
+Two design choices worth flagging. Anchored references (`$B$2`) are introduced
+in Level 0, in the interest and time-value sandboxes, because that is the skill
+the DCF lesson in Level 5 tests — three of the Level 0 challenges are debugging
+problems about a reference that drifted when filled. And every sandbox
+"success" line ends by telling the learner which input to change, so the sheet
+is used as a model rather than a worksheet.
 
-**The level lookup was wrong.** The porter mapped module codes (`1600`) but
-lessons carry lesson codes (`1620`), so every ported lesson silently defaulted
-to `statements`. Liquidity is `analysis`; the DCF is `valuation`.
+## The honest arithmetic on the rest
 
-Neither would have been visible without porting real lessons. That is exactly
-what the step was for.
+186 topics remain. At the depth above — and these took real time to write and
+verify — that is **550–1,100 hours** of authoring. There is no architecture
+that shortcuts it, and I would rather say so than deliver 227 thin topics that
+technically satisfy a counter.
 
-## Two lessons still show one gap, on purpose
+What is now true that was not before: the work is **additive and gated**. Each
+new lesson lights up the roadmap, the search index, the prerequisite graph and
+the progress rollup with no code change, and cannot ship broken because the
+coverage and hardcode gates run on every commit.
 
-`ebitda` and `1330-balance-sheet` still report `prerequisites` as missing. That
-is correct: their real prerequisites are lessons that have not been ported yet
-(revenue, COGS, opex; modules 1100–1300). The test asserts prerequisites are
-the *only* outstanding gap rather than silencing the report — a gap report you
-switch off when it is inconvenient is not a gap report.
+## Suggested order for the rest
 
-## Suite status
+1. **Level 1, Accounting Foundations (21 topics).** It is the direct
+   continuation and the existing 38 v1 lessons already cover much of the
+   ground — the porter lifts them mechanically, leaving only the authored
+   sections.
+2. **Level 3, Financial Analysis (18).** Mostly ratios, which are the fastest
+   topics to write well and the most sandbox-friendly.
+3. **Level 2, Financial Statements (33).** Largest, but 6 are already done.
+4. Levels 4–5 next; 6–10 last, since they presume everything above.
 
-| Suite | Assertions |
-|---|---|
-| v1 engine (`tests/engine.test.html`) | 151 ✅ |
-| v1 curriculum (`tests/lessons.test.html`) | 300 ✅ |
-| v2 sheet engine | 175 ✅ |
-| Learning architecture | 111 ✅ |
-| Ported lessons | 116 ✅ |
-| **Total** | **853 ✅** |
+## One thing still blocking all of it
 
-## Next
-
-1. **Build the grid**, non-virtualized, against these three lessons. They
-   exercise every feature it needs: SUM ranges, anchored fills across columns,
-   a tie meter, per-cell hints, multiple number formats.
-2. **Port the remaining 35** — mechanical part is one command, authored part is
-   the ~100 hours above.
-3. **Author Level 0.** Still the biggest hole in the product: there is nothing
-   below the accounting equation, and "a beginner can learn finance here" lives
-   or dies on it.
+None of this is wired into the live site. `js/learn/`, `js/sheets/` and these
+lessons are not referenced by `index.html`, and the last upload flattened
+several of them to the repo root. Until that commit happens, the coverage
+number is real and invisible.

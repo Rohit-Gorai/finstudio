@@ -1,19 +1,29 @@
 
-The ported lessons validate
+Curriculum coverage — every roadmap topic needs a sandbox practice problem
 
-Every sandbox is solvable with the intended formulas
+  L0  ██████████ 100%   22/22  Finance Foundations
+  L1  ░░░░░░░░░░   5%    1/21  Accounting Foundations
+  L2  ██░░░░░░░░  18%    6/33  Financial Statements
+  L3  █░░░░░░░░░  11%    2/18  Financial Analysis
+  L4  █░░░░░░░░░  10%    3/29  Financial Modeling
+  L5  ███░░░░░░░  25%    7/28  Valuation
+  L6  ░░░░░░░░░░   0%    0/14  Investment Banking
+  L7  ░░░░░░░░░░   0%    0/12  Private Equity / LBO
+  L8  ░░░░░░░░░░   0%    0/17  Equity Research & Investing
+  L9  ░░░░░░░░░░   0%    0/17  Markets
+  L10 ░░░░░░░░░░   0%    0/16  Advanced Finance
 
-Mutation: blanking any answer cell must fail a check
+  TOTAL ██░░░░░░░░ 18%   41/227 topics
 
-Mutation: the right number, typed in, must still fail (§17)
+  Authored lessons: 26
+  Sandboxes verified solvable: 26
 
-The figures tie to the rest of the curriculum
+  Still unwritten: 186 topics
+    · L1 · Accounting equation
+    · L1 · Double-entry accounting
+    · L1 · Debits and credits
+    · L1 · Chart of accounts
+    · L1 · Accrual accounting
+    · L1 · Cash accounting
+    … and 180 more
 
-The sandboxes are live models, not static answers
-
-Every practice question in every lesson can be answered
-
-The three ported lessons form a graph
-
-──────────────────────────────────────────────────────────
-All 116 assertions passed.
