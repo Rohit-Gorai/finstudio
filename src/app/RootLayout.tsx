@@ -1,16 +1,15 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { curriculum } from "@/data/masterCurriculum";
 
 type NavItem = { label: string; href: string };
-const nav: NavItem[] = [
-  { label: "Learn", href: "/" }, { label: "Curriculum", href: "/curriculum" }, { label: "Formulas", href: "/formulas" }, { label: "Glossary", href: "/glossary" },
-];
-const levelLink = (level: number) => `/curriculum#level-${level}`;
+const nav: NavItem[] = [{ label: "Learn", href: "/" }, { label: "Curriculum", href: "/curriculum" }, { label: "Formulas", href: "/formulas" }, { label: "Glossary", href: "/glossary" }];
+const levelLink = (level: number) => `/level/${level}`;
 export function RootLayout() {
   const location = useLocation();
   return <div className="min-h-screen bg-paper text-ink">
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="topbar"><div className="topbar-inner"><Link to="/" className="brand" aria-label="FinStudio home"><span className="brand-mark" aria-hidden="true">F</span><span className="brand-name">Fin<em>Studio</em></span></Link><nav className="topnav" aria-label="Primary">{nav.map(item=><Link key={item.href} to={item.href} className={location.pathname===item.href?"active":""}>{item.label}</Link>)}</nav><div className="topbar-actions"><Link className="search-link" to="/curriculum" aria-label="Explore curriculum">⌕ <span>Explore</span></Link><Link className="btn-primary" to="/curriculum">Start learning <span aria-hidden="true">→</span></Link></div></div></header>
-    <main id="main" tabIndex={-1}><div className="site-shell"><aside className="desktop-rail" aria-label="Learning levels"><p className="rail-label">SYLLABUS</p>{Array.from({length:11},(_,level)=><Link key={level} to={levelLink(level)} className="rail-link"><span>{String(level).padStart(2,"0")}</span> Level {level}</Link>)}</aside><div className="site-main"><Outlet /></div></div></main>
+    <main id="main" tabIndex={-1}><div className="site-shell"><aside className="desktop-rail" aria-label="Learning levels"><p className="rail-label">SYLLABUS</p>{curriculum.map(level=><Link key={level.level} to={levelLink(level.level)} className="rail-link"><span>{String(level.level).padStart(2,"0")}</span> {level.title}</Link>)}</aside><div className="site-main"><Outlet /></div></div></main>
     <footer className="site-footer"><div className="footer-inner"><div className="footer-head"><div><p className="footer-statement">Every number, <span>built by you.</span></p><p className="footer-sub">A practice-first finance school.</p></div><Link className="footer-cta" to="/curriculum">Explore the full curriculum <span aria-hidden="true">→</span></Link></div><div className="footer-cols"><div><h3>Learn</h3><Link to="/curriculum">Curriculum</Link><Link to="/formulas">Formula library</Link><Link to="/glossary">Glossary</Link></div><div><h3>Build</h3><Link to={levelLink(4)}>Financial modeling</Link><Link to={levelLink(5)}>Valuation</Link><Link to={levelLink(7)}>Private equity / LBO</Link><Link to={levelLink(8)}>Investment cases</Link></div><div><h3>Advanced</h3><Link to={levelLink(9)}>Markets</Link><Link to={levelLink(10)}>Advanced finance</Link><a href="https://github.com/Rohit-Gorai/finstudio" rel="noreferrer">Source on GitHub</a></div><div><h3>Notes</h3><span>Educational content only</span><span>Not investment, accounting or tax advice</span><span>₹ / en-IN formats; concepts are global</span><a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noreferrer">Report an error</a></div></div><p className="footer-credit">Designed and developed by <strong>Rohit Gorai</strong> · © {new Date().getFullYear()} Rohit Gorai</p></div></footer>
   </div>;
 }
