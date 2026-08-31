@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { allTopics, topicBySlug, topicRouteSlug } from "@/data/masterCurriculum";
 import { getLessonContent } from "@/data/lessonContent";
+import { completeLessonContent } from "@/data/lessonCompletion";
 import { useMemo, useState } from "react";
 
 export function TopicPage() {
@@ -12,7 +13,7 @@ export function TopicPage() {
   const next = index >= 0 ? allTopics[index + 1] : undefined;
   const result = useMemo(() => (values[0] ?? 0) * (1 + (values[1] ?? 0) / 100 + (values[2] ?? 0) / 100), [values]);
   if (!topic) return <div className="mx-auto max-w-5xl px-5 py-20"><h1 className="font-display text-4xl font-semibold">Topic not found</h1><p className="mt-3 text-lg text-ink-soft">This topic is not in the FinStudio curriculum.</p><Link className="mt-6 inline-block text-lg font-semibold text-green" to="/curriculum">Back to curriculum →</Link></div>;
-  const lesson = getLessonContent(topic.topic, topic.module, topic.level);
+  const lesson = completeLessonContent(topic.topic, getLessonContent(topic.topic, topic.module, topic.level));
   const steps = ["Learn", "See", "Try", "Practice", "Build", "Check", "Apply", "Master"];
   return <article className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
     <Link to={`/level/${topic.level}`} className="text-lg font-semibold text-green no-underline">← Level {topic.level}: {topic.levelTitle}</Link>
