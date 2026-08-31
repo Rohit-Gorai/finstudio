@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "audit:curriculum": "node tests/curriculum-audit.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
