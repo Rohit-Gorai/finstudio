@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { allTopics, curriculum, topicBySlug, topicRouteSlug } from "../src/data/masterCurriculum";
 import { getLessonContent } from "../src/data/lessonContent";
 import { completeLessonContent } from "../src/data/lessonCompletion";
+import { getTopicLearning, buildCurriculumAudit } from "../src/data/topicLearning";
 
 describe("FinStudio curriculum integrity", () => {
   it("contains every level from 0 through 10", () => {
@@ -36,6 +37,23 @@ describe("FinStudio curriculum integrity", () => {
       expect(lesson.example.trim(), topic.topic).not.toHaveLength(0);
       expect(lesson.pitfalls.length, topic.topic).toBeGreaterThanOrEqual(2);
       expect(lesson.decision.trim(), topic.topic).not.toHaveLength(0);
+    }
+  });
+
+  it("provides structured learning, practice, quiz, sandbox and case assets for every topic", () => {
+    const audit = buildCurriculumAudit(curriculum);
+    expect(audit.length).toBe(allTopics.length);
+    for (const item of audit) {
+      expect(item.routeReady, item.topic).toBe(true);
+      expect(item.content, item.topic).toBe(true);
+      expect(item.quiz, item.topic).toBe(true);
+      expect(item.practice, item.topic).toBe(true);
+      expect(item.sandbox, item.topic).toBe(true);
+      expect(item.caseStudy, item.topic).toBe(true);
+      expect(item.complete, item.topic).toBe(true);
+      const lesson = getTopicLearning(item.topic, item.module, item.level);
+      expect(lesson.interview.length, item.topic).toBeGreaterThanOrEqual(3);
+      expect(lesson.mistakes.length, item.topic).toBeGreaterThanOrEqual(3);
     }
   });
 });
