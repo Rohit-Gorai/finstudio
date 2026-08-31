@@ -14,6 +14,7 @@ export const curriculum: CurriculumLevel[] = [
 {level:9,title:'Markets',blurb:'Learn market instruments and macro relationships through interactive visualizations rather than long explanations.',modules:[M('Equities',['Stocks','Market capitalization']),M('Fixed income',['Bonds','Yield','Yield curves','Duration','Convexity','Credit']),M('Macro & currencies',['Interest rates','Central banks','FX','Commodities']),M('Derivatives',['Derivatives','Options','Futures']),M('Market mechanics',['Liquidity','Volatility'])]},
 {level:10,title:'Advanced Finance',blurb:'Move into pricing, portfolio construction, risk, simulation and capital structure.',modules:[M('Options & portfolio theory',['Options pricing','Black-Scholes intuition','Greeks','Portfolio theory','CAPM','Efficient frontier','Sharpe ratio','Beta','Alpha','Factor investing']),M('Risk & simulation',['Risk management','VaR','Scenario analysis','Monte Carlo simulation']),M('Corporate finance',['Capital structure','Cost of capital'])]},
 ];
-export const allTopics = curriculum.flatMap(l => l.modules.flatMap(m => m.topics.map(topic => ({ level: l.level, levelTitle: l.title, module: m.title, topic }))));
 export const topicSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-export const topicBySlug = (slug: string) => allTopics.find(x => topicSlug(x.topic) === slug);
+export const allTopics = curriculum.flatMap(l => l.modules.flatMap(m => m.topics.map(topic => ({ level: l.level, levelTitle: l.title, module: m.title, topic, slug: `${l.level}-${topicSlug(m.title)}-${topicSlug(topic)}` }))));
+export const topicRouteSlug = (x: { level:number; module:string; topic:string }) => `${x.level}-${topicSlug(x.module)}-${topicSlug(x.topic)}`;
+export const topicBySlug = (slug: string) => allTopics.find(x => x.slug === slug) ?? (() => { const matches = allTopics.filter(x => topicSlug(x.topic) === slug); return matches.length === 1 ? matches[0] : undefined; })();
