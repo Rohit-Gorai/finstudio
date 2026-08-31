@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { allTopics, curriculum, topicBySlug, topicRouteSlug } from "../src/data/masterCurriculum";
 import { getLessonContent } from "../src/data/lessonContent";
+import { completeLessonContent } from "../src/data/lessonCompletion";
 
 describe("FinStudio curriculum integrity", () => {
   it("contains every level from 0 through 10", () => {
@@ -26,9 +27,9 @@ describe("FinStudio curriculum integrity", () => {
     }
   });
 
-  it("provides a complete lesson payload for every topic", () => {
+  it("provides a complete user-facing lesson payload for every topic", () => {
     for (const topic of allTopics) {
-      const lesson = getLessonContent(topic.topic, topic.module, topic.level);
+      const lesson = completeLessonContent(topic.topic, getLessonContent(topic.topic, topic.module, topic.level));
       expect(lesson.concept.trim(), topic.topic).not.toHaveLength(0);
       expect(lesson.why.trim(), topic.topic).not.toHaveLength(0);
       expect(lesson.mechanics.length, topic.topic).toBeGreaterThanOrEqual(3);
