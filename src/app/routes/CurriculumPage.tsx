@@ -1,10 +1,70 @@
 import { Link } from "react-router-dom";
 import { allTopics, curriculum, topicRouteSlug } from "@/data/masterCurriculum";
+import { buildCurriculumAudit } from "@/data/topicLearning";
+
 const stages = ["Learn", "See", "Try", "Practice", "Build", "Check", "Apply", "Master"];
+
 export function CurriculumPage() {
+  const audit = buildCurriculumAudit(curriculum);
+  const auditByKey = new Map(audit.map(item => [`${item.level}|${item.module}|${item.topic}`, item]));
+  const completeCount = audit.filter(item => item.complete).length;
+
   return <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
-    <header className="max-w-4xl"><p className="text-sm font-semibold uppercase tracking-widest text-green">Curriculum · Levels 0–10</p><h1 className="mt-3 font-display text-5xl font-semibold tracking-tight sm:text-6xl">Learn finance by building it.</h1><p className="mt-5 text-lg text-ink-soft">Every topic follows the practice-first loop: Learn → See → Try → Practice → Build → Check → Apply → Master.</p><div className="mt-5 flex flex-wrap gap-3 text-sm"><span className="rounded-full border border-line bg-paper-2 px-3 py-1">{curriculum.length} levels</span><span className="rounded-full border border-line bg-paper-2 px-3 py-1">{curriculum.reduce((n,l)=>n+l.modules.length,0)} modules</span><span className="rounded-full border border-line bg-paper-2 px-3 py-1">{allTopics.length} topics</span></div></header>
-    <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-paper-2 p-4"><div className="flex min-w-max gap-2">{stages.map((s,i)=><div key={s} className="rounded-full border border-line bg-paper px-3 py-1.5 text-xs"><span className="font-mono text-green">{String(i+1).padStart(2,"0")}</span> {s}</div>)}</div></div>
-    <div className="mt-12 space-y-10">{curriculum.map(level=><section key={level.level} id={`level-${level.level}`} className="scroll-mt-24"><div className="flex items-end justify-between gap-4 border-b border-line pb-3"><div><p className="font-mono text-xs text-ink-faint">LEVEL {level.level}</p><h2 className="mt-1 font-display text-3xl font-semibold">{level.title}</h2></div><span className="text-sm text-ink-soft">{level.modules.reduce((n,m)=>n+m.topics.length,0)} topics</span></div><p className="mt-3 max-w-3xl text-sm text-ink-soft">{level.blurb}</p><div className="mt-5 grid gap-4 md:grid-cols-2">{level.modules.map(m=><article key={m.title} className="rounded-lg border border-line bg-paper-2 p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><h3 className="font-display text-xl font-semibold">{m.title}</h3><span className="font-mono text-xs text-ink-faint">{m.topics.length}</span></div><div className="mt-4 grid gap-1 sm:grid-cols-2">{m.topics.map(topic=>{const item=allTopics.find(x=>x.level===level.level&&x.module===m.title&&x.topic===topic)!;return <Link key={topic} to={`/topic/${topicRouteSlug(item)}`} className="rounded px-2 py-1.5 text-sm text-ink-soft no-underline hover:bg-paper-3 hover:text-green">{topic} <span aria-hidden="true">→</span></Link>})}</div></article>)}</div></section>)}</div>
+    <header className="max-w-4xl">
+      <p className="text-sm font-semibold uppercase tracking-widest text-green">Curriculum · Levels 0–10</p>
+      <h1 className="mt-3 font-display text-5xl font-semibold tracking-tight sm:text-6xl">Learn finance by building it.</h1>
+      <p className="mt-5 text-lg text-ink-soft">Every topic is a real lesson destination — not a dead-end roadmap item. Learn the idea, see the mechanics, try the model, practise, check your answer, apply it, and master it.</p>
+      <div className="mt-5 flex flex-wrap gap-3 text-sm">
+        <span className="rounded-full border border-line bg-paper-2 px-3 py-1">{curriculum.length} levels</span>
+        <span className="rounded-full border border-line bg-paper-2 px-3 py-1">{curriculum.reduce((n,l)=>n+l.modules.length,0)} modules</span>
+        <span className="rounded-full border border-line bg-paper-2 px-3 py-1">{allTopics.length} topics</span>
+        <span className="rounded-full border border-green bg-green-soft px-3 py-1 font-semibold text-green">{completeCount}/{allTopics.length} lesson-ready</span>
+      </div>
+    </header>
+
+    <div className="mt-8 overflow-x-auto rounded-lg border border-line bg-paper-2 p-4">
+      <div className="flex min-w-max gap-2">
+        {stages.map((s,i)=><div key={s} className="rounded-full border border-line bg-paper px-3 py-1.5 text-xs"><span className="font-mono text-green">{String(i+1).padStart(2,"0")}</span> {s}</div>)}
+      </div>
+    </div>
+
+    <div className="mt-5 rounded-xl border border-line bg-paper-2 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-xs font-semibold uppercase tracking-widest text-green">How this works</p>
+          <p className="mt-1 text-sm leading-6 text-ink-soft">Every topic below opens its own interactive lesson. No topic should require you to guess where the content lives.</p>
+        </div>
+        <Link to="/curriculum/matrix" className="rounded-lg border border-line bg-paper px-4 py-2.5 text-sm font-semibold text-ink no-underline hover:border-green hover:text-green">View curriculum matrix →</Link>
+      </div>
+    </div>
+
+    <div className="mt-12 space-y-10">
+      {curriculum.map(level=><section key={level.level} id={`level-${level.level}`} className="scroll-mt-24">
+        <div className="flex items-end justify-between gap-4 border-b border-line pb-3">
+          <div><p className="font-mono text-xs text-ink-faint">LEVEL {level.level}</p><h2 className="mt-1 font-display text-3xl font-semibold">{level.title}</h2></div>
+          <span className="text-sm text-ink-soft">{level.modules.reduce((n,m)=>n+m.topics.length,0)} topics</span>
+        </div>
+        <p className="mt-3 max-w-3xl text-sm text-ink-soft">{level.blurb}</p>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          {level.modules.map(m=><article key={m.title} className="rounded-lg border border-line bg-paper-2 p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4"><h3 className="font-display text-xl font-semibold">{m.title}</h3><span className="font-mono text-xs text-ink-faint">{m.topics.length}</span></div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {m.topics.map(topic=>{
+                const item=allTopics.find(x=>x.level===level.level&&x.module===m.title&&x.topic===topic)!;
+                const check = auditByKey.get(`${level.level}|${m.title}|${topic}`);
+                return <Link key={topic} to={`/topic/${topicRouteSlug(item)}`} aria-label={`Open lesson: ${topic}`} className="group rounded-lg border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft no-underline transition hover:-translate-y-px hover:border-green hover:bg-green-soft hover:text-green">
+                  <span className="flex items-center justify-between gap-2"><span><span className="mr-2 font-mono text-[10px] text-ink-faint">{String(m.topics.indexOf(topic)+1).padStart(2,"0")}</span>{topic}</span><span aria-hidden="true" className="font-semibold">→</span></span>
+                  <span className="mt-1 flex gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-faint">
+                    <span>8-part lesson</span>{check?.complete && <span className="text-green">· Ready</span>}
+                  </span>
+                </Link>;
+              })}
+            </div>
+          </article>)}
+        </div>
+      </section>)}
+    </div>
+
+    <nav className="mt-14 flex justify-between border-t border-line pt-6 text-base font-semibold"><span /><Link to="/level/0" className="text-green no-underline">Start at Level 0 →</Link></nav>
   </div>;
 }
