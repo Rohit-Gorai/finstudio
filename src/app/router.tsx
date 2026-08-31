@@ -6,18 +6,16 @@ import { FormulasPage } from "@/app/routes/FormulasPage";
 import { GlossaryPage } from "@/app/routes/GlossaryPage";
 import { StyleGuidePage } from "@/app/routes/StyleGuidePage";
 import { NotFoundPage } from "@/app/routes/NotFoundPage";
+import { TopicPage } from "@/app/routes/TopicPage";
 
 export const router = createBrowserRouter([
-  {
-    element: <RootLayout />,
-    errorElement: <NotFoundPage />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "curriculum", element: <CurriculumPage /> },
-      { path: "formulas", element: <FormulasPage /> },
-      { path: "glossary", element: <GlossaryPage /> },
-      { path: "style-guide", element: <StyleGuidePage /> },
-      { path: "*", element: <NotFoundPage /> },
-    ],
-  },
+  { element: <RootLayout />, errorElement: <NotFoundPage />, children: [
+    { index: true, element: <HomePage /> },
+    { path: "curriculum", element: <CurriculumPage /> },
+    { path: "topic/:topicSlug", element: <TopicPage /> },
+    { path: "formulas", element: <FormulasPage /> },
+    { path: "glossary", element: <GlossaryPage /> },
+    { path: "style-guide", element: <StyleGuidePage /> },
+    { path: "*", element: <NotFoundPage /> },
+  ] },
 ], { basename: import.meta.env.BASE_URL.replace(/\/$/, "") || "/" });
