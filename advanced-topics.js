@@ -52,8 +52,44 @@
     var main=document.getElementById('main'); if(!main)return;
     var values=topic.inputs.map(function(x){return x[1];});
     var cards=topic.inputs.map(function(x,i){return '<label class="lab-input"><span>'+esc(x[0])+'</span><input type="number" step="any" value="'+x[1]+'" data-i="'+i+'"></label>';}).join('');
-    main.innerHTML='<div class="page topic-lab-page"><p class="lesson-kicker">LEVEL '+topic.level+' · '+esc(topic.group)+'</p><h1>'+esc(topic.name)+'</h1><p class="lesson-lede">'+esc(topic.example)+'</p><div class="topic-template"><section><h2>What is '+esc(topic.name)+'?</h2><p>'+esc(topic.example)+'</p></section><section><h2>The Formula / Intuition</h2><div class="lab-formula">'+esc(topic.formula)+'</div></section><section><h2>See It</h2><div class="lab-viz"><div class="lab-bars"><i style="height:30%"></i><i style="height:55%"></i><i style="height:80%"></i><i style="height:65%"></i><i style="height:95%"></i></div><strong id="labOutput"></strong></div></section><section><h2>Example</h2><p>'+esc(topic.example)+'</p></section><section class="lab-sandbox"><div><p class="lesson-kicker">TRY IT YOURSELF</p><h2>Sandbox</h2><p>Change an assumption. FinStudio recalculates the result immediately.</p></div><div class="lab-inputs">'+cards+'</div><div class="lab-result"><span>Live result</span><strong id="labResult"></strong></div></section><section class="lab-challenge"><h2>Challenge</h2><p>Change at least two inputs and explain, in your own words, why the result changed. Then try an extreme value and see whether your intuition still holds.</p></section></div></div>';
-    function update(){var v=[].map.call(main.querySelectorAll('.lab-input input'),function(el){var n=Number(el.value);return Number.isFinite(n)?n:0;});var out=topic.calc(v);main.querySelector('#labResult').textContent=out;main.querySelector('#labOutput').textContent=out;}
+    main.innerHTML='<div class="page topic-lab-page"><p class="lesson-kicker">LEVEL '+topic.level+' · '+esc(topic.group)+'</p><h1>'+esc(topic.name)+'</h1><p class="lesson-lede">'+esc(topic.example)+'</p><div class="topic-template"><section><h2>The formula</h2><div class="lab-formula">'+esc(topic.formula)+'</div></section><section><h2>See it move</h2><p class="lab-viz-cap">How the result responds as <strong>'+esc(topic.inputs[0][0])+'</strong> varies from half to double. The solid bar is your current setting.</p><div class="lab-viz"><div class="lab-bars" id="labBars"></div><strong id="labOutput"></strong></div></section><section class="lab-sandbox"><div><p class="lesson-kicker">TRY IT YOURSELF</p><h2>Sandbox</h2><p>Change an assumption. FinStudio recalculates the result immediately.</p></div><div class="lab-inputs">'+cards+'</div><div class="lab-result"><span>Live result</span><strong id="labResult"></strong></div></section><section class="lab-challenge"><h2>Challenge</h2><p>Change at least two inputs and explain, in your own words, why the result changed. Then try an extreme value and see whether your intuition still holds.</p></section></div></div>';
+    var refMax = null;
+    function update(){
+      var v=[].map.call(main.querySelectorAll('.lab-input input'),function(el){
+        var n=Number(el.value); return Number.isFinite(n)?n:0;});
+      var out=topic.calc(v);
+      var res=main.querySelector('#labResult'); if(res) res.textContent=out;
+      var o=main.querySelector('#labOutput'); if(o) o.textContent=out;
+      /* The old bars were five inline heights, identical on every topic and
+         unmoved by any input. This sweeps the first driver from half to double
+         its current value and plots the result, so the chart reports the model. */
+      var bars=main.querySelector('#labBars'); if(!bars) return;
+      var base=v[0]||1;
+      if (refMax == null) {
+        var d = topic.inputs.map(function (x) { return x[1]; }), dm = 0;
+        [0.5,0.75,1,1.5,2].forEach(function (k) {
+          var w = d.slice(); w[0] = (d[0]||1) * k;
+          var n = Math.abs(parseFloat(String(topic.calc(w)).replace(/[^0-9.\-]/g,'')));
+          if (Number.isFinite(n) && n > dm) dm = n;
+        });
+        refMax = dm || 1;
+      }
+      var pts=[0.5,0.75,1,1.5,2].map(function(k){
+        var w=v.slice(); w[0]=base*k;
+        var num=parseFloat(String(topic.calc(w)).replace(/[^0-9.\-]/g,''));
+        return {k:k,y:Number.isFinite(num)?num:0};
+      });
+      /* Normalising to the sweep's own min/max made the chart invariant: for any
+         model linear in the swept driver the shape is identical whatever the other
+         inputs are. Anchor instead to the result at the lesson's default inputs, so
+         both the SHAPE and the LEVEL move when the learner changes anything. */
+      var span = refMax || 1, lo = 0;
+      bars.innerHTML=pts.map(function(p){
+        var h=Math.max(8,Math.min(100,((p.y-lo)/span)*88+10));
+        return '<i class="'+(p.k===1?'now':'')+'" style="height:'+h.toFixed(0)+'%" title="'+
+          (p.k*100).toFixed(0)+'% of current \u2192 '+p.y.toFixed(2)+'"></i>';
+      }).join('');
+    }
     [].forEach.call(main.querySelectorAll('.lab-input input'),function(el){el.addEventListener('input',update);}); update();
   }
   function sync(){var h=location.hash.replace(/^#\/?/,'');if(h.indexOf('lab/topic/')===0){var id=h.slice(10);var t=topics.find(function(x){return slug(x.name)===id;});if(t)render(t);}}

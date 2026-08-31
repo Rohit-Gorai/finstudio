@@ -37,7 +37,28 @@
       section.className = "roadmap-level";
       var cards = level.modules.map(function (m) {
         var liveModule = liveModuleFor(m.title);
+        // A topic shows what it actually is: an authored lesson, an original
+        // course lesson, a calculator, or something still to be written.
+        var counts = { lesson: 0, legacy: 0, lab: 0, planned: 0 };
         var topics = m.topics.map(function (topic) {
+          var authored = null;
+          if (window.FinLessons) {
+            var want = topic.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+            Object.keys(window.FinLessons).some(function (k) {
+              var l = window.FinLessons[k];
+              var covers = (l.covers || []).some(function (c) {
+                return c.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() === want;
+              });
+              if (covers || l.title.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() === want) {
+                authored = l; return true;
+              }
+              return false;
+            });
+          }
+          if (authored) {
+            counts.lesson++;
+            return '<a class="rt rt-lesson" href="#/learn/' + authored.id + '">' + esc(topic) + '</a>';
+          }
           var linked = null;
           if (liveModule) {
             LS.manifest.modules[liveModule].lessons.forEach(function (id) {
@@ -45,14 +66,21 @@
               if (lesson && lesson.title && lesson.title.toLowerCase() === topic.toLowerCase()) linked = "#" + "/" + id;
             });
           }
-          var lab = advancedTopic(topic);
-          if (lab) linked = "#/lab/topic/" + slug(topic);
-          if (linked) return '<a href="' + linked + '">' + esc(topic) + '</a>';
-          return '<span>' + esc(topic) + '</span>';
+          if (linked) { counts.legacy++; return '<a class="rt rt-legacy" href="' + linked + '">' + esc(topic) + '</a>'; }
+          if (advancedTopic(topic)) {
+            counts.lab++;
+            return '<a class="rt rt-lab" href="#/lab/topic/' + slug(topic) + '">' + esc(topic) + '</a>';
+          }
+          counts.planned++;
+          return '<span class="rt rt-planned" title="Not written yet">' + esc(topic) + '</span>';
         }).join(" · ");
-        var liveCount = liveModule ? LS.manifest.modules[liveModule].lessons.length : 0;
-        var labCount = m.topics.filter(function (topic) { return !!advancedTopic(topic); }).length;
-        var badge = liveCount ? 'Interactive · ' + liveCount + ' lessons' : (labCount ? 'Interactive · ' + labCount + ' topic labs' : 'Roadmap · lessons to build');
+        var written = counts.lesson + counts.legacy;
+        var badge = written === m.topics.length
+          ? '\u2713 All ' + m.topics.length + ' written'
+          : written
+            ? written + ' of ' + m.topics.length + ' written'
+            : counts.lab ? counts.lab + ' calculators \u00b7 lessons to come'
+              : 'Planned \u00b7 not written yet';
         return '<article class="roadmap-module"><h3>' + esc(m.title) + '</h3><p>' + topics + '</p><span class="roadmap-badge">' + badge + '</span></article>';
       }).join("");
       section.innerHTML = '<div class="roadmap-level-head"><div class="roadmap-number">LEVEL ' + level.level + '</div><div><h2>' + esc(level.title) + '</h2><p class="roadmap-level-lede">' + esc(level.blurb) + '</p></div></div><div class="roadmap-modules">' + cards + '</div>';

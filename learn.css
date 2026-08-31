@@ -328,3 +328,47 @@
   margin: .6rem 0 0; padding: .5rem .8rem; border-radius: 8px; font-size: .86rem;
   background: rgba(30,107,78,.07); color: var(--lx-accent);
 }
+
+/* ============================================================================
+   Roadmap topic states — a topic now looks like what it is
+   ========================================================================= */
+.rt { border-bottom: 1px solid transparent; }
+.rt-lesson { font-weight: 600; border-bottom-color: currentColor; }
+.rt-legacy { border-bottom-color: rgba(0,0,0,.2); }
+.rt-lab { border-bottom: 1px dotted currentColor; }
+.rt-planned { color: #9A9A9F; }
+
+.roadmap-badge { white-space: nowrap; }
+
+/* ---- a topic that has not been written yet says so ---- */
+.topic-planned { max-width: 640px; }
+.planned-note {
+  margin: 1.4rem 0 2rem; padding: 1.1rem 1.3rem; border-radius: 12px;
+  background: rgba(138,90,0,.07); border: 1px solid rgba(138,90,0,.2);
+}
+.planned-note strong { display: block; margin-bottom: .35rem; }
+.planned-note p { margin: 0; color: #4A4A50; }
+.planned-list { list-style: none; margin: .8rem 0 2rem; padding: 0; }
+.planned-list li {
+  padding: .7rem 0; border-bottom: 1px solid rgba(0,0,0,.08);
+  display: flex; flex-direction: column; gap: .15rem;
+}
+.planned-list li:last-child { border-bottom: 0; }
+.planned-list a { font-weight: 600; }
+.planned-list span { font-size: .88rem; color: #6E6E73; }
+.planned-back { margin-top: 1.5rem; }
+
+/* ---- the status matrix ---- */
+.matrix-summary {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: .8rem; margin: 1.5rem 0 2rem;
+}
+.matrix-summary div {
+  padding: 1rem; border: 1px solid rgba(0,0,0,.09); border-radius: 12px;
+}
+.matrix-summary strong {
+  display: block; font-size: 1.7rem; font-variant-numeric: tabular-nums; line-height: 1;
+}
+.matrix-summary span { font-size: .82rem; color: #6E6E73; }
+.matrix-wrap table tr.st-planned td { color: #9A9A9F; }
+.matrix-wrap table tr.st-lesson td:nth-child(3) { color: #17714A; font-weight: 600; }
