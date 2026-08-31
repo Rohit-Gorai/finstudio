@@ -20,7 +20,7 @@
         "Receivables ↑     → revenue, <b>no cash in</b>       → cash &lt; profit",
         "Capex / repayment → cash out, <b>never an expense</b> → cash &lt; profit"
       ], note: "Read the middle column: each line is a timing mismatch between when value moves and when cash moves. That's all the cash flow statement ever fixes." },
-      { t: "example", h: "<p>In FY25 the café earned " + R(p.pat) + " of profit. Its bank balance rose by " + R(cf.net) + ". A gap of " + R(p.pat - cf.net) + " — bigger than the profit itself. Every rupee of that gap has a name, and by lesson 1550 you'll have accounted for all of them.</p>" },
+      { t: "example", h: "<p>In FY25 the café earned " + R(p.pat) + " of profit. Its bank balance rose by " + R(cf.net) + ". A gap of " + R(p.pat - cf.net) + " — bigger than the profit itself. Every rupee of that gap has a name, and by the “Capstone: the full cash flow statement” lesson you'll have accounted for all of them.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -65,7 +65,7 @@
         "+ Increase in accrued expenses    <i>(same idea)</i>",
         "= <b>Cash from operations</b>"
       ], note: "The rule that never fails: an <b>asset</b> going up consumes cash; a <b>liability</b> going up releases cash. If you remember only one thing from this module, remember that." },
-      { t: "example", h: "<p>Every input is one you already know. PAT " + R(p.pat) + " (lesson 1460). Depreciation " + R(p.dep) + " (1440). Receivables rose from " + R(bs24.receivables) + " to " + R(bs.receivables) + "; inventory from " + R(bs24.inventory) + " to " + R(bs.inventory) + "; payables from " + R(bs24.payables) + " to " + R(bs.payables) + "; accrued salaries from " + R(bs24.accrued) + " to " + R(bs.accrued) + ".</p>" },
+      { t: "example", h: "<p>Every input is one you already know. PAT " + R(p.pat) + " (see “Capstone: the full income statement”). Depreciation " + R(p.dep) + " (1440). Receivables rose from " + R(bs24.receivables) + " to " + R(bs.receivables) + "; inventory from " + R(bs24.inventory) + " to " + R(bs.inventory) + "; payables from " + R(bs24.payables) + " to " + R(bs.payables) + "; accrued salaries from " + R(bs24.accrued) + " to " + R(bs.accrued) + ".</p>" },
       {
         t: "sheet",
         sheet: {
@@ -113,7 +113,7 @@
         "Capex ≈ Depreciation  → <b>maintaining</b> — replacing what wears out",
         "Capex &lt; Depreciation  → <b>shrinking</b> — living off existing assets"
       ], note: "A business that runs capex below depreciation for years is consuming its own capacity. It flatters cash flow now and forces a large catch-up later." },
-      { t: "example", h: "<p>FY25's only investing activity was the " + R(240000) + " second machine and scooter — the FY25 additions from your depreciation schedule in lesson 1440. So CFI is " + R(cf.cfi) + ". Note that FY25 capex of " + R(240000) + " exactly equals FY25 depreciation of " + R(p.dep) + ": the café is holding its capacity steady, not expanding it.</p>" },
+      { t: "example", h: "<p>FY25's only investing activity was the " + R(240000) + " second machine and scooter — the FY25 additions from your depreciation schedule in the “Depreciation & EBIT” lesson. So CFI is " + R(cf.cfi) + ". Note that FY25 capex of " + R(240000) + " exactly equals FY25 depreciation of " + R(p.dep) + ": the café is holding its capacity steady, not expanding it.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -136,11 +136,11 @@
             { cell: "B7", expect: 240000, message: "B7: capex as a positive addition to PP&E", mustFormula: true },
             { cell: "B9", expect: 1400000, message: "B9: closing net PP&E — matches the balance sheet's " + R(1400000), mustFormula: true }
           ],
-          success: "CFI " + R(cf.cfi) + ", and net PP&E rolls to exactly " + R(bs.ppeNet) + " — the figure you put on the balance sheet in lesson 1330. Capex and depreciation cancelled, so net PP&E didn't move at all."
+          success: "CFI " + R(cf.cfi) + ", and net PP&E rolls to exactly " + R(bs.ppeNet) + " — the figure you put on the balance sheet in the “Capstone: build the balance sheet” lesson. Capex and depreciation cancelled, so net PP&E didn't move at all."
         }
       },
-      { t: "where", h: "CFI is the second section of the <strong>cash flow statement</strong>. The capex it reports lands in PP&E on the <strong>balance sheet</strong> and then drips onto the <strong>income statement</strong> as depreciation for years afterwards. This roll-forward is bridge #2 of module 2100." },
-      { t: "mcq", q: "A café reports strong CFO but its capex has been half its depreciation for three years. What should you suspect?", opts: ["Excellent capital discipline", "Cash flow is being flattered by under-investment that must be caught up later", "The depreciation rate is definitely wrong", "Nothing — CFO is what matters"], correct: 1, why: ["It can look like discipline for a year. Three years of replacing only half of what wears out is different — the equipment is aging.", "Depreciation is the annual estimate of capacity being consumed. Spending half of it means the asset base is quietly running down, and the espresso machines will need replacing all at once. Today's healthy cash flow is partly borrowed from tomorrow's balance sheet. Comparing capex to depreciation over several years is one of the fastest quality checks in analysis.", "Possible, but under-spending is the far more common explanation — and you'd check the asset ages before blaming the rate.", "CFO matters enormously, but CFO minus capex — free cash flow, lesson 2230 — is what actually funds lenders and owners."] }
+      { t: "where", h: "CFI is the second section of the <strong>cash flow statement</strong>. The capex it reports lands in PP&E on the <strong>balance sheet</strong> and then drips onto the <strong>income statement</strong> as depreciation for years afterwards. This roll-forward is bridge #2 of the “Linking the three statements” module." },
+      { t: "mcq", q: "A café reports strong CFO but its capex has been half its depreciation for three years. What should you suspect?", opts: ["Excellent capital discipline", "Cash flow is being flattered by under-investment that must be caught up later", "The depreciation rate is definitely wrong", "Nothing — CFO is what matters"], correct: 1, why: ["It can look like discipline for a year. Three years of replacing only half of what wears out is different — the equipment is aging.", "Depreciation is the annual estimate of capacity being consumed. Spending half of it means the asset base is quietly running down, and the espresso machines will need replacing all at once. Today's healthy cash flow is partly borrowed from tomorrow's balance sheet. Comparing capex to depreciation over several years is one of the fastest quality checks in analysis.", "Possible, but under-spending is the far more common explanation — and you'd check the asset ages before blaming the rate.", "CFO matters enormously, but CFO minus capex — free cash flow, the “Free cash flow” lesson — is what actually funds lenders and owners."] }
     ]
   };
 
@@ -158,8 +158,8 @@
         "= <b>Cash from financing</b>",
         "<i>Interest paid: operating (it's a cost of running the business)</i>",
         "<i>Loan principal: financing (it's the money itself)</i>"
-      ], note: "The interest-vs-principal split from lesson 1220 decides which section each payment lands in. Ind AS permits interest paid in either operating or financing for non-financial companies, provided it's applied consistently — we keep it in operating, inside PAT." },
-      { t: "example", h: "<p>FY25 had two financing events: the café repaid " + R(50000) + " of loan principal (lesson 1220), and paid Priya her first dividend of " + R(C.fy25.dividend) + " (lesson 1320). No new shares, no new borrowing. CFF is " + R(cf.cff) + " — the business returning money to its funders.</p>" },
+      ], note: "The interest-vs-principal split from the “Borrowings” lesson decides which section each payment lands in. Ind AS permits interest paid in either operating or financing for non-financial companies, provided it's applied consistently — we keep it in operating, inside PAT." },
+      { t: "example", h: "<p>FY25 had two financing events: the café repaid " + R(50000) + " of loan principal (see “Borrowings”), and paid Priya her first dividend of " + R(C.fy25.dividend) + " (see “Retained earnings”). No new shares, no new borrowing. CFF is " + R(cf.cff) + " — the business returning money to its funders.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -185,7 +185,7 @@
           success: "CFF " + R(cf.cff) + " and the loan rolls to exactly " + R(bs.loan) + ". Note the dividend appears here — never on the income statement. Dividends are a distribution of profit, not a cost of earning it."
         }
       },
-      { t: "where", h: "CFF is the third section of the <strong>cash flow statement</strong>. Loan movements roll the borrowings line on the <strong>balance sheet</strong>; the dividend reduces retained earnings there too (the '− dividends' in your lesson 1320 roll-forward). The <strong>income statement</strong> sees none of it — only the interest." },
+      { t: "where", h: "CFF is the third section of the <strong>cash flow statement</strong>. Loan movements roll the borrowings line on the <strong>balance sheet</strong>; the dividend reduces retained earnings there too (the '− dividends' in your the “Retained earnings” lesson roll-forward). The <strong>income statement</strong> sees none of it — only the interest." },
       { t: "mcq", q: "Which pairing is correct?", opts: ["Interest paid → financing; dividend paid → financing", "Interest paid → operating; dividend paid → financing", "Interest paid → operating; dividend paid → operating", "Both belong in investing"], correct: 1, why: ["Defensible under Ind AS, which allows interest paid in financing if applied consistently — but it isn't the convention this course (or most teaching models) uses, since interest is already inside PAT.", "Interest is a cost of running the business, already deducted in arriving at PAT, so it sits in operating. A dividend isn't a cost at all — it's profit being handed to the owner, which is a transaction with a capital provider: financing. The give-away is that interest reduces profit and dividends don't.", "A dividend can't be operating — it isn't an expense of earning revenue. It never appears on the income statement.", "Investing is only about long-term assets — buying and selling machines, not dealing with funders."] }
     ]
   };
@@ -195,13 +195,13 @@
     title: "Capstone: the full cash flow statement",
     short: "★ The cash flow statement",
     desc: "Combine CFO, CFI and CFF to derive closing cash — which must equal the ₹1,00,000 on the capstone balance sheet.",
-    lede: "Three sections, one answer. Add them to the opening bank balance and you must land on exactly ₹1,00,000 — the cash line of the balance sheet you tied in lesson 1330. This is the third statement closing the loop.",
+    lede: "Three sections, one answer. Add them to the opening bank balance and you must land on exactly ₹1,00,000 — the cash line of the balance sheet you tied in the “Capstone: build the balance sheet” lesson. This is the third statement closing the loop.",
     body: [
       { t: "p", h: "You now have two independent proofs waiting to meet. The balance sheet said cash was " + R(bs.cash) + ". This statement derives cash from a completely different direction — profit, working capital, capex, financing. When they agree, your model is genuinely consistent." },
       { t: "formula", title: "The whole statement", lines: [
-        "Cash from operations   (lesson 1520)",
-        "+ Cash from investing  (lesson 1530)",
-        "+ Cash from financing  (lesson 1540)",
+        "Cash from operations   (see “CFO (indirect)”)",
+        "+ Cash from investing  (see “CFI & capex”)",
+        "+ Cash from financing  (see “CFF”)",
         "= Net change in cash",
         "+ Opening cash",
         "= <b>Closing cash</b>  → must equal the balance sheet"
@@ -235,7 +235,7 @@
             ["Opening cash (1 Apr 2024)", cf.openingCash],
             ["CLOSING CASH", { input: true, mf: true, fmt: "inr", ph: "=B18+B19" }],
             [null, null],
-            ["Balance sheet cash (lesson 1330)", bs.cash]
+            ["Balance sheet cash (see “Capstone: build the balance sheet”)", bs.cash]
           ],
           checks: [
             { cell: "B8", expect: 380000, message: "B8: cash from operations via SUM", mustFormula: true, mustUse: "SUM", mustUseLabel: "the SUM function" },

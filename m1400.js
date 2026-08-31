@@ -20,13 +20,13 @@
         "Credit sale:    deliver now, collect later  → revenue, <b>receivable ↑</b>",
         "Advance:        collect now, deliver later  → <b>no revenue yet</b>, liability ↑"
       ], note: "Only the middle case creates a receivable; only the last delays revenue. The delivery date, not the bank statement, drives the top line." },
-      { t: "example", h: "<p>FY25 revenue of <strong>" + R(p.revenue) + "</strong> comes from two streams: the counter (walk-in coffee, paid instantly) and corporate catering (invoiced on 30-day terms — the " + R(600000) + " you met in lesson 1140). Both are revenue the moment the coffee is handed over.</p>" },
+      { t: "example", h: "<p>FY25 revenue of <strong>" + R(p.revenue) + "</strong> comes from two streams: the counter (walk-in coffee, paid instantly) and corporate catering (invoiced on 30-day terms — the " + R(600000) + " you met in the “Receivables” lesson). Both are revenue the moment the coffee is handed over.</p>" },
       {
         t: "sheet",
         sheet: {
           id: "s1",
           title: "FY25 revenue, and how much of it was actually collected",
-          hint: "Total revenue in B4 with SUM. Then in B7: cash collected = counter sales (all cash) + catering collections. You worked out catering collections in lesson 1140 using the roll-forward — opening receivables + invoices − closing.",
+          hint: "Total revenue in B4 with SUM. Then in B7: cash collected = counter sales (all cash) + catering collections. You worked out catering collections in the “Receivables” lesson using the roll-forward — opening receivables + invoices − closing.",
           grid: [
             ["", { v: "FY25", year: true }],
             ["Counter sales (cash)", p.revenue - 600000],
@@ -42,7 +42,7 @@
             { cell: "B7", expect: 2360000, message: "B7: cash collected = counter + (opening AR + catering invoices − closing AR)", mustFormula: true },
             { cell: "B8", expect: 40000, message: "B8: the gap between revenue and cash", mustFormula: true }
           ],
-          success: "Revenue " + R(p.revenue) + ", cash collected " + R(2360000) + ". The " + R(40000) + " gap is exactly the growth in receivables — and exactly what the cash flow statement will subtract in lesson 1520."
+          success: "Revenue " + R(p.revenue) + ", cash collected " + R(2360000) + ". The " + R(40000) + " gap is exactly the growth in receivables — and exactly what the cash flow statement will subtract in the “CFO (indirect)” lesson."
         }
       },
       { t: "where", h: "Revenue is the first line of the <strong>income statement</strong>. Anything invoiced but uncollected sits in receivables on the <strong>balance sheet</strong>. The change in receivables is a working-capital adjustment on the <strong>cash flow statement</strong>." },
@@ -64,7 +64,7 @@
         "Gross margin % = Gross profit ÷ Revenue",
         "Café FY25: " + R(p.revenue) + " − " + R(p.cogs) + " = <b>" + R(p.grossProfit) + "</b> (" + P(C.ratios.gmPct) + ")"
       ], note: "The direct/indirect line can be judgment. A barista's wage is arguably direct, but because staffing is fixed week to week the café — like most cafés — reports it as an operating expense. Be consistent, and read others' definitions before comparing." },
-      { t: "example", h: "<p>The café consumed " + R(p.cogs) + " of beans, milk and pastry (lesson 1130) to deliver " + R(p.revenue) + " of coffee. A 65% gross margin is normal for a café: the physical inputs of a latte are cheap; the rent and the barista are what actually cost money.</p>" },
+      { t: "example", h: "<p>The café consumed " + R(p.cogs) + " of beans, milk and pastry (see “Inventory”) to deliver " + R(p.revenue) + " of coffee. A 65% gross margin is normal for a café: the physical inputs of a latte are cheap; the rent and the barista are what actually cost money.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -87,8 +87,8 @@
           success: "Gross profit grew from " + R(1300000) + " to " + R(1560000) + " — but margin held at exactly 65%. Growth came from selling more coffee, not from charging more per cup."
         }
       },
-      { t: "where", h: "Gross profit is the first subtotal on the <strong>income statement</strong>. It has no balance-sheet line of its own — but the inventory it consumed came off the <strong>balance sheet</strong>, and the margin it reveals is the first ratio you'll compute in lesson 1610." },
-      { t: "mcq", q: "The café's gross margin falls from 65% to 58% while revenue grows. The most likely cause is…", opts: ["Rent went up", "Bean prices rose and the café didn't raise cup prices", "It bought a second espresso machine", "It repaid part of the loan"], correct: 1, why: ["Rent is an operating expense, below the gross profit line — it can't touch gross margin. That's precisely why the subtotal is useful: it isolates product economics from overheads.", "Gross margin only moves when the relationship between selling price and direct cost changes. Costlier beans absorbed rather than passed on is the textbook cause — and a warning sign, because it means the café lacks the pricing power to defend its margin.", "A machine is capex; it reaches the P&L as depreciation, far below gross profit.", "Loan repayments never touch the income statement at all (lesson 1220), let alone gross margin."] }
+      { t: "where", h: "Gross profit is the first subtotal on the <strong>income statement</strong>. It has no balance-sheet line of its own — but the inventory it consumed came off the <strong>balance sheet</strong>, and the margin it reveals is the first ratio you'll compute in the “Margins” lesson." },
+      { t: "mcq", q: "The café's gross margin falls from 65% to 58% while revenue grows. The most likely cause is…", opts: ["Rent went up", "Bean prices rose and the café didn't raise cup prices", "It bought a second espresso machine", "It repaid part of the loan"], correct: 1, why: ["Rent is an operating expense, below the gross profit line — it can't touch gross margin. That's precisely why the subtotal is useful: it isolates product economics from overheads.", "Gross margin only moves when the relationship between selling price and direct cost changes. Costlier beans absorbed rather than passed on is the textbook cause — and a warning sign, because it means the café lacks the pricing power to defend its margin.", "A machine is capex; it reaches the P&L as depreciation, far below gross profit.", "Loan repayments never touch the income statement at all (see “Borrowings”), let alone gross margin."] }
     ]
   };
 
@@ -105,7 +105,7 @@
         "Revenue − COGS = Gross profit",
         "Gross profit − Operating expenses = <b>EBITDA</b>",
         "Café FY25: " + R(p.grossProfit) + " − " + R(p.opex) + " = <b>" + R(p.ebitda) + "</b>"
-      ], note: "EBITDA is popular because it compares two businesses' operations without their debt or tax situations getting in the way. Its danger: it ignores that machines wear out and must be replaced. EBITDA is not cash flow — module 1500 shows why." },
+      ], note: "EBITDA is popular because it compares two businesses' operations without their debt or tax situations getting in the way. Its danger: it ignores that machines wear out and must be replaced. EBITDA is not cash flow — the “The cash flow statement” module shows why." },
       { t: "example", h: "<p>The café's FY25 overheads: rent " + R(p.rent) + " (unchanged — a five-year lease), salaries " + R(p.salaries) + " (up, a third barista was hired), utilities " + R(p.utilities) + ", and marketing " + R(p.marketing) + ". Total " + R(p.opex) + ".</p>" },
       {
         t: "sheet",
@@ -136,7 +136,7 @@
         }
       },
       { t: "note", h: "<strong>Sign convention:</strong> this sheet enters costs as negative numbers and adds them. Real published statements print costs as positives and subtract. Both are fine — but inside a model, all-negative-costs-and-SUM means fewer sign errors. Pick one and never mix." },
-      { t: "where", h: "EBITDA is a subtotal on the <strong>income statement</strong> (though Indian statutory formats don't print it as a named line — analysts compute it). It's the starting point for valuation multiples and the closest P&L line to operating cash flow, which module 1500 builds properly." },
+      { t: "where", h: "EBITDA is a subtotal on the <strong>income statement</strong> (though Indian statutory formats don't print it as a named line — analysts compute it). It's the starting point for valuation multiples and the closest P&L line to operating cash flow, which the “The cash flow statement” module builds properly." },
       { t: "mcq", q: "Two cafés both report EBITDA of ₹5,00,000. Café A owns its equipment outright; Café B leases everything and has a large loan. Which is more profitable?", opts: ["They're identical — EBITDA says so", "Café A, almost certainly", "Café B, almost certainly", "EBITDA alone can't tell you"], correct: 3, why: ["Identical EBITDA is exactly where the number stops being informative. It was designed to strip out the differences that matter here.", "A is a reasonable guess — no interest, and owned assets — but you're inferring below-EBITDA facts EBITDA deliberately excludes. You'd need the full P&L to say.", "B's lease costs sit in opex (so already inside EBITDA), but its interest doesn't. Guessing B is riskier still.", "That's the honest answer, and the lesson. EBITDA excludes interest (B pays a lot, A none) and depreciation (A's owned machines wear out; B's don't appear). Same EBITDA, potentially very different profit after tax — which is why this module keeps going down to PAT."] }
     ]
   };
@@ -145,15 +145,15 @@
     id: "1440-depreciation-pl", code: "1440", minutes: 4,
     title: "Depreciation on the P&L",
     short: "Depreciation & EBIT",
-    desc: "Take the depreciation schedule from lesson 1120 onto the income statement to reach EBIT — operating profit.",
-    lede: "Now the van schedule you built in lesson 1120 comes back. Subtract depreciation from EBITDA and you get EBIT — the last line before financing and government take their cuts.",
+    desc: "Take the depreciation schedule from the “Depreciation” lesson onto the income statement to reach EBIT — operating profit.",
+    lede: "Now the van schedule you built in the “Depreciation” lesson comes back. Subtract depreciation from EBITDA and you get EBIT — the last line before financing and government take their cuts.",
     body: [
       { t: "def", term: "EBIT (operating profit)", h: "<strong>E</strong>arnings <strong>B</strong>efore <strong>I</strong>nterest and <strong>T</strong>ax. EBITDA minus depreciation — profit after recognising that assets wear out, but before how the business is financed. Also called operating profit." },
       { t: "formula", title: "EBITDA to EBIT", lines: [
         "EBIT = EBITDA − Depreciation &amp; amortisation",
         "Café FY25: " + R(p.ebitda) + " − " + R(p.dep) + " = <b>" + R(p.ebit) + "</b>"
       ], note: "Amortisation is the same idea applied to intangible assets (software, a licence). The café has none, so its D&A is pure depreciation." },
-      { t: "example", h: "<p>FY25 depreciation comes straight from the asset register: the fit-out (" + R(60000) + "), the original machine (" + R(60000) + "), the van (" + R(80000) + " — your lesson 1120 schedule), plus a first full year on the " + R(240000) + " of FY25 additions over 6 years (" + R(40000) + "). Total " + R(p.dep) + ", up from " + R(p24.dep) + " in FY24 because of that new equipment.</p>" },
+      { t: "example", h: "<p>FY25 depreciation comes straight from the asset register: the fit-out (" + R(60000) + "), the original machine (" + R(60000) + "), the van (" + R(80000) + " — your the “Depreciation” lesson schedule), plus a first full year on the " + R(240000) + " of FY25 additions over 6 years (" + R(40000) + "). Total " + R(p.dep) + ", up from " + R(p24.dep) + " in FY24 because of that new equipment.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -168,7 +168,7 @@
             ["FY25 additions", 240000, { v: 6, fmt: "plain" }, { input: true, mf: true, fmt: "inr" }],
             ["Total FY25 depreciation", null, null, { input: true, mf: true, fmt: "inr", ph: "=SUM(D2:D5)" }],
             [null, null, null, null],
-            ["EBITDA (from lesson 1430)", null, null, p.ebitda],
+            ["EBITDA (from the “Opex & EBITDA” lesson)", null, null, p.ebitda],
             ["EBIT", null, null, { input: true, mf: true, fmt: "inr", ph: "=D8-D6" }]
           ],
           checks: [
@@ -182,7 +182,7 @@
           success: "Depreciation " + R(p.dep) + " → EBIT " + R(p.ebit) + ". Every rupee of that charge was traced to a specific asset — that's how a real schedule is built, and it's why your balance sheet's accumulated depreciation will tie."
         }
       },
-      { t: "where", h: "The charge is an expense on the <strong>income statement</strong>. The same number increases accumulated depreciation on the <strong>balance sheet</strong> (reducing net PP&E), and gets added back on the <strong>cash flow statement</strong> because no cash moved. One number, three statements — that's bridge #2 of module 2100." },
+      { t: "where", h: "The charge is an expense on the <strong>income statement</strong>. The same number increases accumulated depreciation on the <strong>balance sheet</strong> (reducing net PP&E), and gets added back on the <strong>cash flow statement</strong> because no cash moved. One number, three statements — that's bridge #2 of the “Linking the three statements” module." },
       { t: "mcq", q: "The café's EBITDA is ₹5,40,000 and EBIT is ₹3,00,000. A friend says \"so it really made ₹5,40,000, the depreciation is just an accounting entry.\" What's wrong with that?", opts: ["Nothing — depreciation isn't cash", "The equipment genuinely wears out and will need replacing with real cash", "Depreciation is a tax, not an expense", "EBITDA is always the wrong number to use"], correct: 1, why: ["It's true that no cash moved this year — but that's a statement about timing, not about whether the cost is real.", "The van really does lose a fifth of its life every year, and in FY29 the café will write a real cheque to replace it. Depreciation is the honest annual cost of that; ignoring it flatters any asset-heavy business. Note the café's steady-state capex (₹2,40,000/yr) happens to equal its depreciation — which is what you'd expect for a business just maintaining itself.", "Depreciation is an expense; it reduces taxable profit but is not itself a tax.", "EBITDA is useful for comparing operations across different financing structures — it's just not profit, and not cash."] }
     ]
   };
@@ -202,7 +202,7 @@
         "<b>Profit after tax</b> = Profit before tax − Tax",
         "Café FY25: " + R(p.ebit) + " − " + R(p.interest) + " = " + R(p.pbt) + "; tax @25% = " + R(p.tax) + "; <b>PAT = " + R(p.pat) + "</b>"
       ], note: "We apply a flat 25% to book profit. Real tax is computed on taxable income, which differs from book profit (depreciation rates alone differ) and creates deferred tax — a genuine complication we deliberately skip. Flag it, don't fake it." },
-      { t: "example", h: "<p>Interest is " + R(p.interest) + " — 10% of the " + R(C.fy24.bs.loan) + " loan balance the café opened FY25 with (lesson 1220). Tax at 25% of " + R(p.pbt) + " is " + R(p.tax) + ". What's left is <strong>" + R(p.pat) + "</strong> — and you should recognise that number: it's exactly the PAT you rolled into retained earnings back in lesson 1320.</p>" },
+      { t: "example", h: "<p>Interest is " + R(p.interest) + " — 10% of the " + R(C.fy24.bs.loan) + " loan balance the café opened FY25 with (see “Borrowings”). Tax at 25% of " + R(p.pbt) + " is " + R(p.tax) + ". What's left is <strong>" + R(p.pat) + "</strong> — and you should recognise that number: it's exactly the PAT you rolled into retained earnings back in the “Retained earnings” lesson.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -223,11 +223,11 @@
             { cell: "B6", expect: -60000, message: "B6: tax at 25% of PBT (as a negative, matching the sign convention)", mustFormula: true },
             { cell: "B7", expect: 180000, message: "B7: profit after tax", mustFormula: true }
           ],
-          success: "PAT " + R(p.pat) + " — the same " + R(p.pat) + " you put into retained earnings in lesson 1320, now derived rather than given. The course is starting to close its loops."
+          success: "PAT " + R(p.pat) + " — the same " + R(p.pat) + " you put into retained earnings in the “Retained earnings” lesson, now derived rather than given. The course is starting to close its loops."
         }
       },
-      { t: "where", h: "PAT is the <strong>income statement's</strong> final line. It flows into retained earnings on the <strong>balance sheet</strong> (bridge #1), and it's the starting line of the <strong>cash flow statement</strong> (lesson 1520). No other number appears on all three statements so directly." },
-      { t: "mcq", q: "The café is considering repaying its whole ₹5,50,000 loan next year. Ignoring everything else, what happens to the P&L?", opts: ["PAT falls by ₹5,50,000", "PAT rises because ₹55,000 of interest disappears — partly offset by more tax", "No change — repayment isn't a P&L item, and neither is interest", "PAT rises by exactly ₹55,000"], correct: 1, why: ["Repaying principal never hits the P&L (lesson 1220) — it's a balance sheet and cash flow event only.", "The repayment itself is invisible to the P&L, but the interest it eliminates is not: ₹55,000 less expense → PBT up ₹55,000 → tax up ₹13,750 at 25% → PAT up ₹41,250. Interest saved is never fully kept, because the taxman takes a share of any profit increase. This is the mirror image of the 'tax shield' on debt.", "The repayment isn't, but interest very much is an expense.", "Close, but it forgets tax. A pre-tax saving of ₹55,000 is worth ₹41,250 after 25% tax."] }
+      { t: "where", h: "PAT is the <strong>income statement's</strong> final line. It flows into retained earnings on the <strong>balance sheet</strong> (bridge #1), and it's the starting line of the <strong>cash flow statement</strong> (see “CFO (indirect)”). No other number appears on all three statements so directly." },
+      { t: "mcq", q: "The café is considering repaying its whole ₹5,50,000 loan next year. Ignoring everything else, what happens to the P&L?", opts: ["PAT falls by ₹5,50,000", "PAT rises because ₹55,000 of interest disappears — partly offset by more tax", "No change — repayment isn't a P&L item, and neither is interest", "PAT rises by exactly ₹55,000"], correct: 1, why: ["Repaying principal never hits the P&L (see “Borrowings”) — it's a balance sheet and cash flow event only.", "The repayment itself is invisible to the P&L, but the interest it eliminates is not: ₹55,000 less expense → PBT up ₹55,000 → tax up ₹13,750 at 25% → PAT up ₹41,250. Interest saved is never fully kept, because the taxman takes a share of any profit increase. This is the mirror image of the 'tax shield' on debt.", "The repayment isn't, but interest very much is an expense.", "Close, but it forgets tax. A pre-tax saving of ₹55,000 is worth ₹41,250 after 25% tax."] }
     ]
   };
 
@@ -236,7 +236,7 @@
     title: "Capstone: the full income statement",
     short: "★ The income statement",
     desc: "Assemble Bombay Bean's complete FY25 income statement from revenue to PAT — which must land on exactly ₹1,80,000.",
-    lede: "Every line you've built in this module, in one statement. There's a hard target: profit after tax must come out at exactly ₹1,80,000, because that's the number already sitting inside the balance sheet you tied in lesson 1330. If it doesn't match, the two statements disagree — and one of them is wrong.",
+    lede: "Every line you've built in this module, in one statement. There's a hard target: profit after tax must come out at exactly ₹1,80,000, because that's the number already sitting inside the balance sheet you tied in the “Capstone: build the balance sheet” lesson. If it doesn't match, the two statements disagree — and one of them is wrong.",
     body: [
       { t: "p", h: "This is how professionals check themselves. You built the balance sheet first and it tied, using a PAT you were <em>given</em>. Now you're deriving that PAT independently from revenue and costs. If the two agree, both are almost certainly right. If they don't, you've found a real error." },
       { t: "formula", title: "The whole statement", lines: [
@@ -245,7 +245,7 @@
         "EBITDA − Depreciation        = EBIT",
         "EBIT − Interest              = Profit before tax",
         "PBT − Tax                    = <b>Profit after tax</b>"
-      ], note: "Costs are entered negative and every subtotal is a SUM — the convention from lesson 1430." },
+      ], note: "Costs are entered negative and every subtotal is a SUM — the convention from the “Opex & EBITDA” lesson." },
       { t: "example", h: "<p>Bombay Bean Coffee Co., year ended 31 March 2025. All the inputs are ones you've derived: revenue " + R(p.revenue) + " (1410), COGS " + R(p.cogs) + " (1420/1130), the four operating costs (1430), depreciation " + R(p.dep) + " (1440), interest " + R(p.interest) + " (1450/1220), tax at 25%.</p>" },
       {
         t: "sheet",
@@ -287,17 +287,17 @@
             {
               custom: function (s) {
                 var pat = s.value("B18");
-                return pat === 180000 ? true : "Until PAT is exactly " + R(180000) + ", this statement contradicts the balance sheet you tied in lesson 1330.";
+                return pat === 180000 ? true : "Until PAT is exactly " + R(180000) + ", this statement contradicts the balance sheet you tied in the “Capstone: build the balance sheet” lesson.";
               },
-              message: "PAT agrees with the retained earnings used in lesson 1320/1330"
+              message: "PAT agrees with the retained earnings used in the “Retained earnings” lesson/1330"
             }
           ],
           success: "PAT " + R(p.pat) + ", a " + P(C.ratios.patPct) + " net margin — derived independently and matching the balance sheet exactly. Two statements built from opposite directions now agree."
         }
       },
-      { t: "note", h: "Look at how the margins narrow down the statement: 65% gross → 22.5% EBITDA → 12.5% EBIT → 7.5% PAT. Of every ₹100 a customer spends, ₹7.50 ends up as the owner's profit. That funnel is the single most useful picture of a business's economics, and lesson 1610 turns it into ratios." },
+      { t: "note", h: "Look at how the margins narrow down the statement: 65% gross → 22.5% EBITDA → 12.5% EBIT → 7.5% PAT. Of every ₹100 a customer spends, ₹7.50 ends up as the owner's profit. That funnel is the single most useful picture of a business's economics, and the “Margins” lesson turns it into ratios." },
       { t: "where", h: "This statement explains one line of the <strong>balance sheet</strong>: the " + R(p.pat) + " that grew retained earnings. It explains nothing about cash — the café earned " + R(p.pat) + " but its bank balance rose only " + R(C.fy25.cf.net) + ". Module 1500 explains that gap, and it's the last big idea in accounting." },
-      { t: "mcq", q: "The café earned " + R(p.pat) + " of profit but its cash only rose " + R(C.fy25.cf.net) + ". Which of these best explains a gap like that?", opts: ["The profit calculation must be wrong", "Profit includes non-cash charges and ignores cash spent on assets, stock, and loan repayment", "The tax was paid twice", "Depreciation removed cash from the bank"], correct: 1, why: ["Both numbers are right — they measure different things. Learning to hold both in your head at once is the point of module 1500.", "Several things drive a wedge: depreciation (₹2,40,000 of expense with no cash outflow, pushing cash <em>above</em> profit), and capex, higher inventory and receivables, loan repayment and the dividend (all real cash out that profit never sees). Netting to +₹40,000 of cash on ₹1,80,000 of profit is entirely normal for a growing business.", "Nothing was paid twice — the tax expense is a single 25% charge.", "Depreciation is precisely the expense that removes <em>no</em> cash. It's the biggest reason cash flow usually exceeds profit, not the reverse."] }
+      { t: "mcq", q: "The café earned " + R(p.pat) + " of profit but its cash only rose " + R(C.fy25.cf.net) + ". Which of these best explains a gap like that?", opts: ["The profit calculation must be wrong", "Profit includes non-cash charges and ignores cash spent on assets, stock, and loan repayment", "The tax was paid twice", "Depreciation removed cash from the bank"], correct: 1, why: ["Both numbers are right — they measure different things. Learning to hold both in your head at once is the point of the “The cash flow statement” module.", "Several things drive a wedge: depreciation (₹2,40,000 of expense with no cash outflow, pushing cash <em>above</em> profit), and capex, higher inventory and receivables, loan repayment and the dividend (all real cash out that profit never sees). Netting to +₹40,000 of cash on ₹1,80,000 of profit is entirely normal for a growing business.", "Nothing was paid twice — the tax expense is a single 25% charge.", "Depreciation is precisely the expense that removes <em>no</em> cash. It's the biggest reason cash flow usually exceeds profit, not the reverse."] }
     ]
   };
 })();

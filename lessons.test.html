@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LedgerSchool curriculum tests</title>
+<title>FinStudio curriculum tests</title>
 <style>
   :root { --paper:#FBF9F3; --ink:#182530; --green:#1E6B4E; --red:#B23A2F; --line:#DCD3BE; }
   body { background: var(--paper); color: var(--ink); font: 15px/1.6 "Public Sans", system-ui, sans-serif; margin: 0; padding: 2rem 1.2rem 4rem; }
@@ -26,7 +26,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>LedgerSchool curriculum tests</h1>
+  <h1>FinStudio curriculum tests</h1>
   <p class="sub">Solves every sandbox with the intended formulas and asserts that every check passes — so no lesson can ship with an unreachable answer or a mis-referenced cell. Also audits lesson structure, MCQs and the manifest.</p>
   <div id="summary">Running…</div>
   <div id="out"></div>
@@ -47,6 +47,7 @@
 <script src="../js/lessons/manifest.js"></script>
 <script src="../js/quizzes.js"></script>
 <script src="../js/reference.js"></script>
+<script src="../js/glossary.js"></script>
 <script>
 (function () {
   "use strict";
@@ -394,6 +395,39 @@
     ].forEach(function (term) {
       record(refText.indexOf(term) >= 0, "reference covers '" + term + "'");
     });
+  })();
+
+  section("Glossary");
+  (function () {
+    var seen = {}, problems;
+    record(LS.glossary.length >= 60, "glossary has a useful number of terms (" + LS.glossary.length + ")");
+    LS.glossary.forEach(function (t) {
+      problems = [];
+      if (!t.term) problems.push("no term");
+      if (!t.plain || t.plain.length < 20) problems.push("plain-English line missing or too thin");
+      if (!t.def || t.def.length < 30) problems.push("definition missing or too thin");
+      // the plain line must be genuinely plainer than the definition
+      if (t.plain && t.def && t.plain.length >= t.def.length) problems.push("plain line is not shorter than the definition");
+      if (["beginner", "intermediate", "advanced"].indexOf(t.level) < 0) problems.push("bad level '" + t.level + "'");
+      if (!t.group) problems.push("no group");
+      var key = t.term.toLowerCase();
+      if (seen[key]) problems.push("duplicate term");
+      seen[key] = true;
+      t.related.forEach(function (r) {
+        if (!LS.glossaryLookup(r)) problems.push("related term '" + r + "' is not in the glossary");
+      });
+      if (t.lesson && !LS.lessons[t.lesson]) problems.push("points at missing lesson " + t.lesson);
+      record(problems.length === 0, "glossary: " + t.term, problems.join("; "));
+    });
+    // aliases must not collide with a different term
+    var collisions = [];
+    LS.glossary.forEach(function (t) {
+      t.also.forEach(function (a) {
+        var hit = LS.glossaryLookup(a);
+        if (hit && hit.term !== t.term) collisions.push(a + " → " + hit.term + " and " + t.term);
+      });
+    });
+    record(collisions.length === 0, "no alias resolves to two different terms", collisions.join("; "));
   })();
 
   section("Company dataset self-audit");

@@ -17,6 +17,7 @@
     level: "valuation",
     difficulty: "advanced",
     estimatedTime: 8,
+    covers: ["DCF","Terminal value","Discount factors","Enterprise value","Equity value"],
     tags: ["dcf", "valuation", "wacc", "terminal value", "discount factor", "present value", "gordon growth"],
     summary: "Forecast the cash a business will generate, discount it for time and risk, and add up what it is worth today.",
     prerequisites: ["1330-balance-sheet"],
@@ -213,6 +214,7 @@
         { cell: "B13", sheet: "DCF", expect: 5915993, tol: 4000, mustFormula: true, mustReference: ["B10", "B12"], label: "ENTERPRISE VALUE" },
         { cell: "B15", sheet: "DCF", expect: 5465993, tol: 4000, mustFormula: true, mustReference: ["B13", "B14"], label: "EQUITY VALUE" }
       ],
+      solution: { DCF: { C7: "=1/(1+$B$2)^C5", D7: "=1/(1+$B$2)^D5", E7: "=1/(1+$B$2)^E5", C8: "=C6*C7", D8: "=D6*D7", E8: "=E6*E7", B10: "=SUM(C8:E8)", B11: "=E6*(1+B3)/(B2-B3)", B12: "=B11*E7", B13: "=B10+B12", B15: "=B13+B14" } },
       cellHints: {
         C7: { whatGoesHere: "Discount factor", hint: "One over (1 + WACC) to the power of the year. Anchor the WACC so it fills across.", pattern: "=1/(1+$B$2)^C5" },
         C8: { whatGoesHere: "Present value", hint: "The cash flow multiplied by its discount factor.", pattern: "=C6*C7" },

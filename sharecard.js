@@ -24,7 +24,7 @@
     // brand
     g.fillStyle = INK;
     g.font = "600 30px Georgia, 'Times New Roman', serif";
-    g.fillText("LedgerSchool", 64, 84);
+    g.fillText("FinStudio", 64, 84);
     g.fillStyle = "#8A959D";
     g.font = "18px system-ui, -apple-system, sans-serif";
     g.fillText("learn finance by building it", 254, 84);
@@ -106,7 +106,7 @@
     btn.addEventListener("click", function () {
       try {
         var a = document.createElement("a");
-        a.download = "ledgerschool-balance-sheet-ties.png";
+        a.download = "finstudio-balance-sheet-ties.png";
         a.href = canvas.toDataURL("image/png");
         document.body.appendChild(a);
         a.click();

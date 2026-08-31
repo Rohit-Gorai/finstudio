@@ -1,0 +1,57 @@
+/* Exact Master Prompt curriculum: Levels 0–10. Existing authored lessons are preserved separately. */
+(function(){
+  "use strict";
+  var LS=window.LS=window.LS||{};
+  function M(title,topics){return {title:title,topics:topics};}
+  var R=[
+    {level:0,title:"Finance Foundations",blurb:"Learn the language of finance, capital, value, risk and time value before building models.",modules:[
+      M("Finance basics",["What is finance?","Personal finance vs corporate finance vs investing","Financial markets","Companies and capital","Revenue","Costs","Profit","Cash","Assets","Liabilities","Equity","Debt","Interest","Risk","Return"]),
+      M("Time value & decision making",["Time value of money","Compounding","Inflation","Present value","Future value","Opportunity cost","Risk vs reward"])]},
+    {level:1,title:"Accounting Foundations",blurb:"Build accounting from first principles and understand how transactions flow through the books.",modules:[
+      M("Accounting mechanics",["Accounting equation","Double-entry accounting","Debits and credits","Chart of accounts","Accrual accounting","Cash accounting","Revenue recognition","Expenses"]),
+      M("Working capital & operating assets",["Accounts receivable","Accounts payable","Inventory","Prepaid expenses","Deferred revenue","Accrued expenses","Working capital"]),
+      M("Long-lived assets & equity",["Depreciation","Amortization","PP&E","Goodwill","Intangible assets","Retained earnings"])]},
+    {level:2,title:"Financial Statements",blurb:"Build the income statement, balance sheet and cash flow statement, then connect them interactively.",modules:[
+      M("Income statement",["Revenue","COGS","Gross profit","Operating expenses","EBITDA","D&A","EBIT","Interest","EBT","Taxes","Net income"]),
+      M("Balance sheet",["Cash","Receivables","Inventory","PP&E","Intangibles","Debt","Payables","Other liabilities","Equity"]),
+      M("Cash flow statement",["CFO","CFI","CFF","Capex","Change in working capital","Debt issuance","Debt repayment","Dividends","Stock issuance"]),
+      M("Three-statement connection",["Three-statement connection","Revenue cascade through the three statements","Profit to cash","Balance sheet check"])]},
+    {level:3,title:"Financial Analysis",blurb:"Turn financial statements into insight using margins, returns, liquidity, leverage and cash conversion.",modules:[
+      M("Profitability & returns",["Gross margin","EBITDA margin","EBIT margin","Net margin","ROE","ROA","ROIC","Asset turnover"]),
+      M("Liquidity & leverage",["Current ratio","Quick ratio","Debt/equity","Net debt/EBITDA","Interest coverage"]),
+      M("Cash & operating analysis",["Free cash flow","Working capital analysis","Cash conversion cycle","Operating leverage","Financial leverage"])]},
+    {level:4,title:"Financial Modeling",blurb:"Build a real model from assumptions and drivers through statements, cash flow and model checks.",modules:[
+      M("Model architecture",["Model architecture","Assumptions","Historical periods","Forecast periods","Drivers","Model formatting","Model best practices"]),
+      M("Operating schedules",["Revenue build","Cost build","Headcount model","Working capital model","Capex model","Depreciation schedule","Debt schedule","Interest schedule","Tax schedule","Retained earnings"]),
+      M("Integrated modeling",["Three-statement model","Scenario analysis","Sensitivity analysis","Model checks","Circularity"]),
+      M("Build a real model",["Revenue","Gross Profit","EBITDA","EBIT","Net Income","Cash Flow","Balance Sheet"])]},
+    {level:5,title:"Valuation",blurb:"Value businesses using market multiples and intrinsic valuation, with live assumptions and sensitivities.",modules:[
+      M("Valuation building blocks",["Enterprise value","Equity value","Market capitalization","Net debt","EV/Revenue","EV/EBITDA","P/E","PEG"]),
+      M("DCF",["DCF","WACC","Cost of equity","Cost of debt","CAPM","Beta","Risk-free rate","Equity risk premium","Terminal value","Perpetuity growth","Exit multiple","Discount factors","Sensitivity analysis"]),
+      M("Live DCF",["Revenue growth","Margin","WACC","Terminal growth","Enterprise Value","Equity Value","Share Price"])]},
+    {level:6,title:"Investment Banking",blurb:"Learn transaction analysis and build the mechanics behind M&A and deal execution.",modules:[
+      M("Transaction valuation",["Comparable companies","Precedent transactions","Trading multiples","Transaction multiples"]),
+      M("M&A modeling",["Accretion/dilution","Merger models","Sources & Uses","Purchase price","Financing mix","Goodwill","Synergies","Pro forma financials","Debt schedules"]),
+      M("LBO basics",["LBO basics"])]},
+    {level:7,title:"Private Equity / LBO",blurb:"Build an LBO from entry valuation and financing through debt paydown and sponsor returns.",modules:[
+      M("LBO construction",["Entry valuation","Debt financing","Sources & Uses","Operating case","Debt paydown","Exit valuation","Exit multiple","Sponsor equity"]),
+      M("Sponsor returns",["MOIC","IRR","Management options","Sensitivity analysis"])]},
+    {level:8,title:"Equity Research & Investing",blurb:"Build an evidence-based investment view from business quality, estimates, valuation, catalysts and risks.",modules:[
+      M("Business analysis",["Business analysis","Revenue drivers","Unit economics","Competitive advantage","TAM / SAM / SOM","Management analysis","Earnings","Guidance"]),
+      M("Investment case",["Free cash flow","Valuation","Investment thesis","Catalysts","Risks","Bear case","Base case","Bull case"]),
+      M("Interactive investment cases",["Build interactive investment cases"])]},
+    {level:9,title:"Markets",blurb:"Learn market instruments and macro relationships through interactive visualizations rather than long explanations.",modules:[
+      M("Equities",["Stocks","Market capitalization"]),
+      M("Fixed income",["Bonds","Yield","Yield curves","Duration","Convexity","Credit"]),
+      M("Macro & currencies",["Interest rates","Central banks","FX","Commodities"]),
+      M("Derivatives",["Derivatives","Options","Futures"]),
+      M("Market mechanics",["Liquidity","Volatility"])]},
+    {level:10,title:"Advanced Finance",blurb:"Move into pricing, portfolio construction, risk, simulation and capital structure.",modules:[
+      M("Options & portfolio theory",["Options pricing","Black-Scholes intuition","Greeks","Portfolio theory","CAPM","Efficient frontier","Sharpe ratio","Beta","Alpha","Factor investing"]),
+      M("Risk & simulation",["Risk management","VaR","Scenario analysis","Monte Carlo simulation"]),
+      M("Corporate finance",["Capital structure","Cost of capital"])]}
+  ];
+  LS.masterCurriculum=R;
+  LS.manifest=LS.manifest||{};
+  LS.manifest.roadmap=R;
+})();

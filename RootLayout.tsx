@@ -1,43 +1,39 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+
+type NavItem = { label: string; href: string };
+const nav: NavItem[] = [
+  { label: "Learn", href: "/" },
+  { label: "Curriculum", href: "/curriculum" },
+  { label: "Formulas", href: "/formulas" },
+  { label: "Glossary", href: "/glossary" },
+];
 
 export function RootLayout() {
-  return (
-    <>
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
+  const location = useLocation();
 
-      <header className="sticky top-0 z-30 border-b border-border bg-surface">
-        <div className="flex h-14 items-center gap-6 px-4 sm:px-6">
-          <Link
-            to="/"
-            className="flex items-center gap-2 font-bold text-ink no-underline hover:no-underline"
-          >
-            <span
-              aria-hidden="true"
-              className="grid h-7 w-7 place-items-center rounded bg-brand text-caption font-bold text-white"
-            >
-              F
-            </span>
-            <span className="text-h4">FinSchool</span>
-          </Link>
-          <p className="hidden text-caption text-ink-2 sm:block">
-            The W3Schools of Finance
-          </p>
+  return (
+    <div className="min-h-screen bg-paper text-ink">
+      <a className="skip-link" href="#main">Skip to content</a>
+      <header className="topbar">
+        <div className="topbar-inner">
+          <Link to="/" className="brand" aria-label="FinStudio home"><span className="brand-mark" aria-hidden="true">F</span><span className="brand-name">Fin<em>Studio</em></span></Link>
+          <nav className="topnav" aria-label="Primary">{nav.map((item) => <Link key={item.href} to={item.href} className={location.pathname === item.href ? "active" : ""}>{item.label}</Link>)}</nav>
+          <div className="topbar-actions"><Link className="search-link" to="/search" aria-label="Search FinStudio">⌕ <span>Search</span></Link><Link className="btn-primary" to="/curriculum">Start learning</Link></div>
         </div>
       </header>
-
-      <main id="main" tabIndex={-1} className="px-4 py-10 sm:px-6">
-        <Outlet />
-      </main>
-
-      <footer className="mt-16 border-t border-border bg-surface-2 px-4 py-8 text-center text-caption text-ink-2">
-        <p className="measure">
-          FinSchool is free and open source. Text and exercises use Indian
-          formats (₹, en-IN grouping); the concepts are global. Not investment
-          or tax advice.
-        </p>
+      <main id="main" tabIndex={-1}><Outlet /></main>
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <p className="footer-statement">Every number, <span>built by you.</span></p>
+          <div className="footer-cols">
+            <div><h3>Learn</h3><Link to="/curriculum">Curriculum</Link><Link to="/formulas">Formula library</Link><Link to="/glossary">Glossary</Link></div>
+            <div><h3>Explore</h3><Link to="/paths">Learning paths</Link><Link to="/lab">Modeling Lab</Link><Link to="/search">Search</Link></div>
+            <div><h3>About</h3><a href="https://github.com/Rohit-Gorai/finstudio" rel="noreferrer">Source on GitHub</a><a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noreferrer">Report an error</a></div>
+            <div><h3>Notes</h3><span>Educational content only</span><span>Not investment, accounting or tax advice</span><span>₹ / en-IN formats; concepts are global</span></div>
+          </div>
+          <p className="footer-credit">Designed and developed by <strong>Rohit Gorai</strong> · © {new Date().getFullYear()} Rohit Gorai</p>
+        </div>
       </footer>
-    </>
+    </div>
   );
 }

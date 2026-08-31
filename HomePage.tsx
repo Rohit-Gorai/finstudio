@@ -1,31 +1,24 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+
+type Track = { title: string; description: string; href: string };
+const tracks: Track[] = [
+  { title: "Accounting", description: "Build the statements from first principles.", href: "/module/1000" },
+  { title: "Financial Modeling", description: "Link assumptions, statements and forecasts.", href: "/module/2100" },
+  { title: "Valuation", description: "Turn operating forecasts into enterprise value.", href: "/module/2200" },
+  { title: "Analysis", description: "Read margins, liquidity, leverage and returns.", href: "/module/1600" },
+];
+
+const learningLoop = [
+  ["01", "Learn", "Short, focused explanations."], ["02", "See", "Worked examples and context."], ["03", "Try", "Questions that expose mistakes."],
+  ["04", "Build", "A live spreadsheet sandbox."], ["05", "Check", "Formula-level validation."], ["06", "Apply", "Connect it to the next concept."],
+] as const;
 
 export function HomePage() {
   return (
-    <div className="measure">
-      <h1>Learn Finance the Interactive Way</h1>
-      <p className="mt-4 text-ink-2">
-        Short lessons that end in a live spreadsheet where you build the number
-        yourself — and the balance sheet has to tie. No videos, no sign-up.
-      </p>
-      <div className="mt-6 flex flex-wrap gap-3">
-        <Button>Start learning</Button>
-        <Link to="/style-guide">
-          <Button variant="secondary">Design system</Button>
-        </Link>
-      </div>
-
-      <Card className="mt-10 p-5">
-        <h2 className="text-h4">Milestone 2 in progress</h2>
-        <p className="mt-2 text-small text-ink-2">
-          Toolchain and design system are in place. Navigation, the lesson
-          engine and the spreadsheet sandbox follow in milestones 3–5. The
-          existing 38-lesson curriculum is being ported as the quality
-          benchmark — see <code className="text-caption">PROJECT_ANALYSIS.md</code>.
-        </p>
-      </Card>
-    </div>
+    <>
+      <section className="border-b border-line bg-paper-2"><div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:py-24"><div><p className="font-mono text-xs font-semibold uppercase tracking-[.18em] text-green">FINANCE, BUILT NOT WATCHED</p><h1 className="mt-5 max-w-3xl font-display text-5xl font-semibold leading-[1.04] tracking-tight sm:text-7xl">Learn finance by actually doing finance.</h1><p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink-soft">Understand concepts. Practice the mechanics. Build financial models. Get immediate feedback on every number and formula.</p><div className="mt-8 flex flex-wrap gap-3"><Link className="btn-primary px-5 py-3" to="/curriculum">Start learning</Link><Link className="rounded-md border border-line bg-paper px-5 py-3 font-semibold no-underline hover:bg-paper-3" to="/formulas">Explore formulas</Link></div><div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-faint"><span>38 interactive lessons</span><span>35 practice sheets</span><span>9 quizzes</span><span>No sign-up</span></div></div><div className="rounded-xl border border-line bg-paper p-5 shadow-sm sm:p-7"><div className="flex items-center justify-between border-b border-line pb-4"><div><p className="font-mono text-xs text-ink-faint">LIVE MODEL</p><h2 className="mt-1 font-display text-2xl font-semibold">Operating model</h2></div><span className="rounded-full bg-green-soft px-3 py-1 text-xs font-semibold text-green">Practice</span></div><div className="mt-5 space-y-3 font-mono text-sm"><div className="flex justify-between"><span>Revenue</span><strong>₹100.0 Cr</strong></div><div className="flex justify-between"><span>Growth</span><strong className="text-green">+15.0%</strong></div><div className="flex justify-between"><span>Gross margin</span><strong>42.0%</strong></div><div className="flex justify-between border-t border-line pt-3"><span>EBITDA</span><strong>₹35.0 Cr</strong></div><div className="mt-5 h-24 rounded bg-paper-2 p-3"><div className="flex h-full items-end gap-2">{[35,48,43,62,58,76,88,100].map((height, index) => <span key={index} className="flex-1 rounded-t bg-green" style={{ height: `${height}%` }} />)}</div></div></div><p className="mt-4 text-xs text-ink-faint">The point isn't memorising the answer. It's understanding what changes when an assumption changes.</p></div></div></section>
+      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8"><div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p className="text-sm font-semibold uppercase tracking-widest text-green">The FinStudio loop</p><h2 className="mt-3 font-display text-4xl font-semibold">Learn → See → Try → Build → Check</h2><p className="mt-4 text-ink-soft">Every lesson moves from a clear explanation into action, then asks you to prove you understand it.</p></div><div className="grid gap-3 sm:grid-cols-2">{learningLoop.map(([number, title, description]) => <div key={number} className="rounded-lg border border-line bg-paper-2 p-5"><span className="font-mono text-xs text-green">{number}</span><h3 className="mt-3 font-display text-xl font-semibold">{title}</h3><p className="mt-1 text-sm text-ink-soft">{description}</p></div>)}</div></div></section>
+      <section className="border-y border-line bg-paper-2"><div className="mx-auto max-w-7xl px-5 py-16 sm:px-8"><p className="text-sm font-semibold uppercase tracking-widest text-green">Choose your starting point</p><div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">{tracks.map((track) => <Link key={track.title} to={track.href} className="group rounded-lg border border-line bg-paper p-5 no-underline hover:border-green"><h3 className="font-display text-xl font-semibold group-hover:text-green">{track.title}</h3><p className="mt-2 text-sm text-ink-soft">{track.description}</p><span className="mt-5 block text-sm font-semibold text-green">Explore →</span></Link>)}</div></div></section>
+    </>
   );
 }

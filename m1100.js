@@ -55,7 +55,7 @@
       { t: "def", term: "Depreciation", h: "Allocating the cost of a long-lived asset over its useful life, so each year's P&L carries a fair share of the asset it used up. It is an <strong>expense without a cash payment</strong> — the cash left when the asset was bought." },
       { t: "def", term: "Net book value (NBV)", h: "Cost minus accumulated depreciation — what remains on the balance sheet. Not the resale price; just the unallocated cost." },
       { t: "formula", title: "Straight-line depreciation", lines: ["Annual depreciation = (Cost − Residual value) ÷ Useful life", "Van: (" + R(400000) + " − 0) ÷ 5 = <b>" + R(80000) + " per year</b>"], note: "We assume zero residual (scrap) value throughout this course, and a full year's charge in the year of purchase — simple and common for small businesses." },
-      { t: "example", h: "<p>The van, bought 1 April 2023 for " + R(400000) + ", life 5 years. Each year the P&L charges " + R(80000) + " and the van's book value steps down by the same amount, hitting zero at the end of FY28. This schedule reappears in lesson 1440 when you build the P&L, so build it well.</p>" },
+      { t: "example", h: "<p>The van, bought 1 April 2023 for " + R(400000) + ", life 5 years. Each year the P&L charges " + R(80000) + " and the van's book value steps down by the same amount, hitting zero at the end of FY28. This schedule reappears in the “Depreciation & EBIT” lesson when you build the P&L, so build it well.</p>" },
       {
         t: "sheet",
         sheet: {
@@ -82,7 +82,7 @@
           success: "The van glides from " + R(400000) + " to zero over five years, " + R(80000) + " at a time. That yearly " + R(80000) + " is a real expense on the P&L — but not one rupee of cash moves."
         }
       },
-      { t: "where", h: "The annual charge is an <strong>expense on the income statement</strong> (lesson 1440). The running total — accumulated depreciation — is subtracted from PP&E's cost on the <strong>balance sheet</strong>, giving net book value. And because no cash moves, the <strong>cash flow statement</strong> adds it right back (lesson 1520)." },
+      { t: "where", h: "The annual charge is an <strong>expense on the income statement</strong> (see “Depreciation & EBIT”). The running total — accumulated depreciation — is subtracted from PP&E's cost on the <strong>balance sheet</strong>, giving net book value. And because no cash moves, the <strong>cash flow statement</strong> adds it right back (see “CFO (indirect)”)." },
       { t: "mcq", q: "Depreciation is best described as…", opts: ["Cash set aside each year to replace the van", "The fall in the van's market resale price", "This year's share of a cost paid long ago", "A tax trick to reduce profit"], correct: 2, why: ["Nothing is set aside — no cash moves at all. (Well-run businesses do plan for replacement capex, but that's a management decision, not what depreciation records.)", "Book value and market value drift apart immediately — a one-day-old van resells below cost but is barely depreciated. Accounting allocates cost; it doesn't appraise.", "Exactly. The cash left in year one; depreciation is the matching principle spreading that old cost across the five years the van actually serves. Expense recognition follows benefit, not cash.", "It does reduce taxable profit, and tax codes set their own allowed rates — but the concept exists to match cost to benefit, not to game tax."] }
     ]
   };
@@ -117,7 +117,7 @@
           success: "The café bought " + R(870000) + " of stock — " + R(30000) + " more than it consumed, which is exactly why the storeroom grew from " + R(120000) + " to " + R(150000) + "."
         }
       },
-      { t: "where", h: "Closing inventory is a <strong>current asset on the balance sheet</strong>. COGS is the first cost on the <strong>income statement</strong>, right under revenue (lesson 1420). And the ₹30,000 build-up of stock? Cash spent that isn't yet an expense — the cash flow statement will subtract it in lesson 1520." },
+      { t: "where", h: "Closing inventory is a <strong>current asset on the balance sheet</strong>. COGS is the first cost on the <strong>income statement</strong>, right under revenue (see “COGS & gross profit”). And the ₹30,000 build-up of stock? Cash spent that isn't yet an expense — the cash flow statement will subtract it in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "The café buys ₹50,000 of beans with cash and shelves them. The immediate effect on profit is…", opts: ["Profit falls ₹50,000", "Profit rises ₹50,000", "No effect on profit", "Depends on the coffee price"], correct: 2, why: ["Buying stock is not an expense — nothing has been consumed yet. Profit falls only when the beans are used to make sales.", "Buying inputs never raises profit by itself.", "Cash (asset) becomes inventory (asset) — a pure swap, invisible to the P&L. Only when brewed and sold do the beans become COGS and hit profit. This timing gap between buying and expensing is a defining theme of the cash flow module.", "Selling prices affect revenue later; the purchase itself is profit-neutral today."] }
     ]
   };
@@ -152,7 +152,7 @@
           success: "Collected " + R(560000) + " against " + R(600000) + " invoiced. Revenue says +6,00,000; the bank says +5,60,000. Both are right — they're answering different questions."
         }
       },
-      { t: "where", h: "Closing receivables are a <strong>current asset on the balance sheet</strong>. The invoiced amount is inside <strong>revenue on the income statement</strong> (lesson 1410). The ₹40,000 gap between them is precisely what the <strong>cash flow statement</strong> subtracts from profit in lesson 1520." },
+      { t: "where", h: "Closing receivables are a <strong>current asset on the balance sheet</strong>. The invoiced amount is inside <strong>revenue on the income statement</strong> (see “Revenue”). The ₹40,000 gap between them is precisely what the <strong>cash flow statement</strong> subtracts from profit in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "On 25 March the café delivers a ₹40,000 catering order, payable 30 April. In the FY25 statements (year ends 31 March), this order appears in…", opts: ["Revenue only", "Revenue and receivables", "Cash only", "Nowhere until the cash arrives"], correct: 1, why: ["Revenue, yes — but the unpaid ₹40,000 must sit somewhere on the balance sheet too. Every entry has two sides.", "Delivered before year-end → recognized in FY25 revenue. Unpaid at year-end → sitting in receivables on the 31 March balance sheet. When cash arrives in April, receivables fall and cash rises — FY26's cash flow, not FY26's revenue.", "No cash has moved by 31 March, so it can't be in cash.", "Accrual accounting recognizes what's <em>earned</em>, not what's collected — otherwise statements could be gamed by simply delaying invoices."] }
     ]
   };
@@ -166,7 +166,7 @@
     body: [
       { t: "def", term: "Cash & bank balances", h: "Money available now — the till float and the current account. The most liquid asset there is, so it anchors one end of the balance sheet's sorting order." },
       { t: "def", term: "Current vs non-current", h: "An asset is <strong>current</strong> if it's expected to become cash (or be consumed) <strong>within 12 months</strong> — inventory, receivables, cash itself. Everything slower is <strong>non-current</strong> — PP&E, and long-term deposits." },
-      { t: "example", h: "<p>When Priya signed the café's lease she paid the landlord a " + R(C.fy25.bs.deposit) + " refundable <strong>security deposit</strong>. It's the café's money — an asset — but it only comes back when the lease ends, years away. So it's a non-current asset, sitting near PP&E, far from cash. At 31 March 2025 the café's cash is " + R(C.fy25.bs.cash) + " — modest for a business this size, and module 1500 will explain exactly why that's the number.</p>" },
+      { t: "example", h: "<p>When Priya signed the café's lease she paid the landlord a " + R(C.fy25.bs.deposit) + " refundable <strong>security deposit</strong>. It's the café's money — an asset — but it only comes back when the lease ends, years away. So it's a non-current asset, sitting near PP&E, far from cash. At 31 March 2025 the café's cash is " + R(C.fy25.bs.cash) + " — modest for a business this size, and the “The cash flow statement” module will explain exactly why that's the number.</p>" },
       {
         t: "classify",
         tag: "Sort the asset side",
@@ -196,11 +196,11 @@
           checks: [
             { cell: "B5", expect: 450000, message: "B5: total current assets via SUM", mustFormula: true, mustUse: "SUM", mustUseLabel: "the SUM function" }
           ],
-          success: "Current assets " + R(450000) + ". Hold onto this number — it's the top half of the current ratio in lesson 1620."
+          success: "Current assets " + R(450000) + ". Hold onto this number — it's the top half of the current ratio in the “Liquidity” lesson."
         }
       },
-      { t: "where", h: "The <strong>balance sheet</strong> groups assets by these labels: non-current first (PP&E, deposit), then current in order of liquidity. You now know every asset line on the café's balance sheet — module 1200 builds the other side." },
-      { t: "mcq", q: "Why do lenders care so much about the current/non-current split?", opts: ["Non-current assets are worth more", "It shows whether near-term cash coming in can cover near-term bills going out", "Tax rates differ between the two", "It's purely a presentation convention"], correct: 1, why: ["Value isn't the point — timing is. A café rich in vans can still miss payroll on Friday.", "A business dies when it can't pay this month's bills, regardless of how many machines it owns. Matching assets-turning-into-cash against liabilities-coming-due within the same 12 months is the core of liquidity analysis — lesson 1620 turns it into ratios.", "The split has real cash-timing meaning beyond any tax treatment.", "It changes decisions — banks lend or refuse on it — so it's much more than presentation."] }
+      { t: "where", h: "The <strong>balance sheet</strong> groups assets by these labels: non-current first (PP&E, deposit), then current in order of liquidity. You now know every asset line on the café's balance sheet — the “Liabilities” module builds the other side." },
+      { t: "mcq", q: "Why do lenders care so much about the current/non-current split?", opts: ["Non-current assets are worth more", "It shows whether near-term cash coming in can cover near-term bills going out", "Tax rates differ between the two", "It's purely a presentation convention"], correct: 1, why: ["Value isn't the point — timing is. A café rich in vans can still miss payroll on Friday.", "A business dies when it can't pay this month's bills, regardless of how many machines it owns. Matching assets-turning-into-cash against liabilities-coming-due within the same 12 months is the core of liquidity analysis — the “Liquidity” lesson turns it into ratios.", "The split has real cash-timing meaning beyond any tax treatment.", "It changes decisions — banks lend or refuse on it — so it's much more than presentation."] }
     ]
   };
 })();

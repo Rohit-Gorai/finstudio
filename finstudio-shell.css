@@ -1,0 +1,48 @@
+/* FinStudio production shell overrides. Kept separate from the legacy lesson CSS so the lesson engine stays stable. */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(24,37,48,.98);color:var(--paper);border-bottom:1px solid #334550;box-shadow:0 2px 12px rgba(24,37,48,.10)}
+.topbar-inner{width:min(1440px,100%);min-height:68px;margin:0 auto;padding:.7rem 1.35rem;display:flex;align-items:center;gap:1.15rem}
+.brand{display:inline-flex;align-items:center;gap:.6rem;color:var(--paper);text-decoration:none;flex:none}.brand-mark-wrap{width:34px;height:34px;border:1px solid #52616B;border-radius:8px;display:grid;place-items:center;background:#21313C}.brand-mark-letter{font-family:var(--font-display);font-weight:700;font-size:1.15rem;color:#8FD4B4;line-height:1}.brand-name{font-family:var(--font-display);font-weight:600;font-size:1.35rem}.brand-name em{font-style:normal;color:#7AC8A2}
+.topnav{display:flex;align-items:center;gap:.15rem;margin-left:.75rem}.topnav a{padding:.48rem .72rem;border-radius:6px;color:#CBD5DA;text-decoration:none;font-size:.88rem;font-weight:600}.topnav a:hover{background:#263743;color:#fff}.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:.65rem}.search-link{display:inline-flex;gap:.3rem;color:#CBD5DA;text-decoration:none;font-size:.86rem;font-weight:600}.search-link:hover{color:#fff}.btn-small{font-size:.84rem;padding:.52rem .82rem}.nav-toggle{display:none}
+.layout{min-height:calc(100vh - 68px)}.sidebar{top:68px;height:calc(100vh - 68px)}.side-roadmap{margin:.5rem .8rem 1rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:7px;background:var(--paper-2);font-size:.82rem}.side-roadmap a{font-weight:700;text-decoration:none}.side-roadmap p{margin:.15rem 0 0;color:var(--ink-soft);line-height:1.45}
+.roadmap-intro{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:1.25rem 1.35rem;margin:1.2rem 0 1.6rem}.roadmap-level{border-top:1px solid var(--line);padding:2rem 0}.roadmap-level:first-of-type{border-top:0;padding-top:.4rem}.roadmap-level-head{display:flex;gap:1rem;align-items:flex-start}.roadmap-number{font-family:var(--font-mono);font-size:.75rem;color:var(--green);font-weight:700;min-width:3rem;padding-top:.35rem}.roadmap-level h2{margin:0;font-size:1.75rem}.roadmap-level-lede{margin:.35rem 0 1rem;color:var(--ink-soft)}.roadmap-modules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-left:4rem}.roadmap-module{background:#fff;border:1px solid var(--line);border-radius:7px;padding:.9rem 1rem}.roadmap-module h3{margin:0;font-size:1rem}.roadmap-module p{font-size:.78rem;color:var(--green);font-family:var(--font-mono);margin:.55rem 0 0;line-height:1.7}.roadmap-module p span{color:var(--ink-soft)}.roadmap-badge{display:inline-flex;margin-top:.55rem;font-size:.68rem;font-family:var(--font-mono);border:1px solid var(--line);border-radius:99px;padding:.08rem .45rem;color:var(--ink-faint)}
+.site-footer{margin-top:4rem;background:var(--ink);color:#CBD5DA;border-top:0;text-align:left;font-size:.84rem}.footer-inner{width:min(1200px,100%);margin:0 auto;padding:3rem 1.35rem 1.4rem}.footer-top{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;padding-bottom:2rem}.footer-brand{display:inline-flex;align-items:center;gap:.55rem;color:var(--paper);text-decoration:none;font-family:var(--font-display);font-size:1.25rem;font-weight:600}.footer-brand em{font-style:normal;color:#7AC8A2}.footer-mark{width:28px;height:28px;border:1px solid #52616B;border-radius:7px;display:grid;place-items:center;background:#21313C;color:#8FD4B4;font-weight:700}.footer-brand-block p{font-family:var(--font-display);font-size:1.7rem;color:#F7F4EC;margin:.8rem 0 .15rem}.footer-brand-block p strong{color:#8FD4B4}.footer-tagline{color:#9EABB2;font-size:.8rem}.footer-cta{display:inline-flex;align-items:center;gap:.55rem;border:1px solid #52616B;border-radius:6px;padding:.65rem .85rem;color:#E5EBEE;text-decoration:none;font-weight:700}.footer-cta:hover{background:#21313C;border-color:#6B7D88}.footer-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2rem;padding:2rem 0;border-top:1px solid #3D4C58;border-bottom:1px solid #3D4C58}.footer-col{display:flex;flex-direction:column;gap:.5rem}.footer-col h4{margin:0 0 .35rem;color:#fff;font-family:var(--font-body);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em}.footer-col a{color:#C7D1D6;text-decoration:none}.footer-col a:hover{color:#fff;text-decoration:underline}.footer-col span{color:#9EABB2;line-height:1.5}.footer-bottom{display:flex;justify-content:space-between;gap:1rem;padding-top:1.2rem;color:#8E9BA3;font-size:.76rem}.footer-bottom p{margin:0}.footer-bottom strong{color:#D9E1E5}
+@media(max-width:900px){.topnav{display:none}.topbar-inner{padding-inline:.9rem}.search-link{display:none}.nav-toggle{display:inline-flex!important;align-items:center}.sidebar{top:68px;height:auto}.footer-top{align-items:flex-start;flex-direction:column}.footer-cols{grid-template-columns:1fr 1fr}.roadmap-modules{grid-template-columns:1fr;margin-left:0}.roadmap-level-head{gap:.7rem}}
+@media(max-width:520px){.brand-name{font-size:1.18rem}.brand-mark-wrap{width:31px;height:31px}.btn-small{font-size:.78rem;padding:.48rem .65rem}.topbar-inner{gap:.55rem}.footer-inner{padding-inline:1rem}.footer-cols{grid-template-columns:1fr}.footer-bottom{flex-direction:column}.roadmap-level h2{font-size:1.45rem}.roadmap-number{min-width:2.2rem}}
+
+/* ============================================================================
+   Shell corrections — measured fixes, appended so nothing above is disturbed.
+   ========================================================================= */
+
+/* 1. The header CTA inherits the global link underline, so the primary button
+      on every page renders underlined. Buttons are not links. */
+.btn, .topbar .btn, .footer-cta, .nav-toggle { text-decoration: none; }
+
+/* 2. Reading measure. Lesson ledes and roadmap intros were running to 120
+      characters a line on a 1440px screen; comfortable is 65-75. */
+.lesson-lede, .roadmap-level-lede, .roadmap-intro p { max-width: 68ch; }
+
+/* 3. Mobile header. It was 100px — 12% of a 390x844 viewport — because the
+      CTA wrapped onto three lines. One row, nothing wrapping. */
+@media (max-width: 900px) {
+  .topbar-inner { min-height: 56px; padding: .45rem .9rem; gap: .5rem; flex-wrap: nowrap; }
+  .topbar-actions { gap: .4rem; }
+  .topbar-actions .btn-small,
+  .nav-toggle { white-space: nowrap; padding: .5rem .7rem; font-size: .82rem; line-height: 1.1; }
+  .brand-name { font-size: 1.1rem; }
+  .layout { min-height: calc(100vh - 56px); }
+  .sidebar { top: 56px; }
+}
+@media (max-width: 430px) {
+  /* at this width the arrow is the first thing to go, not the label */
+  .topbar-actions .btn-small .ar,
+  .topbar-actions .btn-small span[aria-hidden] { display: none; }
+  .brand-name { font-size: 1rem; }
+}
+
+/* 4. Touch targets. Syllabus rows were sitting under 32px tall on phones. */
+@media (hover: none) and (pointer: coarse) {
+  .side-lessons a, .topnav a, .footer-col a {
+    min-height: 44px; display: flex; align-items: center;
+  }
+  .side-lessons a { padding-top: .55rem; padding-bottom: .55rem; }
+}

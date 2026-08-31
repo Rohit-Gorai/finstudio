@@ -251,7 +251,8 @@ group("The reference lesson validates");
   ok("§33: has 'why it matters'", !!EBITDA.whyItMatters);
   ok("§34: has common mistakes", (EBITDA.commonMistakes || []).length >= 2);
   ok("§35: has real-world uses", (EBITDA.realWorld || []).length >= 3);
-  ok("§36: has a summary", (EBITDA.summary || []).length >= 3);
+  ok("§36: has end-of-lesson takeaways", (EBITDA.takeaways || []).length >= 3);
+  ok("the one-line blurb survives alongside them", typeof EBITDA.summary === "string" && EBITDA.summary.length > 20);
   ok("§42: has three difficulty levels of explanation",
     ["beginner", "intermediate", "advanced"].every((k) => EBITDA.explanation[k]));
 

@@ -207,7 +207,7 @@
     var ref = LS.reference[id];
     var ui = LS.ui, el = ui.el, esc = ui.esc;
     if (!ref) { location.hash = "#/"; return; }
-    ui.setMeta(ref.title + " · LedgerSchool reference", ref.lede);
+    ui.setMeta(ref.title + " · FinStudio reference", ref.lede);
 
     var page = el("div", "page");
     page.appendChild(el("p", "lesson-kicker", "Reference"));

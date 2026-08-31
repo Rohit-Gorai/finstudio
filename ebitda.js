@@ -29,6 +29,7 @@
     level: "statements",
     difficulty: "beginner",
     estimatedTime: 7,
+    covers: ["EBITDA"],
     tags: ["ebitda", "operating profit", "margin", "income statement", "d&a"],
     summary: "Operating profit before the three things that say more about how a company is financed and taxed than about how it trades.",
     prerequisites: [],          // filled in once revenue/COGS/opex lessons are ported
@@ -231,6 +232,7 @@
         { cell: "B7", sheet: "P&L", expect: 0.225, tol: 0.001, mustFormula: true, mustReference: ["B6", "B2"],
           label: "EBITDA margin" }
       ],
+      solution: { "P&L": { B4: "=B2+B3", B6: "=B4+B5", B7: "=B6/B2" } },
       // §15 — guidance attached to cells, revealed a rung at a time
       cellHints: {
         B4: {
@@ -268,7 +270,7 @@
     },
 
     /* ---- END OF LESSON (§36) ---- */
-    summary: [
+    takeaways: [
       "What EBITDA is, and which four charges it sits above",
       "How to compute it from revenue, and from EBIT upwards",
       "Why it makes companies with different debt and asset ages comparable",

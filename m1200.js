@@ -21,7 +21,7 @@
         sheet: {
           id: "s1",
           title: "What did the café pay suppliers in FY25?",
-          hint: "You found purchases (" + R(870000) + ") in lesson 1130. Roll payables forward to find the cash that actually went out: payments = opening + purchases − closing.",
+          hint: "You found purchases (" + R(870000) + ") in the “Inventory” lesson. Roll payables forward to find the cash that actually went out: payments = opening + purchases − closing.",
           grid: [
             ["", { v: "FY25", year: true }],
             ["Opening trade payables", C.fy24.bs.payables],
@@ -35,7 +35,7 @@
           success: "Paid " + R(850000) + " against " + R(870000) + " purchased. The unpaid " + R(20000) + " is cash the café got to keep a little longer — supplier credit is a quiet, interest-free loan."
         }
       },
-      { t: "where", h: "Trade payables and accrued expenses sit under <strong>current liabilities on the balance sheet</strong>. The expenses they relate to are already on the <strong>income statement</strong>. The timing gap between the two is a working-capital delta the <strong>cash flow statement</strong> adjusts for in lesson 1520." },
+      { t: "where", h: "Trade payables and accrued expenses sit under <strong>current liabilities on the balance sheet</strong>. The expenses they relate to are already on the <strong>income statement</strong>. The timing gap between the two is a working-capital delta the <strong>cash flow statement</strong> adjusts for in the “CFO (indirect)” lesson." },
       { t: "mcq", q: "The café receives ₹60,000 of beans on 45-day credit. The immediate effect is…", opts: ["Expense up ₹60,000, cash down ₹60,000", "Inventory up ₹60,000, payables up ₹60,000", "Inventory up ₹60,000, cash down ₹60,000", "Nothing is recorded until payment"], correct: 1, why: ["No cash has moved, and no expense exists yet — the beans are still an asset on the shelf.", "An asset arrives (inventory ↑) and an obligation arrives with it (payables ↑). The equation grows on both sides. No expense until the beans are consumed; no cash movement until day 45. Three different events, three different dates — accrual accounting keeps them straight.", "Cash is untouched for 45 days — that's the whole point of credit terms.", "Accounting records the obligation the moment goods change hands. Waiting for payment would let a business hide its debts."] }
     ]
   };
@@ -73,7 +73,7 @@
         }
       },
       { t: "note", h: "<strong>One simplification to flag:</strong> a real balance sheet would split the " + R(50000) + " due within the next year out of the loan as a <em>current</em> liability (\"current maturities of long-term debt\"). We keep the loan as a single non-current line so the model stays small — remember the refinement exists." },
-      { t: "where", h: "Interest expense sits low on the <strong>income statement</strong>, after operating profit (lesson 1450). The loan balance is a liability on the <strong>balance sheet</strong>. Drawdowns and repayments of principal appear only in the <strong>cash flow statement</strong>, under financing (lesson 1540)." },
+      { t: "where", h: "Interest expense sits low on the <strong>income statement</strong>, after operating profit (see “Interest, tax & PAT”). The loan balance is a liability on the <strong>balance sheet</strong>. Drawdowns and repayments of principal appear only in the <strong>cash flow statement</strong>, under financing (see “CFF”)." },
       { t: "mcq", q: "In FY25 the café pays the bank " + R(110000) + " in total (" + R(60000) + " interest + " + R(50000) + " principal). How much of that reduces FY25 profit?", opts: [R(110000), R(60000), R(50000), "Nothing — loan payments never touch profit"], correct: 1, why: ["Only part of the payment is a cost of doing business. The principal portion is returning borrowed money — the café's obligation shrinks by exactly what it pays, so nothing is consumed.", "Only the interest — the price of using the bank's money for the year — is an expense. The " + R(50000) + " principal repayment swaps cash for a smaller debt: assets down, liabilities down, equity untouched. Lenders read this split closely: a business can afford its interest and still choke on principal repayments.", "That's the principal — the part that is <em>not</em> an expense.", "Interest genuinely is an expense — money paid for a service (the use of capital) that's fully consumed each year."] }
     ]
   };
@@ -119,7 +119,7 @@
         }
       },
       { t: "where", h: "On a <strong>Schedule III balance sheet</strong> (the Indian statutory format) these appear as: Equity, then Non-current liabilities, then Current liabilities — the whole right-hand side ordered from most patient money to most urgent. The capstone in 1330 assembles it." },
-      { t: "mcq", q: "Why is equity listed with liabilities on the same side of the balance sheet?", opts: ["To make the sheet balance by force", "Both are claims on the assets — they differ in who claims and in what order", "Equity is just a special loan from the owner", "Historical accident"], correct: 1, why: ["The sheet balances by arithmetic, not by force — equity is <em>defined</em> as the residual.", "The left side lists what the business has; the right side lists who has a claim on it. Creditors claim fixed amounts first; the owner claims everything that's left, last. Same side, opposite personalities — and that ranking (debt before equity) is exactly why lenders and owners analyse companies so differently (module 1600).", "A loan has a fixed amount and a due date; equity has neither. The difference is fundamental, not cosmetic.", "The layout encodes real seniority of claims — it's information, not accident."] }
+      { t: "mcq", q: "Why is equity listed with liabilities on the same side of the balance sheet?", opts: ["To make the sheet balance by force", "Both are claims on the assets — they differ in who claims and in what order", "Equity is just a special loan from the owner", "Historical accident"], correct: 1, why: ["The sheet balances by arithmetic, not by force — equity is <em>defined</em> as the residual.", "The left side lists what the business has; the right side lists who has a claim on it. Creditors claim fixed amounts first; the owner claims everything that's left, last. Same side, opposite personalities — and that ranking (debt before equity) is exactly why lenders and owners analyse companies so differently (the “Reading statements: ratios” module).", "A loan has a fixed amount and a due date; equity has neither. The difference is fundamental, not cosmetic.", "The layout encodes real seniority of claims — it's information, not accident."] }
     ]
   };
 })();

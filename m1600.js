@@ -78,7 +78,7 @@
         "Quick ratio   = (Current assets − Inventory) ÷ Current liabilities",
         "Café: " + R(r.currentAssets) + " ÷ " + R(r.currentLiabs) + " = <b>" + X(3) + "</b>; quick = <b>" + X(2) + "</b>"
       ], note: "Higher isn't automatically better. A current ratio of 5 can mean cash sitting idle or customers who never pay. For most businesses 1.5–3 is comfortable; the right level depends heavily on the industry." },
-      { t: "example", h: "<p>At 31 March 2025 the café holds " + R(r.currentAssets) + " of current assets (inventory " + R(bs.inventory) + ", receivables " + R(bs.receivables) + ", cash " + R(bs.cash) + " — the total you built in lesson 1150) against " + R(r.currentLiabs) + " of current liabilities (payables " + R(bs.payables) + " and salaries " + R(bs.accrued) + ").</p>" },
+      { t: "example", h: "<p>At 31 March 2025 the café holds " + R(r.currentAssets) + " of current assets (inventory " + R(bs.inventory) + ", receivables " + R(bs.receivables) + ", cash " + R(bs.cash) + " — the total you built in the “Cash & classification” lesson) against " + R(r.currentLiabs) + " of current liabilities (payables " + R(bs.payables) + " and salaries " + R(bs.accrued) + ").</p>" },
       {
         t: "sheet",
         sheet: {
@@ -118,7 +118,7 @@
           rows: [["Inventory", "₹1,00,000"], ["Receivables", "₹2,00,000"], ["Cash", "₹3,00,000"], ["Current liabilities", "₹4,00,000"], ["Current ratio", "1.5x"], ["Quick ratio", "1.25x", "total"]]
         }
       },
-      { t: "where", h: "Both ratios come entirely from the current sections of the <strong>balance sheet</strong> — which is exactly why that statement bothers to split current from non-current (lesson 1150). The split exists to make this calculation possible." },
+      { t: "where", h: "Both ratios come entirely from the current sections of the <strong>balance sheet</strong> — which is exactly why that statement bothers to split current from non-current (see “Cash & classification”). The split exists to make this calculation possible." },
       { t: "mcq", tag: "Which is healthier?", q: "Both cafés show a current ratio of exactly 1.5x. Which one would you lend to?", opts: ["Brew Lane — it has more current assets in total", "Third Wave — its liquidity doesn't depend on selling stock", "Neither — 1.5x is too low", "They're equally safe; the ratio says so"], correct: 1, why: ["Brew Lane's assets are larger but the wrong kind: ₹6,00,000 of it is beans and pastry. If sales slow, that stock doesn't convert — and unlike Third Wave, Brew Lane has only ₹50,000 of cash to bridge the gap.", "Identical current ratios, completely different risk. Third Wave's quick ratio of 1.25x means it could settle every current liability without selling a single bean. Brew Lane's 0.3x means it's utterly dependent on moving inventory. This is exactly the blind spot the quick ratio was invented to expose — never read the current ratio alone.", "1.5x is a perfectly normal level for many businesses; the composition is what separates these two.", "The ratio is identical, which is precisely why one ratio is never enough."] }
     ]
   };

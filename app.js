@@ -126,6 +126,38 @@
     var nav = document.getElementById("sidebar");
     nav.innerHTML = "";
     var hash = currentRoute();
+
+    /* Level 0 and the other v2 lessons sit above the v1 modules. Without this
+       the authored lessons exist but are reachable only by typing the URL. */
+    if (LS.v2Curriculum && window.FinCurriculum) {
+      LS.v2Curriculum.levels().forEach(function (lv) {
+        nav.appendChild(el("div", "side-level", esc("Level " + lv.id + " · " + lv.title)));
+        var wrap = el("div", "side-module");
+        var done = lv.lessons.filter(function (l) {
+          var d = LS.v2Progress && LS.v2Progress.of(l.id);
+          return d && d.seen;
+        }).length;
+        var head = el("div", "side-module-head");
+        head.innerHTML = '<span class="side-module-title">' + esc(lv.title) + '</span>' +
+          '<span class="side-progress">' + done + "/" + lv.lessons.length + "</span>";
+        wrap.appendChild(head);
+        var ul = el("ul", "side-lessons");
+        lv.lessons.forEach(function (l) {
+          var li = el("li");
+          var a = el("a");
+          a.href = "#/learn/" + l.id;
+          if (hash.kind === "v2" && hash.id === l.id) a.className = "active";
+          var d = LS.v2Progress && LS.v2Progress.of(l.id);
+          a.innerHTML = '<span class="side-lesson-title">' + esc(l.title) + "</span>" +
+            (d && d.seen ? '<span class="side-done">\u2713</span>' : "");
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        wrap.appendChild(ul);
+        nav.appendChild(wrap);
+      });
+    }
+
     LS.manifest.levels.forEach(function (lv) {
       nav.appendChild(el("div", "side-level", esc(lv.title)));
       lv.modules.forEach(function (mc) {
@@ -768,64 +800,6 @@
     return block;
   }
 
-  /* ================= motion & chrome =================
-     One observer per render. Everything here is a no-op when the visitor
-     asks for reduced motion — the content is already in its final position,
-     the class just removes the transform. */
-  var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var revealObserver = null;
-  function revealOnScroll(root) {
-    var items = root.querySelectorAll(".reveal");
-    if (!items.length) return;
-    if (reducedMotion || !("IntersectionObserver" in window)) {
-      Array.prototype.forEach.call(items, function (n) { n.classList.add("in"); });
-      return;
-    }
-    if (revealObserver) revealObserver.disconnect();
-    revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.classList.add("in");
-        revealObserver.unobserve(e.target);
-      });
-    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.05 });
-    Array.prototype.forEach.call(items, function (n) { revealObserver.observe(n); });
-  }
-
-  // hairline under the nav, but only once the page has actually moved
-  (function () {
-    var bar = document.getElementById("topbar");
-    if (!bar) return;
-    var ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(function () {
-        bar.classList.toggle("scrolled", window.scrollY > 8);
-        ticking = false;
-      });
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  })();
-
-  // nav links that point at a section of the homepage rather than a route
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest ? e.target.closest("[data-scroll]") : null;
-    if (!a) return;
-    var id = a.getAttribute("data-scroll");
-    e.preventDefault();
-    function go() {
-      var target = document.getElementById(id);
-      if (target) target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    }
-    if (location.hash && location.hash !== "#/" && location.hash !== "#") {
-      pendingScroll = id;
-      location.hash = "#/";
-    } else { go(); }
-  });
-  var pendingScroll = null;
-
   /* ================= views ================= */
   var content = document.getElementById("main");
 
@@ -835,277 +809,62 @@
     if (m && desc) m.setAttribute("content", desc);
   }
 
-  /* ---------- homepage: the live DCF in the hero ----------
-     Real arithmetic, not a mock. It runs company.js's own dcf() — the same
-     function the 2240 lesson checks against — so the number a visitor drags
-     to is the number they would build themselves in module 2200. */
-  function heroDemo() {
-    if (!LS.C || !LS.C.dcfFn) return null;
-    var TG = 0.04;                    // terminal growth, held fixed here
-    var wrap = el("section", "demo");
-    wrap.innerHTML =
-      '<div class="demo-bar">' +
-        '<span class="demo-addr">B14</span>' +
-        '<span class="demo-fx">fx</span>' +
-        '<span class="demo-formula">=SUM(<b>C10:F10</b>)-B12</span>' +
-      '</div>' +
-      '<div class="demo-body">' +
-        '<div class="demo-model">' +
-          '<p class="demo-label">Discounted cash flow · ' + esc(LS.C.name) + '</p>' +
-          '<table class="demo-rows"><tbody>' +
-            '<tr><td>PV of FY26 free cash flow</td><td data-pv="0"></td></tr>' +
-            '<tr><td>PV of FY27 free cash flow</td><td data-pv="1"></td></tr>' +
-            '<tr><td>PV of FY28 free cash flow</td><td data-pv="2"></td></tr>' +
-            '<tr><td>PV of terminal value</td><td data-pvtv></td></tr>' +
-            '<tr class="demo-total"><td>Enterprise value</td><td data-ev></td></tr>' +
-            '<tr><td>Less: net debt</td><td data-nd></td></tr>' +
-          '</tbody></table>' +
-          '<div class="demo-slider">' +
-            '<div class="demo-slider-head"><label for="demoWacc">Cost of capital (WACC)</label><b data-wacc>12.0%</b></div>' +
-            '<input class="demo-range" id="demoWacc" type="range" min="9" max="15" step="0.5" value="12" ' +
-              'aria-label="Cost of capital, per cent">' +
-            '<p class="demo-hint">Terminal growth held at 4%. Drag it — every figure recalculates.</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="demo-out">' +
-          '<p class="demo-label">Equity value</p>' +
-          '<p class="demo-big" data-eq aria-live="polite"></p>' +
-          '<p class="demo-cap" data-cap></p>' +
-          '<div class="demo-bars">' +
-            '<div class="demo-bar-row"><div class="t"><span>Next three years</span><span data-share3></span></div>' +
-              '<div class="demo-track"><div class="demo-fill" data-fill3 style="width:0%"></div></div></div>' +
-            '<div class="demo-bar-row"><div class="t"><span>Everything after that</span><span data-sharetv></span></div>' +
-              '<div class="demo-track"><div class="demo-fill tv" data-filltv style="width:0%"></div></div></div>' +
-          '</div>' +
-          '<p class="demo-foot">Most of a young company\'s value sits beyond the forecast. ' +
-            '<a href="#/2240-dcf">Build this yourself in 2240 &rarr;</a></p>' +
-        '</div>' +
-      '</div>';
-
-    var q = function (sel) { return wrap.querySelector(sel); };
-    var range = q("#demoWacc");
-    function paint() {
-      var w = parseFloat(range.value) / 100;
-      var d = LS.C.dcfFn(w, TG);
-      for (var i = 0; i < 3; i++) wrap.querySelector('[data-pv="' + i + '"]').textContent = fmt.inr(d.pv[i]);
-      q("[data-pvtv]").textContent = fmt.inr(d.pvTV);
-      q("[data-ev]").textContent = fmt.inr(d.ev);
-      q("[data-nd]").textContent = fmt.inr(-d.netDebt);
-      q("[data-eq]").textContent = fmt.inr(d.equity);
-      q("[data-wacc]").textContent = (Math.round(w * 1000) / 10).toFixed(1) + "%";
-      q("[data-cap]").textContent = "What the café is worth to its owners at a " +
-        (Math.round(w * 1000) / 10).toFixed(1) + "% cost of capital.";
-      var near = d.pv[0] + d.pv[1] + d.pv[2];
-      var p3 = Math.round(near / d.ev * 100);
-      q("[data-share3]").textContent = p3 + "%";
-      q("[data-sharetv]").textContent = (100 - p3) + "%";
-      q("[data-fill3]").style.width = p3 + "%";
-      q("[data-filltv]").style.width = (100 - p3) + "%";
-    }
-    range.addEventListener("input", paint);
-    paint();
-    return wrap;
-  }
-
   function renderHome() {
     setMeta("FinStudio — Learn finance by building it",
       "Free, text-only finance school. Learn accounting, the three statements, ratios and modeling by building every number in a live spreadsheet.");
-
-    var lesson1 = LS.manifest.modules[LS.manifest.levels[0].modules[0]].lessons[0];
-    var totalLessons = allLessonIdsInOrder().length;
-    var totalMin = Object.keys(LS.manifest.modules).reduce(function (a, mc) { return a + moduleMinutes(mc); }, 0);
-    // counted from the curriculum itself, never hardcoded for marketing
-    var sheetCount = 0, cellCount = 0;
-    allLessonIdsInOrder().forEach(function (id) {
-      var l = LS.lessons[id];
-      if (!l) return;
-      (l.body || []).forEach(function (b) {
-        if (b.t !== "sheet" || !b.sheet || !b.sheet.grid) return;
-        sheetCount++;
-        b.sheet.grid.forEach(function (row) {
-          row.forEach(function (def) {
-            if (def && typeof def === "object" && def.input) cellCount++;
-          });
-        });
-      });
-    });
-
-    var page = el("div", "page page-home");
-
-    /* ---- hero ---- */
-    var hero = el("section", "hero wrap");
+    var page = el("div", "page");
+    var hero = el("div", "hero");
     hero.innerHTML =
-      '<p class="eyebrow">No videos · No sign-up · No account</p>' +
       "<h1>Learn finance by building it.</h1>" +
-      '<p class="hero-lede">Every lesson ends in a live spreadsheet where <em>you</em> type the formula. Follow one Mumbai café from its first invoice to a full valuation model — and make the balance sheet tie.</p>' +
-      '<div class="hero-cta">' +
-        '<a class="btn btn-primary" href="#/' + lesson1 + '">Start learning</a>' +
-        '<a class="btn btn-ghost" href="#/" data-scroll="curriculum">Explore the curriculum <span class="ar">&rarr;</span></a>' +
-      '</div>';
-    var demo = heroDemo();
-    if (demo) hero.appendChild(demo);
+      "<p>No videos. No sign-up. Short lessons that end in a live spreadsheet where <em>you</em> type the formula — and the balance sheet has to tie. Follow one café, " + esc(LS.C.name) + ", from its first invoice to a full valuation model.</p>";
+    var cta = el("a", "btn btn-primary", "Start with lesson 1010 →");
+    cta.href = "#/" + LS.manifest.modules[LS.manifest.levels[0].modules[0]].lessons[0];
+    hero.appendChild(cta);
     page.appendChild(hero);
 
-    /* ---- 01 · the formula, not the answer ---- */
-    var s1 = el("section", "story wrap reveal");
-    s1.innerHTML =
-      '<div class="story-grid">' +
-        '<div class="story-copy">' +
-          '<span class="story-num">01 — Build</span>' +
-          "<h2>You type the formula, not the answer.</h2>" +
-          "<p>The sandbox reads what you typed, not just what it evaluates to. Where the point of the lesson is the formula, a hardcoded number is marked wrong — even when the number is right. That one rule is the difference between recognising finance and being able to do it.</p>" +
-          '<div class="story-stat">' +
-            "<div><b>" + (cellCount || 192) + '</b><span>cells you fill in yourself</span></div>' +
-            "<div><b>" + (sheetCount || 35) + '</b><span>spreadsheet sandboxes</span></div>' +
-          "</div>" +
-        "</div>" +
-        '<div class="panel">' +
-          '<div class="panel-mini-head"><span>Working capital</span><span>B12</span></div>' +
-          "<table><tbody>" +
-            "<tr><td>Receivables</td><td>" + fmt.inr(LS.C.fy25.bs.receivables) + "</td></tr>" +
-            "<tr><td>Inventory</td><td>" + fmt.inr(LS.C.fy25.bs.inventory) + "</td></tr>" +
-            "<tr><td>Less: payables</td><td>" + fmt.inr(-LS.C.fy25.bs.payables) + "</td></tr>" +
-            '<tr class="proved"><td>Working capital</td><td>' +
-              fmt.inr(LS.C.fy25.bs.receivables + LS.C.fy25.bs.inventory - LS.C.fy25.bs.payables) + "</td></tr>" +
-          "</tbody></table>" +
-          '<p class="panel-caption">You typed <span class="typed-cell">=B9+B10-B11</span> — accepted. The same figure typed as a number is not.</p>' +
-        "</div>" +
-      "</div>";
-    page.appendChild(s1);
-
-    /* ---- 02 · one company ---- */
-    var s2 = el("section", "story wrap reveal");
-    s2.innerHTML =
-      '<div class="story-grid flip">' +
-        '<div class="story-copy">' +
-          '<span class="story-num">02 — Connect</span>' +
-          "<h2>One café. Every number, all the way through.</h2>" +
-          "<p>" + esc(LS.C.name) + " runs through all " + totalLessons +
-            " lessons. The profit you compute in the income statement capstone is the exact figure sitting inside retained earnings on the balance sheet; the closing cash you build in the cash flow statement is that balance sheet's cash line. Nothing is invented per lesson, so every connection is one you can trace.</p>" +
-        "</div>" +
-        '<div class="panel">' +
-          '<div class="panel-mini-head"><span>FY25 · Income statement</span><span>&#8377;</span></div>' +
-          "<table><tbody>" +
-            "<tr><td>Revenue</td><td>" + fmt.inr(LS.C.fy25.pl.revenue) + "</td></tr>" +
-            "<tr><td>Gross profit</td><td>" + fmt.inr(LS.C.fy25.pl.grossProfit) + "</td></tr>" +
-            "<tr><td>EBITDA</td><td>" + fmt.inr(LS.C.fy25.pl.ebitda) + "</td></tr>" +
-            "<tr><td>EBIT</td><td>" + fmt.inr(LS.C.fy25.pl.ebit) + "</td></tr>" +
-            '<tr class="proved hl"><td>Profit after tax</td><td>' + fmt.inr(LS.C.fy25.pl.pat) + "</td></tr>" +
-          "</tbody></table>" +
-          '<p class="panel-caption">This exact figure reappears in retained earnings, in the cash flow statement, and in the valuation.</p>' +
-        "</div>" +
-      "</div>";
-    page.appendChild(s2);
-
-    /* ---- 03 · the dark band ---- */
-    var band = el("section", "band reveal");
-    band.innerHTML =
-      '<div class="wrap">' +
-        '<span class="story-num" style="color:rgba(245,245,247,.5)">03 — Prove</span>' +
-        "<h2>It has to tie.</h2>" +
-        "<p>A balance sheet that does not balance is not nearly right, it is wrong. Every capstone carries a live tie meter that watches both sides and refuses to congratulate you until the difference is zero.</p>" +
-        '<div class="band-proof">' +
-          "<span><i>Assets</i> <b>" + fmt.inr(LS.C.fy25.bs.totalAssets) + "</b></span>" +
-          '<span class="eq">=</span>' +
-          "<span><i>Liabilities + equity</i> <b>" + fmt.inr(LS.C.fy25.bs.totalLE) + "</b></span>" +
-          '<span class="verdict">&#10003; Difference &#8377;0</span>' +
-        "</div>" +
-      "</div>";
-    page.appendChild(band);
-
-    /* ---- 04 · experiment ---- */
-    var s4 = el("section", "story wrap reveal");
-    s4.innerHTML =
-      '<div class="story-grid">' +
-        '<div class="story-copy">' +
-          '<span class="story-num">04 — Experiment</span>' +
-          "<h2>Change one assumption. Watch it move.</h2>" +
-          "<p>The sheets are live models, not screenshots. Push receivable days from 30 to 60 and you can watch the cash drain out of a profitable business — which is the only way that lesson ever really lands.</p>" +
-        "</div>" +
-        '<div class="panel">' +
-          '<div class="panel-mini-head"><span>Receivable days</span><span>30 &rarr; 60</span></div>' +
-          "<table><tbody>" +
-            '<tr><td>Revenue</td><td class="txt">no change</td></tr>' +
-            '<tr><td>Profit</td><td class="txt">no change</td></tr>' +
-            '<tr class="hl"><td>Receivables</td><td class="txt">&uarr; higher</td></tr>' +
-            '<tr class="hl"><td>Working capital</td><td class="txt">&uarr; higher</td></tr>' +
-            '<tr class="proved"><td>Cash</td><td class="txt">&darr; lower</td></tr>' +
-          "</tbody></table>" +
-          '<p class="panel-caption">Profitable and out of cash. Module 1500 makes you build the year that proves it.</p>' +
-        "</div>" +
-      "</div>";
-    page.appendChild(s4);
-
-    /* ---- curriculum ---- */
-    var curr = el("section", "wrap reveal");
-    curr.id = "curriculum";
-    curr.innerHTML =
-      '<span class="story-num">The curriculum</span>' +
-      '<h2 class="sec-h">Numbered like a chart of accounts.</h2>' +
-      '<p class="sec-p">Work top to bottom. Every number you meet later is one you built earlier — ' +
-        totalLessons + " lessons, about " + Math.max(1, Math.round(totalMin / 60)) + " hours of reading and building.</p>";
-    var rows = el("div", "curriculum");
+    page.appendChild(el("h2", null, "The syllabus"));
+    page.appendChild(el("p", null, "Modules are numbered like a chart of accounts. Work top to bottom; every number you meet later is one you built earlier."));
+    var cards = el("div", "module-cards");
     LS.manifest.levels.forEach(function (lv) {
       lv.modules.forEach(function (mc) {
         var m = LS.manifest.modules[mc];
         var prog = moduleProgress(mc);
-        var pct = prog.total ? Math.round(prog.done / prog.total * 100) : 0;
-        var a = el("a", "curr-row");
+        var a = el("a", "module-card");
         a.href = "#/module/" + mc;
-        a.innerHTML =
-          '<span class="curr-code">' + mc + "</span>" +
-          '<span class="curr-body"><span class="curr-title">' + esc(m.title) + "</span>" +
-            '<span class="curr-blurb">' + esc(m.blurb) + "</span>" +
-            (pct ? '<span class="curr-progress"><i style="width:' + pct + '%"></i></span>' : "") +
-          "</span>" +
-          '<span class="curr-meta">' +
-            (prog.done ? '<span class="done">' + prog.done + "/" + prog.total + " done</span>" : prog.total + " lessons") +
-            " &middot; " + moduleMinutes(mc) + " min</span>" +
-          '<span class="curr-arrow" aria-hidden="true">&rarr;</span>';
-        rows.appendChild(a);
+        a.innerHTML = "<h3>" + esc(m.title) + "</h3><p>" + esc(m.blurb) + "</p>" +
+          '<div class="progress-track"><div class="progress-fill" style="width:' + (prog.total ? Math.round(prog.done / prog.total * 100) : 0) + '%"></div></div>' +
+          '<div class="mc-meta"><span>' + prog.done + "/" + prog.total + " lessons</span><span>~" + moduleMinutes(mc) + " min</span></div>";
+        cards.appendChild(a);
       });
     });
-    curr.appendChild(rows);
-    page.appendChild(curr);
+    page.appendChild(cards);
 
-    /* ---- reference ---- */
     if (LS.reference) {
-      var refs = el("section", "wrap reveal refs-section");
-      refs.innerHTML =
-        '<span class="story-num">Reference</span>' +
-        '<h2 class="sec-h sec-h-sm">Look it up without leaving.</h2>' +
-        '<p class="sec-p">Every statement line defined in two sentences, every formula in the course on one page, and a glossary that opens in place inside a lesson.</p>';
-      var refGrid = el("div", "ref-grid");
+      page.appendChild(el("h2", null, "Reference"));
+      page.appendChild(el("p", null, "Look things up without hunting through lessons: every statement line defined in two sentences, and every formula in the course on one page."));
+      var refCards = el("div", "module-cards");
       Object.keys(LS.reference).forEach(function (rid) {
         var r = LS.reference[rid];
-        var a = el("a", "ref-card");
+        var a = el("a", "module-card");
         a.href = "#/ref/" + rid;
         a.innerHTML = "<h3>" + esc(r.title) + "</h3><p>" + esc(r.lede) + "</p>";
-        refGrid.appendChild(a);
+        refCards.appendChild(a);
       });
       if (LS.glossary) {
-        var ga2 = el("a", "ref-card");
+        var ga2 = el("a", "module-card");
         ga2.href = "#/glossary";
         ga2.innerHTML = "<h3>Finance glossary</h3><p>Every term the course uses — " + LS.glossary.length +
           " of them — each explained in one plain sentence before the technical definition.</p>";
-        refGrid.appendChild(ga2);
+        refCards.appendChild(ga2);
       }
-      refs.appendChild(refGrid);
-      page.appendChild(refs);
+      page.appendChild(refCards);
     }
 
-    /* ---- closer ---- */
-    var closer = el("section", "closer wrap reveal");
-    closer.innerHTML =
-      "<h2>Start where everyone starts: five buckets.</h2>" +
-      "<p>Three to eight minutes a lesson. Progress is saved in your browser — nothing is sent anywhere, and there is no account to make.</p>" +
-      '<div class="hero-cta"><a class="btn btn-primary" href="#/' + lesson1 + '">Start learning</a>' +
-      '<a class="btn btn-outline" href="#/glossary">Browse the glossary</a></div>';
-    page.appendChild(closer);
+    page.appendChild(el("h2", null, "How it works"));
+    page.appendChild(el("p", null, "Every lesson takes three to eight minutes: a definition, a formula, the café's real numbers, then a spreadsheet where you build the figure yourself. The sandbox checks your work and — where the point of the lesson is the formula — refuses to accept a hardcoded number. Progress is saved in your browser; nothing is sent anywhere, and there is no account to make."));
 
     content.innerHTML = "";
     content.appendChild(page);
-    revealOnScroll(page);
   }
 
   function renderModule(code) {
@@ -1126,9 +885,8 @@
       var lesson = LS.lessons[id];
       var li = el("li"), a = el("a");
       a.href = "#/" + id;
-      a.innerHTML = '<span class="ll-code">' + esc(String(id).split("-")[0]) + "</span>" +
-        "<span>" + esc(lesson.title) + "</span>" +
-        (store.isDone(id) ? '<span class="ll-done">\u2713</span>' : "") +
+      a.innerHTML = "<span>" + esc(lesson.title) + "</span>" +
+        (store.isDone(id) ? '<span class="ll-done">✓</span>' : "") +
         '<span class="ll-min">' + (lesson.minutes || 4) + " min</span>";
       li.appendChild(a);
       ul.appendChild(li);
@@ -1194,6 +952,41 @@
   }
 
   /* ================= router ================= */
+  /* ---- v2 learning layer: curriculum graph, progress, next-lesson ---- */
+  (function () {
+    if (!window.FinCurriculum || !window.FinLessons) return;
+    var C = window.FinCurriculum;
+    var all = Object.keys(window.FinLessons).map(function (k) { return window.FinLessons[k]; });
+    LS.v2Curriculum = new C.Curriculum(all);
+    LS.v2Progress = new C.Progress(readV2Progress());
+    LS.levelTitle = function (key) {
+      var lv = C.LEVELS.filter(function (l) { return l.key === key; })[0];
+      return lv ? "Level " + lv.id + " · " + lv.title : key;
+    };
+    LS.nextV2Lesson = function (id) {
+      var order = LS.v2Curriculum.learningOrder();
+      var i = order.indexOf(id);
+      for (var j = i + 1; j < order.length; j++) {
+        var l = LS.v2Curriculum.get(order[j]);
+        if (l) return l;
+      }
+      return null;
+    };
+    function readV2Progress() {
+      try { return JSON.parse(localStorage.getItem("finstudio:v2:progress") || "{}"); }
+      catch (e) { return {}; }
+    }
+    LS.store = LS.store || {};
+    LS.store.markSeen = function (id) {
+      LS.v2Progress.markSeen(id);
+      try { localStorage.setItem("finstudio:v2:progress", JSON.stringify(LS.v2Progress.data)); } catch (e) {}
+    };
+    LS.store.markDone = function (id) {
+      LS.v2Progress.record(id, { modeling: 1 });
+      try { localStorage.setItem("finstudio:v2:progress", JSON.stringify(LS.v2Progress.data)); } catch (e) {}
+    };
+  })();
+
   function currentRoute() {
     var h = location.hash.replace(/^#\/?/, "");
     if (!h) return { kind: "home" };
@@ -1202,29 +995,23 @@
     if (parts[0] === "quiz" && parts[1]) return { kind: "quiz", id: parts[1] };
     if (parts[0] === "ref" && parts[1]) return { kind: "ref", id: parts[1] };
     if (parts[0] === "glossary") return { kind: "glossary" };
+    if (parts[0] === "learn" && parts[1]) return { kind: "v2", id: parts[1] };
     return { kind: "lesson", id: parts[0] };
   }
 
   function route() {
     var r = currentRoute();
-    var known = r.kind === "lesson" ? !!LS.lessons[r.id] : true;
-    // the shell keys its layout off this: the homepage drops the syllabus rail
-    // and goes full-bleed, every other route keeps it
-    document.body.dataset.route = known ? r.kind : "home";
     if (r.kind === "module") renderModule(r.id);
     else if (r.kind === "quiz" && LS.renderQuiz) LS.renderQuiz(r.id, content);
     else if (r.kind === "ref" && LS.renderRef) LS.renderRef(r.id, content);
     else if (r.kind === "glossary" && LS.renderGlossary) LS.renderGlossary(content);
+    else if (r.kind === "v2" && window.FinLessons && window.FinLessons[r.id] && LS.renderV2Lesson)
+      LS.renderV2Lesson(window.FinLessons[r.id], content);
     else if (r.kind === "lesson" && LS.lessons[r.id]) renderLesson(r.id);
     else renderHome();
     buildSidebar();
     closeNav();
     content.focus({ preventScroll: true });
-    if (pendingScroll) {
-      var target = document.getElementById(pendingScroll);
-      pendingScroll = null;
-      if (target) { target.scrollIntoView({ behavior: "auto", block: "start" }); return; }
-    }
     window.scrollTo(0, 0);
   }
 
