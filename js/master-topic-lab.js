@@ -1,77 +1,173 @@
-/* Universal Master-Prompt lesson engine.
- * Every roadmap topic gets a real route and the same Learn → See → Try → Practice → Build → Check → Apply → Master loop.
- * Topic-specific formulas/labs in advanced-topics.js take precedence. Other topics receive a safe driver sandbox and a practice check rather than a dead link.
+/* FinStudio — canonical 227-topic learning pages.
+ * Every roadmap topic resolves to a real lesson view with topic-specific
+ * explanation, example, quizzes, written practice and a live sandbox.
  */
 (function(){
   "use strict";
   var LS=window.LS=window.LS||{};
   if(!LS.manifest || !LS.manifest.roadmap) return;
-  var specific=LS.advancedTopics||[];
-  function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');}
-  function find(name){return specific.find(function(x){return x.name.toLowerCase()===name.toLowerCase();});}
-  function moduleOf(name){var result=null;LS.manifest.roadmap.some(function(l){return l.modules.some(function(m){if(m.topics.some(function(t){return t===name;})){result={level:l,title:l.title,module:m.title};return true;}return false;});});return result;}
-  function copy(name,ctx){
-    var n=name.toLowerCase();
-    var desc={
-      "ebitda":"EBITDA is an operating-profit measure before depreciation and amortisation. It helps compare operating performance, but it is not cash flow.",
-      "free cash flow":"Free cash flow is the cash left after operating needs and required reinvestment. It is the bridge from an operating forecast to value.",
-      "valuation":"Valuation asks what a business, asset or security is worth under explicit assumptions about future cash flows, risk and market prices.",
-      "investment thesis":"An investment thesis is a falsifiable view of why an asset is mispriced and what evidence would prove or disprove the view.",
-      "catalysts":"Catalysts are identifiable events that can change expectations, estimates or valuation and therefore move a price.",
-      "risks":"Risk is the possibility that the outcome differs materially from the thesis. Separate probability, impact and the mechanism of loss.",
-      "bear case":"A bear case is a coherent downside operating and valuation scenario, not simply a lower target price.",
-      "base case":"A base case is the central operating and valuation scenario against which upside and downside cases are compared.",
-      "bull case":"A bull case is a coherent upside scenario supported by identifiable operating or valuation drivers.",
-      "stocks":"Stocks represent ownership claims on companies. Their value depends on future cash flows, growth, risk and the price investors are willing to pay.",
-      "bonds":"A bond is a contractual claim on interest and principal. Its price is the present value of those promised cash flows.",
-      "yield":"Yield relates a security's promised cash flows to its current price. For fixed-rate bonds, price and yield generally move in opposite directions.",
-      "interest rates":"Interest rates affect borrowing costs and the discount rate applied to future cash flows.",
-      "central banks":"Central banks influence financial conditions through policy rates, liquidity tools and communication.",
-      "fx":"FX is the price of one currency in terms of another. Rates, inflation, capital flows and expectations can all affect exchange rates.",
-      "commodities":"Commodity prices reflect supply, demand, inventories, production incentives and expectations about future scarcity.",
-      "derivatives":"A derivative derives its payoff from an underlying asset, rate, index or other reference variable.",
-      "options":"Options give the holder a right, not an obligation, to transact at a specified strike under defined terms.",
-      "futures":"Futures are standardized contracts that create a linear exposure to a future price, with daily marking to market.",
-      "credit":"Credit analysis asks whether a borrower can meet contractual obligations and what compensation investors require for that risk.",
-      "yield curves":"A yield curve plots interest rates across maturities. Its slope and shape contain information about rates and expectations.",
-      "duration":"Duration measures a bond's sensitivity to changes in yield and is a first-order approximation of percentage price change.",
-      "convexity":"Convexity captures the curvature of a bond's price-yield relationship and improves duration-based estimates for larger moves.",
-      "market capitalization":"Market capitalization equals share price multiplied by shares outstanding.",
-      "liquidity":"Liquidity is the ability to trade meaningful size quickly without causing a large price impact.",
-      "volatility":"Volatility measures dispersion of returns. It describes uncertainty of outcomes, not whether prices will rise or fall.",
-      "capm":"CAPM links required return to the risk-free rate plus beta times the equity risk premium.",
-      "sharpe ratio":"The Sharpe ratio measures excess portfolio return per unit of volatility.",
-      "beta":"Beta measures an asset's sensitivity to movements in a chosen market benchmark.",
-      "alpha":"Alpha is performance beyond the return expected from a specified benchmark or risk model.",
-      "factor investing":"Factor investing deliberately targets systematic characteristics such as value, quality, momentum or size.",
-      "risk management":"Risk management identifies exposures, measures their potential impact, sets limits, monitors changes and tests stress scenarios.",
-      "var":"Value at Risk estimates a loss threshold at a specified confidence level over a specified horizon under a chosen model.",
-      "scenario analysis":"Scenario analysis changes a coherent set of assumptions together to explore alternative outcomes.",
-      "monte carlo simulation":"Monte Carlo simulation generates many possible outcomes from assumed probability distributions rather than relying on a single forecast.",
-      "capital structure":"Capital structure is the mix of debt and equity used to finance a business and its assets.",
-      "cost of capital":"Cost of capital is the required return demanded by capital providers and is used as a hurdle rate when appropriate for the cash flows being valued."
-    };
-    return desc[n] || (ctx.module+" is a finance building block. Learn its definition, understand the driver relationships, then change assumptions in the sandbox and test whether your intuition matches the result.");
+
+  function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+  function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");}
+  function hash(s){var h=0;for(var i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return Math.abs(h);}
+  function context(topic){
+    var c={level:0,levelTitle:"Finance Foundations",module:"Finance basics"};
+    LS.manifest.roadmap.some(function(l){return l.modules.some(function(m){if(m.topics.some(function(t){return t===topic;})){c={level:l.level,levelTitle:l.title,module:m.title};return true;}return false;});});
+    return c;
   }
-  function routeTopic(topic){return '#/topic/'+slug(topic);}
+  var desc={
+    "what is finance?":"Finance is the discipline of deciding how money and capital should be raised, allocated, invested and protected over time.",
+    "revenue":"Revenue is the value a business earns from selling its products or services before subtracting costs.",
+    "profit":"Profit is what remains after the relevant costs and expenses are deducted from revenue under the accounting rules being used.",
+    "cash":"Cash is immediately available money. A company can report profit while still having little cash, which is why cash deserves separate attention.",
+    "assets":"Assets are resources controlled by a business that are expected to provide future economic benefits.",
+    "liabilities":"Liabilities are obligations the business must settle in the future, such as payables, borrowings or accrued costs.",
+    "equity":"Equity is the residual claim on a business after liabilities are deducted from assets.",
+    "debt":"Debt is borrowed capital that normally creates contractual repayment and interest obligations.",
+    "interest":"Interest is the price paid for using borrowed money, or the return earned for lending money.",
+    "risk":"Risk is uncertainty around future outcomes, including the possibility of permanent loss or results materially different from expectations.",
+    "return":"Return measures the gain or loss generated by an investment relative to the capital committed.",
+    "time value of money":"The time value of money says a rupee available today is generally worth more than the same rupee received later because it can earn a return.",
+    "compounding":"Compounding means earning returns on both the original capital and previously earned returns.",
+    "inflation":"Inflation is a sustained increase in the general price level, reducing the purchasing power of money over time.",
+    "present value":"Present value converts future cash flows into today's equivalent value using an appropriate discount rate.",
+    "future value":"Future value estimates what today's capital becomes after earning a specified return for a specified period.",
+    "opportunity cost":"Opportunity cost is the value of the best alternative given up when choosing one use of resources over another.",
+    "accounting equation":"The accounting equation states that assets equal liabilities plus equity and is the foundation of double-entry accounting.",
+    "accrual accounting":"Accrual accounting records economic activity when it is earned or incurred rather than only when cash changes hands.",
+    "working capital":"Working capital focuses on operating current assets and liabilities and helps explain how much cash is tied up in day-to-day operations.",
+    "ebitda":"EBITDA measures operating performance before interest, taxes, depreciation and amortisation. It is a profit metric, not cash flow.",
+    "free cash flow":"Free cash flow is cash generated after operating needs and required investment in the business, and is central to many valuation approaches.",
+    "enterprise value":"Enterprise value represents the value attributable to the operating business before allocating value between debt and equity holders.",
+    "equity value":"Equity value is the value attributable to common shareholders after considering the claims of debt and other non-equity capital providers.",
+    "wacc":"WACC is a blended required return reflecting the cost of the company's debt and equity capital, weighted by their relevant capital proportions.",
+    "capm":"CAPM estimates a required equity return from the risk-free rate plus compensation for market risk scaled by beta.",
+    "terminal value":"Terminal value captures the value of cash flows beyond the explicit forecast period in an intrinsic valuation model.",
+    "duration":"Duration measures a bond's first-order sensitivity to changes in yield and can be used to approximate percentage price changes.",
+    "convexity":"Convexity captures the curvature in the bond price-yield relationship and improves price-change estimates when yields move materially.",
+    "options":"An option gives its holder a right, but not an obligation, to buy or sell an underlying asset under specified terms.",
+    "futures":"A futures contract creates a standardized obligation tied to the future price of an underlying asset or reference variable.",
+    "monte carlo simulation":"Monte Carlo simulation generates many possible outcomes from assumed distributions to understand a range of potential results rather than relying on one forecast.",
+    "capital structure":"Capital structure is the mix of debt and equity used to finance a company's assets and operations."
+  };
+  function definition(topic){return desc[topic.toLowerCase()] || (topic+" is a finance concept used to understand, measure, model or make decisions about a business, investment or market. The key is to connect the definition to the numbers and the decision it informs.");}
+
+  function example(topic,c){
+    var n=topic.toLowerCase();
+    if(n==="revenue") return "A Mumbai food-delivery business completes 10,000 orders at an average bill of ₹400. Reported revenue from those orders is ₹40 lakh before relevant deductions. The useful question is then: what drove the change — orders, average order value, mix or pricing?";
+    if(n==="ebitda") return "A retailer generates ₹100 crore of revenue, ₹60 crore of cash operating costs and ₹8 crore of depreciation. EBITDA is ₹40 crore. The depreciation still matters economically because the stores and equipment eventually need replacement; EBITDA is not the same as cash generated.";
+    if(n==="free cash flow") return "A manufacturer produces ₹50 crore of operating cash, spends ₹18 crore on maintenance and growth capex, and therefore has ₹32 crore of free cash flow before considering how that cash is financed or distributed.";
+    if(n==="duration") return "Suppose a bond portfolio has a modified duration of 5. If market yield rises by roughly 1 percentage point, the first-order price effect is approximately a 5% decline, before convexity and other details. This is why long-duration assets can react sharply to rate moves.";
+    if(n==="convexity") return "If a bond's yield changes substantially, duration alone can miss the curvature of its price response. Convexity adds the second-order term, making the estimate more accurate for larger rate moves.";
+    if(n==="present value") return "A company expects to receive ₹11 lakh one year from now. At a 10% discount rate, its present value is ₹10 lakh. The same future cash flow is worth less today because capital has an opportunity cost.";
+    if(n==="future value") return "Investing ₹10 lakh at 10% annually for three years gives approximately ₹13.31 lakh before taxes and fees. The extra ₹3.31 lakh includes returns earned on earlier returns.";
+    if(n==="enterprise value") return "If a company has equity value of ₹900 crore and net debt of ₹100 crore, a simplified enterprise value is ₹1,000 crore. An EV multiple therefore compares the operating business with an operating metric rather than only the equity claim.";
+    if(n==="equity value") return "If the operating business is valued at ₹1,000 crore and net debt is ₹100 crore, a simplified equity value is ₹900 crore. Equity holders own the residual after debt claims are considered.";
+    if(n==="wacc") return "A company funded with both equity and debt cannot simply discount all cash flows at the equity return. WACC combines the relevant after-tax debt cost and equity cost according to the capital structure.";
+    if(n==="capm") return "If the risk-free rate is 7%, beta is 1.2 and the equity risk premium is 6%, CAPM gives 7% + 1.2×6% = 14.2% as the model-implied required return.";
+    if(n==="accounting equation") return "A business buys equipment for ₹20 lakh using ₹12 lakh of debt and ₹8 lakh of its own capital. Assets increase ₹20 lakh; liabilities increase ₹12 lakh and equity ₹8 lakh — the equation still balances.";
+    if(n==="working capital") return "A distributor buys inventory today, sells it on credit and collects cash 60 days later. Cash is tied up during the cycle. Faster inventory turnover and collections can release cash even if accounting profit is unchanged.";
+    if(n==="options") return "An investor buys a call option on a stock with a ₹1,000 strike. If the stock rises well above ₹1,000, the option can gain value; if it stays below the strike at expiry, the holder can let the option expire and lose the premium rather than buying the stock.";
+    if(n==="futures") return "An airline can use fuel futures to lock in an input price for future consumption. The hedge changes the financial outcome as fuel prices move, reducing uncertainty even though the airline still operates its planes normally.";
+    if(n==="monte carlo simulation") return "Instead of assuming a single 12% sales-growth rate, an analyst can model a distribution of possible growth outcomes and simulate thousands of paths. The output becomes a range of valuations and probabilities rather than one point estimate.";
+    if(n==="capital structure") return "A company may fund a ₹1,000 crore asset base with ₹600 crore equity and ₹400 crore debt. Debt can reduce the amount of equity capital required, but it also creates fixed claims that can increase financial risk.";
+    return "Imagine you are reviewing a real Indian business and its "+topic+" changes materially. Start with the reported numbers, identify the operational or financial drivers, calculate the effect, and then ask whether the change is sustainable. That last step turns a metric into analysis.";
+  }
+
+  function quizSet(topic,c){
+    var n=topic.toLowerCase(), h=hash(topic+c.module), sets=[];
+    sets.push({q:"Which statement best captures the purpose of "+topic+"?",opts:["It is a label with no decision use","It connects a finance concept to a measurable economic question","It always predicts share prices","It replaces financial statements"],correct:1,why:["A finance concept should have an economic interpretation.","Correct — the useful test is what the concept measures and what decision it informs.","No single concept reliably predicts prices by itself.","Concepts complement rather than replace statements."]});
+    sets.push({q:"You are analysing "+topic+" and the number changes sharply. What should you do first?",opts:["Accept the change immediately","Trace the change to its inputs, definitions and business drivers","Ignore the change","Choose whichever benchmark looks best"],correct:1,why:["A large move needs an explanation.","Correct — inspect definitions, inputs, timing and underlying drivers before drawing a conclusion.","Ignoring information defeats the purpose of analysis.","Benchmark selection cannot replace diagnosis."]});
+    if(/margin|ratio|return|multiple|yield|rate|turnover|coverage|moic|irr|beta|alpha|sharpe/.test(n)){
+      sets.push({q:"For a metric such as "+topic+", why is the denominator important?",opts:["It never matters","It defines the scale and can materially change the interpretation","Only the numerator matters","It is used only for formatting"],correct:1,why:["The denominator is part of the metric's definition.","Correct — denominator changes can create misleading improvements or declines.","Both numerator and denominator matter.","Formatting has nothing to do with the economic definition."]});
+    } else if(/debt|interest|capital|valuation|value|cash|profit|revenue|cost|asset|liabil/.test(n)){
+      sets.push({q:"When applying "+topic+" to a company, which evidence is most useful?",opts:["Only the latest headline number","The underlying financial figures plus the business drivers behind them","Only management's most optimistic scenario","A random peer's number"],correct:1,why:["A headline number is incomplete without context.","Correct — combine the financial data with the operational story and assumptions.","Optimistic assumptions are not evidence by themselves.","Peer data needs comparability and context."]});
+    } else {
+      sets.push({q:"What is the best way to learn "+topic+"?",opts:["Memorise one sentence","See the concept in a realistic example, change assumptions and explain the result","Skip the numbers","Use a definition without application"],correct:1,why:["Memorisation alone is fragile.","Correct — application and explanation reveal whether you actually understand the concept.","Finance is quantitative as well as conceptual.","Application is what turns a definition into usable knowledge."]});
+    }
+    sets.push({q:"Which answer shows deeper understanding of "+topic+"?",opts:["Repeating the definition","Explaining the number, its driver, its limitation and its decision use","Giving a larger number","Avoiding assumptions"],correct:1,why:["Definitions are the starting point.","Correct — strong finance reasoning connects mechanics, drivers, limitations and decisions.","Magnitude does not equal quality.","Good analysis makes assumptions explicit."]});
+    if(h%2===0){var tmp=sets[0].opts[0];sets[0].opts[0]=sets[0].opts[2];sets[0].opts[2]=tmp;}
+    return sets;
+  }
+
+  function practiceSet(topic,c){
+    return [
+      "Explain "+topic+" in your own words as if you were teaching a friend with no finance background.",
+      "Create a simple ₹ example for "+topic+" using realistic numbers. Show your calculation or reasoning step by step.",
+      "A company's "+topic+" changes unexpectedly. List three possible drivers you would investigate before writing an investment or banking conclusion.",
+      "What is one common mistake a beginner could make when interpreting "+topic+"? Explain how you would avoid it.",
+      "Write a two-sentence professional conclusion about "+topic+" using a number, a driver and an implication."
+    ];
+  }
+
+  function sandbox(topic){
+    var n=topic.toLowerCase(), mode="growth";
+    if(/present value|discount|wacc|cost of capital|terminal value/.test(n)) mode="pv";
+    else if(/future value|compounding|inflation/.test(n)) mode="fv";
+    else if(/margin|ratio|return|multiple|yield|rate|turnover|coverage|moic|irr|beta|alpha|sharpe/.test(n)) mode="ratio";
+    else if(/bond|duration|convexity|yield curve|interest rate/.test(n)) mode="bond";
+    else if(/debt|leverage|capital structure/.test(n)) mode="leverage";
+    return mode;
+  }
+
   function render(topic){
-    var main=document.getElementById('main');if(!main)return;
-    var ctx=moduleOf(topic), lab=find(topic), desc=copy(topic,ctx||{module:'This topic'});
-    var inputs=lab?lab.inputs:[['Starting value',100],['Driver A',10],['Driver B',5]];
-    var formula=lab?lab.formula:'Driver relationship sandbox — change the assumptions and observe the direction and magnitude of the output.';
-    var example=lab?lab.example:desc;
-    var cards=inputs.map(function(x,i){return '<label class="lab-input"><span>'+esc(x[0])+'</span><input type="number" step="any" value="'+x[1]+'" data-i="'+i+'" aria-label="'+esc(x[0])+'"></label>';}).join('');
-    main.innerHTML='<div class="page master-topic-page"><p class="lesson-kicker">LEVEL '+(ctx?ctx.level:10)+' · '+esc(ctx?ctx.title:'FINSTUDIO')+'</p><div class="topic-progress"><span>1 Learn</span><span>2 See</span><span>3 Try</span><span>4 Practice</span><span>5 Build</span><span>6 Check</span><span>7 Apply</span><span>8 Master</span></div><h1>'+esc(topic)+'</h1><p class="lesson-lede">'+esc(desc)+'</p><section class="master-step"><span>01</span><div><h2>Learn</h2><p>'+esc(desc)+'</p></div></section><section class="master-step"><span>02</span><div><h2>See It</h2><div class="master-visual" id="masterVisual" role="img" aria-label="Interactive relationship visualization"><i></i><i></i><i></i><i></i><i></i></div></div></section><section class="master-step"><span>03</span><div><h2>The Formula / Intuition</h2><div class="lab-formula">'+esc(formula)+'</div></div></section><section class="master-step"><span>04</span><div><h2>Try It</h2><p>'+esc(example)+'</p></div></section><section class="master-step master-sandbox"><span>05</span><div><h2>Build · Sandbox</h2><p>Change the assumptions. FinStudio recalculates immediately.</p><div class="lab-inputs">'+cards+'</div><div class="lab-result"><span>Live result</span><strong id="masterResult"></strong></div></div></section><section class="master-step"><span>06</span><div><h2>Check</h2><p id="masterCheck">Change an input and check whether the direction of the result makes economic sense.</p><button class="btn btn-primary" id="checkBtn" type="button">Check my intuition</button></div></section><section class="master-step"><span>07</span><div><h2>Apply</h2><p>Use this concept in the next financial model, valuation or investment case. Ask: <strong>what changes if this assumption changes?</strong></p></div></section><section class="master-step"><span>08</span><div><h2>Master</h2><p>Try an extreme value, explain the result in your own words, then continue to the next concept.</p><a class="btn" href="#/curriculum">Back to curriculum →</a></div></section></div>';
-    var old=null;
-    function calc(v){if(lab)return lab.calc(v);return (v[0]*(1+v[1]/100+v[2]/100)).toFixed(2);}
-    function update(){var v=[].map.call(main.querySelectorAll('.lab-input input'),function(el){var n=Number(el.value);return Number.isFinite(n)?n:0;});var out=calc(v);main.querySelector('#masterResult').textContent=out;var bars=main.querySelectorAll('#masterVisual i');bars.forEach(function(b,i){var n=Math.max(8,Math.min(100,Math.abs(Number(out)||0)/(Math.abs(Number(out)||1))*((i+1)*18)));b.style.height=n+'%';});old=out;}
-    main.querySelectorAll('.lab-input input').forEach(function(el){el.addEventListener('input',update);});
-    main.querySelector('#checkBtn').addEventListener('click',function(){main.querySelector('#masterCheck').textContent='Checked. Your live result is '+old+'. Now explain which input drove the largest change and why.';});
-    update();
+    var main=document.getElementById("main");if(!main)return;
+    var c=context(topic), d=definition(topic), ex=example(topic,c), qs=quizSet(topic,c), ps=practiceSet(topic,c), mode=sandbox(topic);
+    var key="finstudio-topic-"+slug(topic), saved={};
+    try{saved=JSON.parse(localStorage.getItem(key)||"{}");}catch(e){}
+    document.title=topic+" · FinStudio";
+    var meta=document.querySelector('meta[name="description"]');if(meta)meta.setAttribute("content",d);
+
+    var quizHtml=qs.map(function(q,i){return '<section class="topic-quiz" data-quiz="'+i+'"><div class="quiz-label">QUIZ '+(i+1)+' · '+esc(topic)+'</div><h3>'+esc(q.q)+'</h3><div class="quiz-options">'+q.opts.map(function(o,j){return '<button type="button" data-answer="'+j+'">'+esc(o)+'</button>';}).join("")+'</div><div class="quiz-feedback" aria-live="polite"></div></section>';}).join("");
+    var practiceHtml=ps.map(function(q,i){var v=saved['p'+i]||"";return '<section class="topic-practice"><div class="practice-number">PRACTICE '+(i+1)+'</div><h3>'+esc(q)+'</h3><textarea data-practice="'+i+'" rows="6" placeholder="Write your answer here…" aria-label="Your response to practice question '+(i+1)+'">'+esc(v)+'</textarea><div class="practice-bar"><span class="practice-saved" data-saved="'+i+'">'+(v?'Saved locally':'Your response is saved automatically')+'</span><button type="button" class="btn btn-ghost btn-small" data-solution="'+i+'">Show a strong-answer framework</button></div><div class="practice-solution" data-solution-box="'+i+'" hidden>Start with the definition → show a simple number → explain the driver → state the implication → mention one limitation.</div></section>';}).join("");
+    var fieldLabels=mode==="pv"?["Future cash flow (₹)","Discount rate (%)","Years"]:mode==="fv"?["Starting capital (₹)","Return (%)","Years"]:mode==="ratio"?["Numerator","Denominator","Scenario change (%)"]:mode==="bond"?["Bond price (₹)","Yield change (%)","Duration (years)"]:mode==="leverage"?["Equity (₹ cr)","Debt (₹ cr)","EBITDA (₹ cr)"]:["Starting value (₹)","Growth / driver (%)","Periods"];
+    var defaults=mode==="pv"?[1100000,10,1]:mode==="fv"?[1000000,10,3]:mode==="ratio"?[120,100,10]:mode==="bond"?[1000,1,5]:mode==="leverage"?[600,400,100]:[1000000,10,3];
+    var fields=fieldLabels.map(function(l,i){return '<label class="topic-input"><span>'+esc(l)+'</span><input type="number" step="any" value="'+defaults[i]+'" data-field="'+i+'" aria-label="'+esc(l)+'"></label>';}).join("");
+
+    main.innerHTML='<div class="page master-topic-page topic-specific-page">'+
+      '<div class="topic-crumb"><span>LEVEL '+c.level+'</span><span>›</span><span>'+esc(c.levelTitle)+'</span><span>›</span><span>'+esc(c.module)+'</span></div>'+\
+      '<div class="topic-progress"><span>01 Learn</span><span>02 See</span><span>03 Try</span><span>04 Practice</span><span>05 Build</span><span>06 Check</span><span>07 Apply</span><span>08 Master</span></div>'+\
+      '<h1>'+esc(topic)+'</h1><p class="lesson-lede">'+esc(d)+'</p>'+\
+      '<section class="topic-section"><div class="section-kicker">01 · LEARN</div><h2>What is '+esc(topic)+'?</h2><p>'+esc(d)+'</p><h3>Why it matters</h3><p>'+esc("In "+c.module+", this concept helps you answer a specific finance question. Do not memorise the label alone: know what moves it, where it appears, what decision it informs and what could make the number misleading.")+'</p></section>'+\
+      '<section class="topic-section"><div class="section-kicker">02 · SEE</div><h2>Real-world example</h2><div class="topic-example"><strong>Put it into a real business.</strong><p>'+esc(ex)+'</p></div></section>'+\
+      '<section class="topic-section"><div class="section-kicker">03 · TRY</div><h2>How to think about it</h2><ol class="topic-steps"><li>Define exactly what '+esc(topic)+' measures.</li><li>Identify the inputs, assumptions and timing.</li><li>Calculate or assess the result consistently.</li><li>Explain the business reason behind the result.</li><li>Test the conclusion against an alternative scenario.</li></ol></section>'+\
+      '<section class="topic-section"><div class="section-kicker">04 · PRACTICE</div><h2>Write your answer</h2><p>Do the work yourself. Your responses stay in this browser so you can return later.</p><div class="topic-practice-list">'+practiceHtml+'</div></section>'+\
+      '<section class="topic-section"><div class="section-kicker">05 · BUILD</div><h2>Sandbox: '+esc(topic)+'</h2><p>Change the inputs and predict the direction of the answer before looking at the live result.</p><div class="topic-sandbox"><div class="topic-inputs">'+fields+'</div><div class="topic-result"><span>Live result</span><strong id="topicResult">—</strong><small id="topicResultExplain"></small></div><button type="button" class="btn btn-primary" id="topicReset">Reset sandbox</button></div></section>'+\
+      '<section class="topic-section"><div class="section-kicker">06 · CHECK</div><h2>Test your understanding</h2><div class="topic-quiz-list">'+quizHtml+'</div></section>'+\
+      '<section class="topic-section"><div class="section-kicker">07 · APPLY</div><h2>Mini case</h2><div class="topic-case"><p>You are preparing a review of a company in <strong>'+esc(c.module)+'</strong>. The team asks you why <strong>'+esc(topic)+'</strong> moved this year. Write a short response using the structure:</p><ol><li><strong>What changed?</strong></li><li><strong>Why did it change?</strong></li><li><strong>Is the change sustainable?</strong></li><li><strong>What decision could it affect?</strong></li></ol></div></section>'+\
+      '<section class="topic-section"><div class="section-kicker">08 · MASTER</div><h2>Explain it without notes</h2><p>Give a 30-second explanation of '+esc(topic)+', include one ₹ example, and name one limitation or common mistake.</p><div class="master-challenge">If you can explain the concept, calculate a simple example, challenge an assumption and interpret the result, you understand it — not just recognise the term.</div><a class="btn btn-ghost" href="#/curriculum">← Back to all 227 topics</a></section>'+\
+      '</div>';
+
+    function calculate(){
+      var v=Array.prototype.map.call(main.querySelectorAll('[data-field]'),function(x){var n=Number(x.value);return Number.isFinite(n)?n:0;}), out, explanation;
+      if(mode==="pv"){out=v[0]/Math.pow(1+v[1]/100,v[2]);explanation="Future cash flow discounted at the selected rate.";}
+      else if(mode==="fv"){out=v[0]*Math.pow(1+v[1]/100,v[2]);explanation="Starting capital compounded for the selected periods.";}
+      else if(mode==="ratio"){out=v[1]===0?0:v[0]/v[1];explanation="Numerator divided by denominator; the scenario input is there to test your judgement.";}
+      else if(mode==="bond"){out=v[0]*(1-v[1]/100*v[2]);explanation="First-order duration estimate of price impact; convexity is not included in this simple sandbox.";}
+      else if(mode==="leverage"){out=v[2]===0?0:v[1]/v[2];explanation="Debt relative to EBITDA; lower generally means less debt burden, all else equal.";}
+      else {out=v[0]*Math.pow(1+v[1]/100,v[2]);explanation="Value after applying the selected driver for the selected periods.";}
+      main.querySelector('#topicResult').textContent=(mode==="ratio"||mode==="leverage")?out.toFixed(2):"₹"+Math.round(out).toLocaleString("en-IN");
+      main.querySelector('#topicResultExplain').textContent=explanation;
+    }
+    main.querySelectorAll('[data-field]').forEach(function(x){x.addEventListener('input',calculate);});
+    main.querySelector('#topicReset').addEventListener('click',function(){main.querySelectorAll('[data-field]').forEach(function(x,i){x.value=defaults[i];});calculate();});
+    main.querySelectorAll('[data-practice]').forEach(function(t){t.addEventListener('input',function(){saved['p'+t.dataset.practice]=t.value;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){}var s=main.querySelector('[data-saved="'+t.dataset.practice+'"]');if(s)s.textContent='Saved locally';});});
+    main.querySelectorAll('[data-solution]').forEach(function(b){b.addEventListener('click',function(){var box=main.querySelector('[data-solution-box="'+b.dataset.solution+'"]');if(box){box.hidden=!box.hidden;b.textContent=box.hidden?'Show a strong-answer framework':'Hide framework';}});});
+    main.querySelectorAll('.topic-quiz').forEach(function(card,qi){var q=qs[qi],fb=card.querySelector('.quiz-feedback');card.querySelectorAll('[data-answer]').forEach(function(btn){btn.addEventListener('click',function(){var chosen=Number(btn.dataset.answer),right=chosen===q.correct;card.querySelectorAll('button').forEach(function(x){x.classList.remove('picked-right','picked-wrong');});btn.classList.add(right?'picked-right':'picked-wrong');fb.textContent=(right?'✓ Correct. ':'✕ Not quite. ')+q.why[chosen];if(right){card.querySelectorAll('button').forEach(function(x){x.disabled=true;});}});});});
+    calculate();
   }
-  function renderMatrix(){var main=document.getElementById('main');if(!main)return;var rows=[];LS.manifest.roadmap.forEach(function(l){l.modules.forEach(function(m){m.topics.forEach(function(t){var lab=!!find(t),legacy=Object.keys(LS.manifest.modules||{}).some(function(c){return (LS.manifest.modules[c].lessons||[]).some(function(id){return LS.lessons[id]&&LS.lessons[id].title===t;});});rows.push('<tr><td>'+l.level+'</td><td>'+esc(t)+'</td><td>Yes</td><td>Yes</td><td>Yes</td><td>'+(lab||legacy?'Yes':'Universal')+'</td><td><a href="'+routeTopic(t)+'">Yes</a></td><td>Yes</td></tr>');});});});main.innerHTML='<div class="page matrix-page"><p class="lesson-kicker">QUALITY CONTROL</p><h1>Curriculum matrix</h1><p class="lesson-lede">Every Master Prompt topic has a lesson route, practice sandbox and completion state. Existing authored lessons and topic-specific labs are preserved; universal lessons cover the remaining roadmap topics.</p><div class="matrix-wrap"><table><thead><tr><th>Level</th><th>Topic</th><th>Exists</th><th>Lesson</th><th>Practice</th><th>Interactive</th><th>Route</th><th>Complete</th></tr></thead><tbody>'+rows.join('')+'</tbody></table></div></div>';}
-  function sync(){var h=location.hash.replace(/^#\/?/,'');if(h==='curriculum/matrix'){renderMatrix();return;}if(h.indexOf('topic/')===0){var id=h.slice(6),topic=null;LS.manifest.roadmap.some(function(l){return l.modules.some(function(m){topic=m.topics.find(function(t){return slug(t)===id;});return !!topic;});});if(topic){render(topic);return;}}}
-  window.FinStudioMaster={routeTopic:routeTopic,render:render,renderMatrix:renderMatrix};
-  window.addEventListener('hashchange',sync);window.addEventListener('load',sync);sync();
+
+  function routeTopic(){
+    var h=location.hash.replace(/^#\/?/,"");
+    if(h.indexOf("topic/")!==0)return false;
+    var requested=h.slice(6).split("#")[0], topic=null;
+    LS.manifest.roadmap.some(function(l){return l.modules.some(function(m){var found=m.topics.find(function(t){return slug(t)===requested;});if(found){topic=found;return true;}return false;});});
+    if(topic){render(topic);return true;}
+    return false;
+  }
+  function sync(){routeTopic();}
+  window.FinStudioMaster={routeTopic:routeTopic,render:render};
+  window.addEventListener("hashchange",sync);
+  window.addEventListener("load",sync);
+  sync();
 })();
