@@ -1,39 +1,23 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { curriculum } from "@/data/masterCurriculum";
+import { allLessons, findLesson } from "@/data/lessons/registry";
+import { levelProgress, moduleProgress } from "@/data/progress";
+import { useEffect, useState } from "react";
 
 type NavItem = { label: string; href: string };
-const nav: NavItem[] = [
-  { label: "Learn", href: "/" },
-  { label: "Curriculum", href: "/curriculum" },
-  { label: "Formulas", href: "/formulas" },
-  { label: "Glossary", href: "/glossary" },
-];
-
+const nav: NavItem[] = [{ label: "Learn", href: "/" }, { label: "Curriculum", href: "/curriculum" }, { label: "Formulas", href: "/formulas" }, { label: "Glossary", href: "/glossary" }];
+const levelLink = (level: number) => `/level/${level}`;
 export function RootLayout() {
   const location = useLocation();
-
-  return (
-    <div className="min-h-screen bg-paper text-ink">
-      <a className="skip-link" href="#main">Skip to content</a>
-      <header className="topbar">
-        <div className="topbar-inner">
-          <Link to="/" className="brand" aria-label="FinStudio home"><span className="brand-mark" aria-hidden="true">F</span><span className="brand-name">Fin<em>Studio</em></span></Link>
-          <nav className="topnav" aria-label="Primary">{nav.map((item) => <Link key={item.href} to={item.href} className={location.pathname === item.href ? "active" : ""}>{item.label}</Link>)}</nav>
-          <div className="topbar-actions"><Link className="search-link" to="/search" aria-label="Search FinStudio">⌕ <span>Search</span></Link><Link className="btn-primary" to="/curriculum">Start learning</Link></div>
-        </div>
-      </header>
-      <main id="main" tabIndex={-1}><Outlet /></main>
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <p className="footer-statement">Every number, <span>built by you.</span></p>
-          <div className="footer-cols">
-            <div><h3>Learn</h3><Link to="/curriculum">Curriculum</Link><Link to="/formulas">Formula library</Link><Link to="/glossary">Glossary</Link></div>
-            <div><h3>Explore</h3><Link to="/paths">Learning paths</Link><Link to="/lab">Modeling Lab</Link><Link to="/search">Search</Link></div>
-            <div><h3>About</h3><a href="https://github.com/Rohit-Gorai/finstudio" rel="noreferrer">Source on GitHub</a><a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noreferrer">Report an error</a></div>
-            <div><h3>Notes</h3><span>Educational content only</span><span>Not investment, accounting or tax advice</span><span>₹ / en-IN formats; concepts are global</span></div>
-          </div>
-          <p className="footer-credit">Designed and developed by <strong>Rohit Gorai</strong> · © {new Date().getFullYear()} Rohit Gorai</p>
-        </div>
-      </footer>
-    </div>
-  );
+  const currentTopic = location.pathname.startsWith("/lesson/") ? location.pathname.slice("/lesson/".length) : "";
+  const [, refresh] = useState(0);
+  useEffect(() => { const onProgress = () => refresh(x => x + 1); window.addEventListener("finstudio:progress", onProgress); return () => window.removeEventListener("finstudio:progress", onProgress); }, []);
+  const active = findLesson(currentTopic);
+  const lessonFor = (level:number, module:string, topic:string) => allLessons.find(l => l.level===level && l.module===module && l.title===topic);
+  return <div className="min-h-screen bg-paper text-ink">
+    <a className="skip-link" href="#main">Skip to content</a>
+    <header className="topbar"><div className="topbar-inner"><Link to="/" className="brand" aria-label="FinStudio home"><span className="brand-mark" aria-hidden="true">F</span><span className="brand-name">Fin<em>Studio</em></span></Link><nav className="topnav" aria-label="Primary">{nav.map(item=><Link key={item.href} to={item.href} className={location.pathname===item.href?"active":""}>{item.label}</Link>)}</nav><div className="topbar-actions"><Link className="search-link" to="/curriculum" aria-label="Explore curriculum">⌕ <span>Explore</span></Link><Link className="btn-primary" to="/curriculum">Start learning <span aria-hidden="true">→</span></Link></div></div></header>
+    <main id="main" tabIndex={-1}><div className="site-shell"><aside className="desktop-rail" aria-label="Learning curriculum"><p className="rail-label">SYLLABUS · LEVELS 0–10</p>{curriculum.map(level=>{const lp=levelProgress(level.level); return <section key={level.level} className={`rail-level ${active?.level===level.level?"active-level":""}`}><Link to={levelLink(level.level)} className="rail-level-title"><span>{String(level.level).padStart(2,"0")}</span> {level.title}<small>{lp.done}/{lp.total}</small></Link>{level.modules.map(module=>{const mp=moduleProgress(level.level,module.title); return <div key={module.title} className={`rail-module ${active?.level===level.level&&active?.module===module.title?"active-module":""}`}><p className="rail-module-title">{module.title}<span>{mp.done}/{mp.total}</span></p>{module.topics.map(topic=>{const item=lessonFor(level.level,module.title,topic); if(!item)return null; const isActive=currentTopic===item.id; return <Link key={topic} to={`/lesson/${item.id}`} className={`rail-topic ${isActive?"active":""}`} aria-current={isActive?"page":undefined}>{topic}</Link>;})}</div>})}</section>})}</aside><details className="mobile-curriculum"><summary>Browse curriculum · Levels 0–10</summary><div className="mobile-curriculum-panel">{curriculum.map(level=><section key={level.level}><Link to={levelLink(level.level)} className="mobile-level-link"><span>LEVEL {level.level}</span>{level.title}</Link>{level.modules.map(module=><div key={module.title} className="mobile-module"><p>{module.title}</p>{module.topics.map(topic=>{const item=lessonFor(level.level,module.title,topic); if(!item)return null; return <Link key={topic} to={`/lesson/${item.id}`}>{topic}</Link>;})}</div>)}</section>)}</div></details><div className="site-main"><Outlet /></div></div></main>
+    <footer className="site-footer"><div className="footer-inner"><div className="footer-head"><div><p className="footer-statement">Every number, <span>built by you.</span></p><p className="footer-sub">A practice-first finance school.</p></div><Link className="footer-cta" to="/curriculum">Explore the full curriculum <span aria-hidden="true">→</span></Link></div><div className="footer-cols"><div><h3>Learn</h3><Link to="/curriculum">Curriculum</Link><Link to="/formulas">Formula library</Link><Link to="/glossary">Glossary</Link></div><div><h3>Build</h3><Link to={levelLink(4)}>Financial modeling</Link><Link to={levelLink(5)}>Valuation</Link><Link to={levelLink(7)}>Private equity / LBO</Link><Link to={levelLink(8)}>Investment cases</Link></div><div><h3>Advanced</h3><Link to={levelLink(9)}>Markets</Link><Link to={levelLink(10)}>Advanced finance</Link><a href="https://github.com/Rohit-Gorai/finstudio" rel="noreferrer">Source on GitHub</a></div><div><h3>Notes</h3><span>Educational content only</span><span>Not investment, accounting or tax advice</span><span>₹ / en-IN formats; concepts are global</span><a href="https://github.com/Rohit-Gorai/finstudio/issues" rel="noreferrer">Report an error</a></div></div><p className="footer-credit">Designed and developed by <strong>Rohit Gorai</strong> · © {new Date().getFullYear()} Rohit Gorai</p></div></footer>
+  </div>;
 }

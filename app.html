@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FinSchool — Learn Finance the Interactive Way</title>
+    <title>FinStudio — Learn finance by building it</title>
     <meta
       name="description"
-      content="Free, interactive finance lessons. Learn accounting, the three financial statements, valuation and Excel by building every number yourself in a live spreadsheet."
+      content="Free, beginner-first finance lessons. Learn accounting, the three financial statements, analysis and valuation one clearly explained concept at a time."
     />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,6 +15,21 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // GitHub Pages has no server-side rewrite, so a path-style URL such as
+      // /finstudio/curriculum is answered with 404.html (a copy of this page).
+      // Convert it to the equivalent hash route before React boots, so shared
+      // and bookmarked path-style links land on the right lesson instead of home.
+      (function () {
+        var base = "/finstudio/";
+        var path = window.location.pathname;
+        if (path.indexOf(base) !== 0) return;
+        var rest = path.slice(base.length).replace(/index\.html$/, "");
+        if (!rest) return;
+        var target = base + "#/" + rest.replace(/^\/+|\/+$/g, "") + window.location.search;
+        window.location.replace(target);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
