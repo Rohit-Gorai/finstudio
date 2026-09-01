@@ -5,6 +5,272 @@
 (function () {
   "use strict";
   var LS = (window.LS = window.LS || {});
+
+  /* ---- sandbox calculators (compiled from sandboxEngine.ts) ---- */
+var FinStudioSandbox = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // src/data/lessons/sandboxEngine.ts
+  var sandboxEngine_exports = {};
+  __export(sandboxEngine_exports, {
+    computeSandbox: () => computeSandbox,
+    sandboxKinds: () => sandboxKinds
+  });
+  var inr = (n) => "\u20B9" + Math.round(n).toLocaleString("en-IN");
+  var pct = (n, dp = 1) => `${n.toFixed(dp)}%`;
+  var sandboxKinds = {
+    /** FV = P × (1+r)^n */
+    "future-value": ({ principal = 0, rate = 0, years = 0 }) => {
+      const fv = principal * Math.pow(1 + rate / 100, years);
+      return [
+        { label: "Future value", value: inr(fv) },
+        { label: "Total growth", value: inr(fv - principal), note: `${inr(principal)} growing at ${pct(rate)} a year for ${years} year(s).` }
+      ];
+    },
+    /** PV = CF ÷ (1+r)^t */
+    "present-value": ({ amount = 0, rate = 0, years = 0 }) => {
+      const pv = amount / Math.pow(1 + rate / 100, years);
+      return [
+        { label: "Present value", value: inr(pv) },
+        { label: "Discount applied", value: inr(amount - pv), note: `What ${inr(amount)} arriving in ${years} year(s) is worth today at ${pct(rate)}.` }
+      ];
+    },
+    /** Simple P(1+rn) vs compound P(1+r)^n, and the gap between them. */
+    "simple-vs-compound": ({ principal = 0, rate = 0, years = 0 }) => {
+      const simple = principal * (1 + rate / 100 * years);
+      const compound = principal * Math.pow(1 + rate / 100, years);
+      return [
+        { label: "Simple interest total", value: inr(simple) },
+        { label: "Compound interest total", value: inr(compound) },
+        { label: "Extra from compounding", value: inr(compound - simple), note: "The gap is interest earned on interest. Stretch the years and watch it widen." }
+      ];
+    },
+    /** Nominal growth vs purchasing power after inflation. */
+    "inflation-real": ({ amount = 0, nominalRate = 0, inflation = 0, years = 0 }) => {
+      const nominal = amount * Math.pow(1 + nominalRate / 100, years);
+      const real = amount * Math.pow((1 + nominalRate / 100) / (1 + inflation / 100), years);
+      const realRate = ((1 + nominalRate / 100) / (1 + inflation / 100) - 1) * 100;
+      return [
+        { label: "Balance in rupees", value: inr(nominal) },
+        { label: "In today's purchasing power", value: inr(real) },
+        { label: "Real return per year", value: pct(realRate, 2), note: realRate < 0 ? "Your balance grows while your buying power falls." : "Growth after inflation \u2014 the figure that says whether you are better off." }
+      ];
+    },
+    /** Revenue = price × volume, this year and next. */
+    "revenue-growth": ({ price = 0, volume = 0, priceGrowth = 0, volumeGrowth = 0 }) => {
+      const now = price * volume;
+      const next = price * (1 + priceGrowth / 100) * volume * (1 + volumeGrowth / 100);
+      return [
+        { label: "Revenue this year", value: inr(now) },
+        { label: "Revenue next year", value: inr(next) },
+        { label: "Growth", value: pct(now ? (next / now - 1) * 100 : 0), note: "Price and volume growth multiply \u2014 the total is more than their sum." }
+      ];
+    },
+    /** Fixed costs amplify profit swings relative to revenue swings. */
+    "operating-leverage": ({ price = 0, variableCost = 0, units = 0, fixedCosts = 0, volumeChange = 0 }) => {
+      const profitAt = (u) => (price - variableCost) * u - fixedCosts;
+      const before = profitAt(units);
+      const after = profitAt(units * (1 + volumeChange / 100));
+      const profitSwing = before !== 0 ? (after - before) / Math.abs(before) * 100 : 0;
+      return [
+        { label: "Profit now", value: inr(before) },
+        { label: `Profit after ${pct(volumeChange, 0)} volume change`, value: inr(after) },
+        { label: "Profit swing", value: pct(profitSwing, 0), note: "Compare this with the volume change \u2014 fixed costs amplify it in both directions." }
+      ];
+    },
+    /** Revenue down to net profit, one subtraction at a time. */
+    "profit-bridge": ({ revenue = 0, cogs = 0, opex = 0, interest = 0, taxRate = 0 }) => {
+      const gross = revenue - cogs;
+      const operating = gross - opex;
+      const pbt = operating - interest;
+      const tax = Math.max(pbt, 0) * (taxRate / 100);
+      const net = pbt - tax;
+      return [
+        { label: "Gross profit", value: inr(gross) },
+        { label: "Operating profit", value: inr(operating) },
+        { label: "Profit before tax", value: inr(pbt) },
+        { label: "Net profit", value: inr(net), note: revenue ? `Net margin ${pct(net / revenue * 100)}.` : void 0 }
+      ];
+    },
+    /** Profit adjusted for cash trapped in receivables and inventory. */
+    "profit-to-cash": ({ profit = 0, receivablesIncrease = 0, inventoryIncrease = 0, payablesIncrease = 0 }) => {
+      const cash = profit - receivablesIncrease - inventoryIncrease + payablesIncrease;
+      return [
+        { label: "Reported profit", value: inr(profit) },
+        { label: "Cash effect", value: inr(cash), note: "Unpaid invoices and unsold stock absorb cash; supplier credit releases it." },
+        { label: "Gap", value: inr(profit - cash) }
+      ];
+    },
+    /** Total return = (sell − buy + income) ÷ buy. */
+    "holding-return": ({ buyPrice = 0, sellPrice = 0, income = 0 }) => {
+      const gain = sellPrice - buyPrice + income;
+      return [
+        { label: "Total gain", value: inr(gain) },
+        { label: "Total return", value: pct(buyPrice ? gain / buyPrice * 100 : 0), note: "Income counts. Leaving it out understates the result." }
+      ];
+    },
+    /** Compare a chosen option against the best alternative. */
+    "opportunity": ({ amount = 0, chosenReturn = 0, alternativeReturn = 0 }) => {
+      const chosen = amount * (chosenReturn / 100);
+      const alt = amount * (alternativeReturn / 100);
+      return [
+        { label: "Chosen option earns", value: inr(chosen) },
+        { label: "Best alternative earns", value: inr(alt) },
+        { label: "Opportunity cost of choosing", value: inr(alt - chosen), note: alt > chosen ? "Positive means the alternative was better \u2014 the choice has a hidden cost." : "Zero or negative means the chosen option beats the alternative." }
+      ];
+    },
+    /** Probability-weighted outcome of a risky bet. */
+    "risk-outcomes": ({ amount = 0, goodChance = 0, goodReturn = 0, badReturn = 0 }) => {
+      const p = Math.min(Math.max(goodChance, 0), 100) / 100;
+      const expected = p * (goodReturn / 100) + (1 - p) * (badReturn / 100);
+      return [
+        { label: "Good year ends at", value: inr(amount * (1 + goodReturn / 100)) },
+        { label: "Bad year ends at", value: inr(amount * (1 + badReturn / 100)) },
+        { label: "Expected return", value: pct(expected * 100), note: "An average of outcomes, not a promise \u2014 you never actually receive the average." }
+      ];
+    },
+    /** Owner return with and without borrowing. */
+    "leverage-returns": ({ operatingProfit = 0, debt = 0, interestRate = 0, equity = 0 }) => {
+      const interest = debt * (interestRate / 100);
+      const ownerProfit = operatingProfit - interest;
+      const totalCapital = debt + equity;
+      const unlevered = totalCapital ? operatingProfit / totalCapital * 100 : 0;
+      const levered = equity ? ownerProfit / equity * 100 : 0;
+      return [
+        { label: "Interest owed", value: inr(interest), note: "Owed in full whatever the year looks like." },
+        { label: "Left for owners", value: inr(ownerProfit) },
+        { label: "Owner return with debt", value: pct(levered) },
+        { label: "Return if all-equity", value: pct(unlevered), note: "Cut operating profit and watch the levered return fall much faster." }
+      ];
+    },
+    /** Equity as the residual: A − L. */
+    "balance": ({ assets = 0, liabilities = 0 }) => [
+      { label: "Equity", value: inr(assets - liabilities), note: "Found by subtraction \u2014 the owners keep whatever is left." }
+    ],
+    /** Operating working capital from its three main parts. */
+    "working-capital": ({ inventory = 0, receivables = 0, payables = 0 }) => [
+      { label: "Operating working capital", value: inr(inventory + receivables - payables), note: "Cash locked into running the business. Grow the first two and it rises \u2014 consuming cash." }
+    ],
+    /** Cash tied up in receivables at different collection speeds. */
+    "receivables-cash": ({ revenue = 0, dsoNow = 0, dsoNew = 0 }) => {
+      const now = dsoNow / 365 * revenue;
+      const later = dsoNew / 365 * revenue;
+      return [
+        { label: `Cash tied up at ${dsoNow} days`, value: inr(now) },
+        { label: `Cash tied up at ${dsoNew} days`, value: inr(later) },
+        { label: later > now ? "Extra cash consumed" : "Cash released", value: inr(Math.abs(later - now)), note: "Every extra day of collection time is your money financing customers." }
+      ];
+    },
+    /** Cash released or consumed by paying suppliers slower or faster. */
+    "payables-cash": ({ cogs = 0, dpoNow = 0, dpoNew = 0 }) => {
+      const now = dpoNow / 365 * cogs;
+      const later = dpoNew / 365 * cogs;
+      return [
+        { label: `Supplier credit at ${dpoNow} days`, value: inr(now) },
+        { label: `Supplier credit at ${dpoNew} days`, value: inr(later) },
+        { label: later > now ? "One-off cash released" : "Cash given up", value: inr(Math.abs(later - now)), note: "A real benefit, but it happens once \u2014 it is not recurring cash flow." }
+      ];
+    },
+    /** Buy stock, sell part of it at a markup. */
+    "sell-through": ({ stockBought = 0, percentSold = 0, markup = 0 }) => {
+      const share = Math.min(Math.max(percentSold, 0), 100) / 100;
+      const cogs = stockBought * share;
+      const revenue = cogs * (1 + markup / 100);
+      return [
+        { label: "Revenue", value: inr(revenue) },
+        { label: "Cost of goods sold", value: inr(cogs) },
+        { label: "Gross profit", value: inr(revenue - cogs) },
+        { label: "Stock still on the shelf", value: inr(stockBought - cogs), note: "Cash already spent, profit untouched \u2014 and at risk if it must be discounted." }
+      ];
+    },
+    /** A cost paid once, spread over the months it covers. */
+    "spread-cost": ({ totalCost = 0, monthsCovered = 0, monthsElapsed = 0 }) => {
+      const months = Math.max(monthsCovered, 1);
+      const elapsed = Math.min(Math.max(monthsElapsed, 0), months);
+      const monthly = totalCost / months;
+      return [
+        { label: "Expense per month", value: inr(monthly) },
+        { label: "Expensed so far", value: inr(monthly * elapsed) },
+        { label: "Still a prepaid asset", value: inr(totalCost - monthly * elapsed), note: "Cash left once; the expense arrives month by month." }
+      ];
+    },
+    /** Advance collections earned only as delivery happens. */
+    "deferred-revenue": ({ contractValue = 0, monthsTotal = 0, monthsDelivered = 0 }) => {
+      const months = Math.max(monthsTotal, 1);
+      const delivered = Math.min(Math.max(monthsDelivered, 0), months);
+      const recognised = contractValue / months * delivered;
+      return [
+        { label: "Revenue earned so far", value: inr(recognised) },
+        { label: "Still owed to the customer", value: inr(contractValue - recognised), note: "Cash in the bank, but a liability until the service is delivered." }
+      ];
+    },
+    /** Revenue recognised when delivered, not when collected. */
+    "accrual-timing": ({ workDelivered = 0, cashCollected = 0 }) => {
+      const receivable = Math.max(workDelivered - cashCollected, 0);
+      const deferred = Math.max(cashCollected - workDelivered, 0);
+      return [
+        { label: "Revenue recognised", value: inr(workDelivered), note: "Follows delivery, not payment." },
+        { label: "Receivable created", value: inr(receivable) },
+        { label: "Deferred revenue created", value: inr(deferred), note: deferred > 0 ? "Collected ahead of delivery \u2014 a liability until earned." : void 0 }
+      ];
+    },
+    /** Straight-line depreciation and the value still on the books. */
+    "depreciation": ({ cost = 0, residual = 0, usefulLife = 0, yearsElapsed = 0 }) => {
+      const life = Math.max(usefulLife, 1);
+      const annual = (cost - residual) / life;
+      const elapsed = Math.min(Math.max(yearsElapsed, 0), life);
+      return [
+        { label: "Annual charge", value: inr(annual) },
+        { label: `Accumulated after ${elapsed} year(s)`, value: inr(annual * elapsed) },
+        { label: "Net book value", value: inr(cost - annual * elapsed), note: "Original cost minus everything charged so far \u2014 not a market price." }
+      ];
+    },
+    /** Opening + capex − depreciation, with a shrinking-base warning. */
+    "ppe-rollforward": ({ opening = 0, capex = 0, depreciationCharge = 0 }) => {
+      const closing = opening + capex - depreciationCharge;
+      return [
+        { label: "Closing PP&E", value: inr(closing) },
+        { label: "Change in asset base", value: inr(closing - opening), note: closing < opening ? "Spending below depreciation \u2014 the asset base is being run down." : "The asset base grew this period." }
+      ];
+    },
+    /** Purchase premium over identifiable net assets. */
+    "goodwill": ({ purchasePrice = 0, assetsAcquired = 0, liabilitiesAcquired = 0 }) => {
+      const identifiable = assetsAcquired - liabilitiesAcquired;
+      return [
+        { label: "Identifiable net assets", value: inr(identifiable) },
+        { label: "Goodwill", value: inr(purchasePrice - identifiable), note: "The premium paid for expectations \u2014 reputation, relationships, synergies." }
+      ];
+    },
+    /** Opening + profit − dividends. */
+    "retained": ({ opening = 0, netProfit = 0, dividends = 0 }) => [
+      { label: "Closing retained earnings", value: inr(opening + netProfit - dividends), note: "Accumulated profit kept in the business \u2014 not a cash balance." }
+    ]
+  };
+  function computeSandbox(kind, values) {
+    const fn = sandboxKinds[kind];
+    return fn ? fn(values) : [];
+  }
+  return __toCommonJS(sandboxEngine_exports);
+})();
+
+  LS.sandbox = FinStudioSandbox;
+
   LS.curriculumMap = [
     { level: 0, title: "Finance Foundations", modules: [
       { title: "Finance basics", topics: [
@@ -65,33 +331,33 @@
     ] },
     { level: 2, title: "Financial Statements", modules: [
       { title: "Income statement", topics: [
-        { title: "Revenue", id: "c-revenue-line-item", written: false },
-        { title: "COGS", id: "c-cogs", written: false },
+        { title: "Revenue", id: "1410-revenue", written: true },
+        { title: "COGS", id: "1420-cogs", written: true },
         { title: "Gross profit", id: "c-gross-profit", written: false },
-        { title: "Operating expenses", id: "c-operating-expenses", written: false },
+        { title: "Operating expenses", id: "1430-opex-ebitda", written: true },
         { title: "EBITDA", id: "c-ebitda", written: false },
-        { title: "D&A", id: "c-d-a", written: false },
+        { title: "D&A", id: "1440-depreciation-pl", written: true },
         { title: "EBIT", id: "c-ebit", written: false },
-        { title: "Interest", id: "c-interest-expense", written: false },
+        { title: "Interest", id: "1450-interest-tax", written: true },
         { title: "EBT", id: "c-ebt", written: false },
         { title: "Taxes", id: "c-taxes", written: false },
-        { title: "Net income", id: "c-net-income", written: false }
+        { title: "Net income", id: "1460-pl-capstone", written: true }
       ] },
       { title: "Balance sheet", topics: [
-        { title: "Cash", id: "c-cash-balance-sheet", written: false },
-        { title: "Receivables", id: "c-receivables", written: false },
-        { title: "Inventory", id: "c-inventory-balance-sheet", written: false },
-        { title: "PP&E", id: "c-ppe-balance-sheet", written: false },
+        { title: "Cash", id: "1150-cash-deposit", written: true },
+        { title: "Receivables", id: "1140-receivables", written: true },
+        { title: "Inventory", id: "1130-inventory", written: true },
+        { title: "PP&E", id: "1110-ppe", written: true },
         { title: "Intangibles", id: "c-intangibles", written: false },
-        { title: "Debt", id: "c-debt-balance-sheet", written: false },
-        { title: "Payables", id: "c-payables", written: false },
+        { title: "Debt", id: "1220-borrowings", written: true },
+        { title: "Payables", id: "1210-payables", written: true },
         { title: "Other liabilities", id: "c-other-liabilities", written: false },
-        { title: "Equity", id: "c-equity-balance-sheet", written: false }
+        { title: "Equity", id: "1310-share-capital", written: true }
       ] },
       { title: "Cash flow statement", topics: [
-        { title: "CFO", id: "c-cfo", written: false },
-        { title: "CFI", id: "c-cfi", written: false },
-        { title: "CFF", id: "c-cff", written: false },
+        { title: "CFO", id: "1520-cfo", written: true },
+        { title: "CFI", id: "1530-cfi", written: true },
+        { title: "CFF", id: "1540-cff", written: true },
         { title: "Capex", id: "c-capex", written: false },
         { title: "Change in working capital", id: "c-change-in-working-capital", written: false },
         { title: "Debt issuance", id: "c-debt-issuance", written: false },
@@ -100,32 +366,32 @@
         { title: "Stock issuance", id: "c-stock-issuance", written: false }
       ] },
       { title: "Three-statement connection", topics: [
-        { title: "Three-statement connection", id: "c-three-statement-connection", written: false },
+        { title: "Three-statement connection", id: "2110-three-bridges", written: true },
         { title: "Revenue cascade through the three statements", id: "c-revenue-cascade-through-the-three-statements", written: false },
-        { title: "Profit to cash", id: "c-profit-to-cash", written: false },
-        { title: "Balance sheet check", id: "c-balance-sheet-check", written: false }
+        { title: "Profit to cash", id: "1510-profit-not-cash", written: true },
+        { title: "Balance sheet check", id: "1330-balance-sheet", written: true }
       ] }
     ] },
     { level: 3, title: "Financial Analysis", modules: [
       { title: "Profitability & returns", topics: [
-        { title: "Gross margin", id: "c-gross-margin", written: false },
+        { title: "Gross margin", id: "1610-margins", written: true },
         { title: "EBITDA margin", id: "c-ebitda-margin", written: false },
         { title: "EBIT margin", id: "c-ebit-margin", written: false },
         { title: "Net margin", id: "c-net-margin", written: false },
-        { title: "ROE", id: "c-roe", written: false },
+        { title: "ROE", id: "1640-returns", written: true },
         { title: "ROA", id: "c-roa", written: false },
         { title: "ROIC", id: "c-roic", written: false },
         { title: "Asset turnover", id: "c-asset-turnover", written: false }
       ] },
       { title: "Liquidity & leverage", topics: [
-        { title: "Current ratio", id: "c-current-ratio", written: false },
+        { title: "Current ratio", id: "1620-liquidity", written: true },
         { title: "Quick ratio", id: "c-quick-ratio", written: false },
-        { title: "Debt/equity", id: "c-debt-equity", written: false },
+        { title: "Debt/equity", id: "1630-leverage", written: true },
         { title: "Net debt/EBITDA", id: "c-net-debt-ebitda", written: false },
         { title: "Interest coverage", id: "c-interest-coverage", written: false }
       ] },
       { title: "Cash & operating analysis", topics: [
-        { title: "Free cash flow", id: "c-free-cash-flow", written: false },
+        { title: "Free cash flow", id: "2230-fcff", written: true },
         { title: "Working capital analysis", id: "c-working-capital-analysis", written: false },
         { title: "Cash conversion cycle", id: "c-cash-conversion-cycle", written: false },
         { title: "Operating leverage", id: "c-operating-leverage", written: false },
@@ -137,8 +403,8 @@
         { title: "Model architecture", id: "c-model-architecture", written: false },
         { title: "Assumptions", id: "c-assumptions", written: false },
         { title: "Historical periods", id: "c-historical-periods", written: false },
-        { title: "Forecast periods", id: "c-forecast-periods", written: false },
-        { title: "Drivers", id: "c-drivers", written: false },
+        { title: "Forecast periods", id: "2220-project-pl", written: true },
+        { title: "Drivers", id: "2210-drivers", written: true },
         { title: "Model formatting", id: "c-model-formatting", written: false },
         { title: "Model best practices", id: "c-model-best-practices", written: false }
       ] },
@@ -155,10 +421,10 @@
         { title: "Retained earnings", id: "c-retained-earnings-schedule", written: false }
       ] },
       { title: "Integrated modeling", topics: [
-        { title: "Three-statement model", id: "c-three-statement-model", written: false },
+        { title: "Three-statement model", id: "2120-linked-model", written: true },
         { title: "Scenario analysis", id: "c-scenario-analysis", written: false },
         { title: "Sensitivity analysis", id: "c-sensitivity-analysis", written: false },
-        { title: "Model checks", id: "c-model-checks", written: false },
+        { title: "Model checks", id: "2130-broken-link", written: true },
         { title: "Circularity", id: "c-circularity", written: false }
       ] },
       { title: "Build a real model", topics: [
@@ -183,7 +449,7 @@
         { title: "PEG", id: "c-peg", written: false }
       ] },
       { title: "DCF", topics: [
-        { title: "DCF", id: "c-dcf", written: false },
+        { title: "DCF", id: "2240-dcf", written: true },
         { title: "WACC", id: "c-wacc", written: false },
         { title: "Cost of equity", id: "c-cost-of-equity", written: false },
         { title: "Cost of debt", id: "c-cost-of-debt", written: false },

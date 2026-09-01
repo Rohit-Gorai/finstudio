@@ -1000,3 +1000,99 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   cursor: default;
 }
 .side-lesson-planned .side-lesson-title { opacity: 0.75; }
+
+/* Practice: writing space per exercise, solution on request. */
+.practice-block { margin: 1.1rem 0; }
+.practice-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.8rem;
+  background: var(--paper-2);
+}
+.practice-q { margin: 0 0 0.55rem; }
+.practice-input {
+  width: 100%;
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  resize: vertical;
+}
+.practice-reveal {
+  margin-top: 0.55rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.practice-reveal:hover { background: var(--paper-3); }
+.practice-solution {
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 3px solid var(--green);
+  background: var(--green-soft);
+  border-radius: 0 8px 8px 0;
+}
+.practice-solution p { margin: 0; }
+
+/* Sandbox: editable inputs, live results. */
+.sandbox-block {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 1rem 1.05rem;
+  margin: 1.1rem 0;
+  background: var(--paper-2);
+}
+.sandbox-title { font-weight: 700; margin: 0 0 0.25rem; }
+.sandbox-prompt { margin: 0 0 0.85rem; color: var(--ink-soft); font-size: 0.92rem; }
+.sandbox-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+.sandbox-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.88rem; }
+.sandbox-field em { color: var(--ink-faint); font-style: normal; }
+.sandbox-field input {
+  font: inherit;
+  font-family: var(--font-mono);
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.sandbox-outputs { border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.sandbox-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+.sandbox-row:last-child { border-bottom: 0; }
+.sandbox-label { display: flex; flex-direction: column; font-size: 0.9rem; }
+.sandbox-note { color: var(--ink-faint); font-size: 0.79rem; margin-top: 0.15rem; }
+.sandbox-value { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
+.sandbox-reset {
+  margin-top: 0.8rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.sandbox-reset:hover { background: var(--paper-3); }

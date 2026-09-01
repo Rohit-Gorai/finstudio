@@ -95,23 +95,25 @@
 
   /* ================= manifest access ================= */
   function allLessonIdsInOrder() {
-    var out = [];
-    LS.manifest.levels.forEach(function (lv) {
-      lv.modules.forEach(function (mc) {
-        out = out.concat(LS.manifest.modules[mc].lessons);
-      });
-    });
-    // Concept lessons continue the same reading order, so Previous/Next works
-    // across them and across level boundaries.
+    // Curriculum order leads, so Previous/Next walks Level 0 -> Level 10 in one
+    // sequence. Café lessons placed inside the curriculum appear once, in their
+    // curriculum position; any left over follow at the end.
+    var out = [], seen = {};
+    function push(id) {
+      if (id && !seen[id] && LS.lessons[id]) { seen[id] = true; out.push(id); }
+    }
     if (LS.curriculumMap) {
       LS.curriculumMap.forEach(function (lv) {
         lv.modules.forEach(function (mod) {
-          mod.topics.forEach(function (t) {
-            if (t.written && LS.lessons[t.id]) out.push(t.id);
-          });
+          mod.topics.forEach(function (t) { if (t.written) push(t.id); });
         });
       });
     }
+    LS.manifest.levels.forEach(function (lv) {
+      lv.modules.forEach(function (mc) {
+        LS.manifest.modules[mc].lessons.forEach(push);
+      });
+    });
     return out;
   }
   /* Where a concept lesson sits in the 11-level curriculum. */
@@ -150,45 +152,18 @@
     var nav = document.getElementById("sidebar");
     nav.innerHTML = "";
     var hash = currentRoute();
-    LS.manifest.levels.forEach(function (lv) {
-      nav.appendChild(el("div", "side-level", esc(lv.title)));
-      lv.modules.forEach(function (mc) {
-        var m = LS.manifest.modules[mc];
-        var wrap = el("div", "side-module");
-        var prog = moduleProgress(mc);
-        var head = el("a", "side-module-head");
-        head.href = "#/module/" + mc;
-        head.innerHTML = '<span class="side-module-title">' + esc(m.title) + '</span>' +
-          '<span class="side-progress">' + prog.done + "/" + prog.total + "</span>";
-        wrap.appendChild(head);
-        var ul = el("ul", "side-lessons");
-        m.lessons.forEach(function (id) {
-          var lesson = LS.lessons[id];
-          if (!lesson) return;
-          var li = el("li");
-          var a = el("a");
-          a.href = "#/" + id;
-          if (hash.kind === "lesson" && hash.id === id) a.className = "active";
-          a.innerHTML = '<span class="side-lesson-title">' + esc(lesson.short || lesson.title) + '</span>' +
-            (store.isDone(id) ? '<span class="side-done" aria-label="completed">✓</span>' : "");
-          li.appendChild(a);
-          ul.appendChild(li);
+    /* Which café lessons already appear inside Levels 0-10, so they are not
+       listed twice. The old "Level 1 / Level 2" headings are gone: the
+       curriculum below is the single source of truth for the pane. */
+    var placed = {};
+    if (LS.curriculumMap) {
+      LS.curriculumMap.forEach(function (lv) {
+        lv.modules.forEach(function (mod) {
+          mod.topics.forEach(function (t) { if (t.written) placed[t.id] = true; });
         });
-        if (LS.quizzes && LS.quizzes[mc]) {
-          var qli = el("li", "side-quiz-link");
-          var qa = el("a");
-          qa.href = "#/quiz/" + mc;
-          if (hash.kind === "quiz" && hash.id === mc) qa.className = "active";
-          var sc = store.quiz(mc);
-          qa.innerHTML = '<span class="side-lesson-title">Module quiz</span>' +
-            (sc != null ? '<span class="side-done">' + sc + "/5</span>" : "");
-          qli.appendChild(qa);
-          ul.appendChild(qli);
-        }
-        wrap.appendChild(ul);
-        nav.appendChild(wrap);
       });
-    });
+    }
+
     /* The full curriculum: all 11 levels, 35 modules, 227 topics. Topics with an
        authored concept lesson are links; the rest are shown but unlinked, so the
        whole learning path is visible without creating routes that 404. */
@@ -224,6 +199,47 @@
           wrap2.appendChild(ul2);
           nav.appendChild(wrap2);
         });
+      });
+    }
+    /* Café model labs: the interactive spreadsheet lessons that don't map onto a
+       single curriculum topic (capstones, module quizzes). Kept reachable. */
+    var labModules = [];
+    LS.manifest.levels.forEach(function (lv) {
+      lv.modules.forEach(function (mc) {
+        var m = LS.manifest.modules[mc];
+        var left = m.lessons.filter(function (id) { return !placed[id] && LS.lessons[id]; });
+        if (left.length || (LS.quizzes && LS.quizzes[mc])) labModules.push({ mc: mc, m: m, left: left });
+      });
+    });
+    if (labModules.length) {
+      nav.appendChild(el("div", "side-level", "Café model labs"));
+      labModules.forEach(function (entry) {
+        var wrap3 = el("div", "side-module");
+        var head3 = el("a", "side-module-head");
+        head3.href = "#/module/" + entry.mc;
+        head3.innerHTML = '<span class="side-module-title">' + esc(entry.m.title) + "</span>";
+        wrap3.appendChild(head3);
+        var ul3 = el("ul", "side-lessons");
+        entry.left.forEach(function (id) {
+          var lesson = LS.lessons[id];
+          var li3 = el("li"), a3 = el("a");
+          a3.href = "#/" + id;
+          if (hash.kind === "lesson" && hash.id === id) a3.className = "active";
+          a3.innerHTML = '<span class="side-lesson-title">' + esc(lesson.short || lesson.title) + "</span>" +
+            (store.isDone(id) ? '<span class="side-done">\u2713</span>' : "");
+          li3.appendChild(a3);
+          ul3.appendChild(li3);
+        });
+        if (LS.quizzes && LS.quizzes[entry.mc]) {
+          var ql = el("li", "side-quiz-link"), qa2 = el("a");
+          qa2.href = "#/quiz/" + entry.mc;
+          if (hash.kind === "quiz" && hash.id === entry.mc) qa2.className = "active";
+          qa2.innerHTML = '<span class="side-lesson-title">Module quiz</span>';
+          ql.appendChild(qa2);
+          ul3.appendChild(ql);
+        }
+        wrap3.appendChild(ul3);
+        nav.appendChild(wrap3);
       });
     }
     if (LS.reference) {
@@ -283,6 +299,93 @@
       return d;
     },
     note: function (b) { return el("div", "note-box", "<p>" + b.h + "</p>"); },
+
+    /* Practice: each exercise gets a writing space, then the worked solution
+       on request. Answers are kept in localStorage so work isn't lost. */
+    practice: function (b, ctx) {
+      var wrap = el("div", "practice-block");
+      (b.items || []).forEach(function (item, i) {
+        var box = el("div", "practice-item");
+        box.appendChild(el("p", "practice-q", "<strong>" + (i + 1) + ".</strong> " + item.q));
+        var ta = document.createElement("textarea");
+        ta.className = "practice-input";
+        ta.rows = 3;
+        ta.placeholder = "Work it out here first\u2026";
+        var key = "practice:" + (ctx && ctx.lessonId) + ":" + i;
+        try { ta.value = localStorage.getItem(key) || ""; } catch (e) {}
+        ta.addEventListener("input", function () {
+          try { localStorage.setItem(key, ta.value); } catch (e) {}
+        });
+        box.appendChild(ta);
+        var btn = el("button", "practice-reveal", "Show worked solution");
+        var ans = el("div", "practice-solution", "<p>" + item.a + "</p>");
+        ans.style.display = "none";
+        btn.addEventListener("click", function () {
+          var open = ans.style.display !== "none";
+          ans.style.display = open ? "none" : "block";
+          btn.textContent = open ? "Show worked solution" : "Hide solution";
+        });
+        box.appendChild(btn);
+        box.appendChild(ans);
+        wrap.appendChild(box);
+      });
+      return wrap;
+    },
+
+    /* Sandbox: editable inputs recalculated live by the shared engine. */
+    sandbox: function (b) {
+      var wrap = el("div", "sandbox-block");
+      wrap.appendChild(el("p", "sandbox-title", esc(b.title || "Sandbox")));
+      if (b.prompt) wrap.appendChild(el("p", "sandbox-prompt", esc(b.prompt)));
+      var inputs = el("div", "sandbox-inputs");
+      var out = el("div", "sandbox-outputs");
+      var state = {};
+      (b.fields || []).forEach(function (f) { state[f.key] = f.value; });
+
+      function recalc() {
+        out.innerHTML = "";
+        var rows = (LS.sandbox && LS.sandbox.computeSandbox)
+          ? LS.sandbox.computeSandbox(b.kind, state) : [];
+        rows.forEach(function (r) {
+          var row = el("div", "sandbox-row");
+          row.innerHTML = '<span class="sandbox-label">' + esc(r.label) +
+            (r.note ? '<span class="sandbox-note">' + esc(r.note) + "</span>" : "") +
+            '</span><span class="sandbox-value">' + esc(r.value) + "</span>";
+          out.appendChild(row);
+        });
+      }
+
+      (b.fields || []).forEach(function (f) {
+        var lab = el("label", "sandbox-field");
+        lab.innerHTML = '<span>' + esc(f.label) +
+          (f.unit ? ' <em>(' + esc(f.unit) + ")</em>" : "") + "</span>";
+        var inp = document.createElement("input");
+        inp.type = "number";
+        inp.value = f.value;
+        inp.addEventListener("input", function () {
+          var n = parseFloat(inp.value);
+          state[f.key] = isNaN(n) ? 0 : n;
+          recalc();
+        });
+        lab.appendChild(inp);
+        inputs.appendChild(lab);
+      });
+
+      var reset = el("button", "sandbox-reset", "Reset");
+      reset.addEventListener("click", function () {
+        (b.fields || []).forEach(function (f, i) {
+          state[f.key] = f.value;
+          inputs.querySelectorAll("input")[i].value = f.value;
+        });
+        recalc();
+      });
+
+      wrap.appendChild(inputs);
+      wrap.appendChild(out);
+      wrap.appendChild(reset);
+      recalc();
+      return wrap;
+    },
     svg: function (b) {
       var d = el("figure", "table-wrap");
       d.style.margin = "1.4rem 0";

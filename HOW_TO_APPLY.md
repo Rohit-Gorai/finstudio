@@ -1,55 +1,71 @@
-# One file. Drag it into the repo root. Done.
+# Upload these 5 files to the repo ROOT
 
-## Why the last upload didn't work
+Your `index.html` is already correct and loads these five from the root — the
+same place your uploads land. Drag all five onto the repo's root file list,
+replacing the existing copies. Nothing goes in a subfolder.
 
-The zip was extracted flat, so these five files landed in the **repo root**
-instead of their folders:
+    app.js   site.css   concepts-l0.js   concepts-l1.js   curriculum-map.js
 
-    app.js  site.css  concepts-l0.js  concepts-l1.js  curriculum-map.js
+## What changes
 
-`index.html` is itself a root file, so it updated correctly — and it was asking
-for `js/lessons/concepts-l0.js`, `js/app.js` and `css/site.css`, which don't
-exist at those paths. The browser got 404s for them and fell back to the old
-sidebar. Nothing was wrong with the files themselves; I checked all five
-against my originals and they are byte-identical and intact.
+**The duplicate Level 1 & 2 block at the top is gone.** The pane now reads:
 
-## The fix
+    Level 0 · Finance Foundations
+    Level 1 · Accounting Foundations
+    …
+    Level 10 · Advanced Finance
+    Café model labs
+    Reference
 
-This `index.html` points at the root copies you already uploaded. **Upload only
-this one file, into the repo root** (replacing the existing `index.html`).
-Nothing else needs to move.
+**The 38 café lessons weren't deleted — they moved inside the curriculum.**
+29 of them are now the lesson for the topic they teach: "Opex & EBITDA" is now
+Level 2 → Income statement → Operating expenses, "CFO (indirect)" is Level 2 →
+Cash flow statement → CFO, and so on. Their spreadsheets and quizzes are
+untouched. The 9 that don't map to a single topic (capstones, the five buckets,
+module quizzes) sit under "Café model labs" at the foot.
 
-GitHub → your repo → click `index.html` → pencil icon → delete all → paste this
-file's contents → Commit. Or drag this file onto the repo's root file list.
+**Previous / Next now walks Level 0 → Level 10 as one sequence**, no duplicates.
 
-## What it also repairs
+## Every clickable lesson now has
 
-While testing I found 13 more assets your live site has been requesting and
-failing to load — from the same flat-upload problem in an earlier batch:
+- What is this / Why it matters / How it works, in plain English
+- A worked example with every arithmetic step shown
+- Key terms, what to remember, common mistakes
+- **Practice** — exercises with a text box to write your answer (saved in your
+  browser, so it survives a refresh) and a "Show worked solution" button
+- **Sandbox** — editable number inputs with live results and a Reset button.
+  Change the interest rate or the years and the answer recalculates instantly.
+  Real maths, not a mock-up: 24 calculators covering compounding, discounting,
+  leverage, working capital, depreciation, deferred revenue and more
+- **Quiz** — multiple choice with an explanation on every option
+- Previous / Next
 
-    js/sheets/engine.js        js/learn/practice.js      js/learn/curriculum.js
-    js/learn/grid.js           js/learn/render.js        css/learn.css
-    js/learn/lessons/level0-basics.js, level0-capital.js, level0-tvm.js,
-    ebitda.js, 1620-liquidity.js, 1330-balance-sheet.js, 2240-dcf.js
+## Honest coverage
 
-Every one has a root copy too. This `index.html` points those at the root
-copies as well, so they finally load. I verified they don't touch the sidebar
-or routing and share no lesson ids with the new content, so nothing conflicts.
+    Level  0 : 22/22 topics have lessons
+    Level  1 : 21/21
+    Level  2 : 19/33
+    Level  3 :  5/18
+    Level  4 :  4/29
+    Level  5 :  1/28
+    Levels 6-10 : 0/76
+    ----------------------------
+    Total    : 72/227 clickable
+
+The other 155 topics are listed in the pane in grey and are not clickable — the
+full path is visible, but no link leads to an empty page. Writing them is the
+remaining work; I'd rather do them properly in batches than template 155 pages
+of filler. Level 2 (14 topics left) then Level 3 (13 left) is the natural order.
 
 ## Verified before sending
 
-I rebuilt your repo exactly as it stands on GitHub, applied only this file, and
-booted it in a browser engine:
+Rebuilt your repo as it stands on GitHub, applied these files, booted it in a
+browser engine:
 
-- scripts requested: 39 · failing to load: **0** (was 18)
-- left pane: **all 11 levels, 0 through 10**
-- 95 linked lessons · 184 topics shown but not yet written
-- Reference block intact at the foot
-- lesson pages render with Previous / Next across levels
-
-## Tidy-up (optional, later)
-
-The root is now cluttered with copies that belong in folders. When you want to
-clean it, move each root file into its proper folder and revert this
-`index.html` to the folder paths — or just leave it working as is. Don't delete
-the root copies while this `index.html` is live; it loads them.
+- 0 assets failing to load
+- pane: Levels 0-10, then Café model labs, then Reference — no duplicate levels
+- 95 clickable lesson links · 155 topics shown as not-yet-written
+- opened "Compounding": 3 practice boxes, 3 sandbox inputs computing live
+  (₹2,20,000 on the defaults), 3 quizzes, Previous → Time value of money,
+  Next → Inflation
+- opened "Opex & EBITDA" from inside Level 2: renders with its spreadsheet intact
