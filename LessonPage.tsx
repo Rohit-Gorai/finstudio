@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { findLesson, neighbours, prerequisitesFor } from "@/data/lessons/registry";
 import { markTopicComplete, topicIsComplete } from "@/data/progress";
 import { LessonNotFound } from "./LessonNotFound";
+import { getActivities } from "@/data/lessons/activities";
+import { PracticeSection, QuizSection, SandboxSection } from "./LessonActivities";
 
 /**
  * One template renders all 227 lessons.
@@ -15,6 +17,7 @@ import { LessonNotFound } from "./LessonNotFound";
 export function LessonPage() {
   const { lessonId } = useParams();
   const lesson = findLesson(lessonId);
+  const activities = lesson ? getActivities(lesson.id) : undefined;
 
   const [complete, setComplete] = useState(false);
   useEffect(() => {
@@ -165,6 +168,39 @@ export function LessonPage() {
                   </div>
                 ))}
               </dl>
+            </section>
+          )}
+
+          {activities && activities.practice.length > 0 && (
+            <section className="topic-section bg-paper">
+              <p className="font-mono text-sm font-semibold tracking-widest text-green">Practice</p>
+              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Work it yourself</h2>
+              <p className="mt-3 text-lg leading-8 text-ink-soft">Attempt each one before revealing the worked solution — the struggle is where the learning happens.</p>
+              <div className="mt-7">
+                <PracticeSection items={activities.practice} />
+              </div>
+            </section>
+          )}
+
+          {activities?.sandbox && (
+            <section className="topic-section bg-paper-2">
+              <p className="font-mono text-sm font-semibold tracking-widest text-green">Sandbox</p>
+              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Change the numbers</h2>
+              <p className="mt-3 text-lg leading-8 text-ink-soft">Every figure below is editable. Predict what will happen before you change it.</p>
+              <div className="mt-7">
+                <SandboxSection spec={activities.sandbox} />
+              </div>
+            </section>
+          )}
+
+          {activities && activities.quiz.length > 0 && (
+            <section className="topic-section bg-paper">
+              <p className="font-mono text-sm font-semibold tracking-widest text-green">Quiz</p>
+              <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">Check your understanding</h2>
+              <p className="mt-3 text-lg leading-8 text-ink-soft">Wrong answers come with the reasoning — read it, then try again.</p>
+              <div className="mt-7">
+                <QuizSection items={activities.quiz} />
+              </div>
             </section>
           )}
 

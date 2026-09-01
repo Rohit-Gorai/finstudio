@@ -80,3 +80,44 @@ export type Lesson = {
 
 export const isTeachable = (lesson: Lesson): boolean =>
   lesson.status !== "outline" && Boolean(lesson.concept && lesson.whyItMatters);
+
+/* ── Per-topic learning activities ──────────────────────────────────────── */
+
+export type PracticeItem = {
+  /** A topic-specific exercise, numerical where the topic is numerical. */
+  question: string;
+  /** The worked solution shown after the learner attempts it. */
+  solution: string;
+};
+
+export type QuizItem = {
+  question: string;
+  choices: string[];
+  /** Index into choices. */
+  answer: number;
+  /** Why the right answer is right — shown after answering. */
+  explanation: string;
+};
+
+export type SandboxField = {
+  key: string;
+  label: string;
+  defaultValue: number;
+  /** Display hint only; values are plain numbers. */
+  unit?: string;
+};
+
+export type SandboxSpec = {
+  /** A calculator kind registered in sandboxEngine.ts. */
+  kind: string;
+  title: string;
+  /** What to try and what to watch for. */
+  prompt: string;
+  fields: SandboxField[];
+};
+
+export type TopicActivities = {
+  practice: PracticeItem[];
+  quiz: QuizItem[];
+  sandbox?: SandboxSpec;
+};

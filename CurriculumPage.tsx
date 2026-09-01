@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { allTopics, curriculum, topicRouteSlug } from "@/data/masterCurriculum";
+import { allTopics, curriculum } from "@/data/masterCurriculum";
 import { allLessons, coverage, findLesson } from "@/data/lessons/registry";
 import { moduleProgress, levelProgress, curriculumProgress } from "@/data/progress";
 import { useEffect, useState } from "react";
