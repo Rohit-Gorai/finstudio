@@ -3,6 +3,7 @@ import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { RootLayout } from "../src/app/RootLayout";
+import { ModulePage } from "../src/app/routes/ModulePage";
 import { LessonPage } from "../src/app/routes/LessonPage";
 import { allLessons, findLesson, neighbours } from "../src/data/lessons/registry";
 import { allActivityIds, getActivities } from "../src/data/lessons/activities";
@@ -22,6 +23,40 @@ describe("left curriculum pane", () => {
     expect(curriculum.length).toBe(11); // Levels 0–10
     for (const level of curriculum) {
       expect(html, `Level ${level.level} missing from sidebar`).toContain(esc(level.title));
+    }
+  });
+
+
+  it("lists every topic of every level — all 227, matching the curriculum", () => {
+    let counted = 0;
+    for (const level of curriculum) {
+      for (const mod of level.modules) {
+        for (const topic of mod.topics) {
+          expect(html, `topic "${topic}" (L${level.level}) missing from sidebar`).toContain(esc(topic));
+          counted++;
+        }
+      }
+    }
+    expect(counted).toBe(227);
+  });
+
+  it("links every module to a module page that renders (no 404s from the pane)", () => {
+    for (const level of curriculum) {
+      for (const mod of level.modules) {
+        const slug = mod.title.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const path = `/module/${level.level}-${slug}`;
+        expect(html, `sidebar missing link ${path}`).toContain(path);
+        const r = createMemoryRouter([{ path: "/module/:moduleId", element: createElement(ModulePage) }], { initialEntries: [path] });
+        const page = renderToString(createElement(RouterProvider, { router: r }));
+        expect(page, `${path} did not resolve`).toContain(esc(mod.title));
+        expect(page, `${path} fell through to not-found`).not.toContain("not found");
+      }
+    }
+  });
+
+  it("keeps the reference links the original pane offered", () => {
+    for (const href of ["/curriculum", "/formulas", "/glossary"]) {
+      expect(html).toContain(`href="/${href.slice(1)}"`);
     }
   });
 

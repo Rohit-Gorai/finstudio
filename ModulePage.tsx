@@ -3,7 +3,7 @@ import { curriculum } from "@/data/masterCurriculum";
 import { allLessons, lessonsForModule } from "@/data/lessons/registry";
 import { LessonNotFound } from "./LessonNotFound";
 
-const slugify = (s: string) =>
+export const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 /**
