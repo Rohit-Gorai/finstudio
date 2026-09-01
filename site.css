@@ -986,3 +986,17 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 
 /* inside the narrow popover a long formula must wrap, not clip */
 .gloss-pop .gloss-fx { white-space: normal; overflow-x: visible; line-height: 1.5; }
+
+/* Curriculum topics whose concept lesson isn't written yet: visible so the full
+   learning path is clear, muted and unlinked so nothing leads to an empty page.
+   Matches .side-lessons a spacing exactly so the rail stays aligned. */
+.side-lesson-planned {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.32rem 1.1rem 0.32rem 1.6rem;
+  color: var(--ink-faint);
+  border-left: 3px solid transparent;
+  cursor: default;
+}
+.side-lesson-planned .side-lesson-title { opacity: 0.75; }

@@ -101,7 +101,31 @@
         out = out.concat(LS.manifest.modules[mc].lessons);
       });
     });
+    // Concept lessons continue the same reading order, so Previous/Next works
+    // across them and across level boundaries.
+    if (LS.curriculumMap) {
+      LS.curriculumMap.forEach(function (lv) {
+        lv.modules.forEach(function (mod) {
+          mod.topics.forEach(function (t) {
+            if (t.written && LS.lessons[t.id]) out.push(t.id);
+          });
+        });
+      });
+    }
     return out;
+  }
+  /* Where a concept lesson sits in the 11-level curriculum. */
+  function conceptLocation(lessonId) {
+    var found = null;
+    if (!LS.curriculumMap) return null;
+    LS.curriculumMap.forEach(function (lv) {
+      lv.modules.forEach(function (mod) {
+        mod.topics.forEach(function (t) {
+          if (t.id === lessonId) found = { level: lv, module: mod };
+        });
+      });
+    });
+    return found;
   }
   function moduleOf(lessonId) {
     var found = null;
@@ -126,38 +150,6 @@
     var nav = document.getElementById("sidebar");
     nav.innerHTML = "";
     var hash = currentRoute();
-
-    /* Level 0 and the other v2 lessons sit above the v1 modules. Without this
-       the authored lessons exist but are reachable only by typing the URL. */
-    if (LS.v2Curriculum && window.FinCurriculum) {
-      LS.v2Curriculum.levels().forEach(function (lv) {
-        nav.appendChild(el("div", "side-level", esc("Level " + lv.id + " · " + lv.title)));
-        var wrap = el("div", "side-module");
-        var done = lv.lessons.filter(function (l) {
-          var d = LS.v2Progress && LS.v2Progress.of(l.id);
-          return d && d.seen;
-        }).length;
-        var head = el("div", "side-module-head");
-        head.innerHTML = '<span class="side-module-title">' + esc(lv.title) + '</span>' +
-          '<span class="side-progress">' + done + "/" + lv.lessons.length + "</span>";
-        wrap.appendChild(head);
-        var ul = el("ul", "side-lessons");
-        lv.lessons.forEach(function (l) {
-          var li = el("li");
-          var a = el("a");
-          a.href = "#/learn/" + l.id;
-          if (hash.kind === "v2" && hash.id === l.id) a.className = "active";
-          var d = LS.v2Progress && LS.v2Progress.of(l.id);
-          a.innerHTML = '<span class="side-lesson-title">' + esc(l.title) + "</span>" +
-            (d && d.seen ? '<span class="side-done">\u2713</span>' : "");
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-        wrap.appendChild(ul);
-        nav.appendChild(wrap);
-      });
-    }
-
     LS.manifest.levels.forEach(function (lv) {
       nav.appendChild(el("div", "side-level", esc(lv.title)));
       lv.modules.forEach(function (mc) {
@@ -197,6 +189,43 @@
         nav.appendChild(wrap);
       });
     });
+    /* The full curriculum: all 11 levels, 35 modules, 227 topics. Topics with an
+       authored concept lesson are links; the rest are shown but unlinked, so the
+       whole learning path is visible without creating routes that 404. */
+    if (LS.curriculumMap) {
+      LS.curriculumMap.forEach(function (lv) {
+        nav.appendChild(el("div", "side-level", esc("Level " + lv.level + " · " + lv.title)));
+        lv.modules.forEach(function (mod) {
+          var wrap2 = el("div", "side-module");
+          var written = mod.topics.filter(function (t) { return t.written; });
+          var doneCount = written.filter(function (t) { return store.isDone(t.id); }).length;
+          var head2 = el("div", "side-module-head");
+          head2.innerHTML = '<span class="side-module-title">' + esc(mod.title) + '</span>' +
+            '<span class="side-progress">' + doneCount + "/" + written.length + "</span>";
+          wrap2.appendChild(head2);
+          var ul2 = el("ul", "side-lessons");
+          mod.topics.forEach(function (t) {
+            var li2 = el("li");
+            if (t.written) {
+              var a2 = el("a");
+              a2.href = "#/" + t.id;
+              if (hash.kind === "lesson" && hash.id === t.id) a2.className = "active";
+              a2.innerHTML = '<span class="side-lesson-title">' + esc(t.title) + '</span>' +
+                (store.isDone(t.id) ? '<span class="side-done" aria-label="completed">\u2713</span>' : "");
+              li2.appendChild(a2);
+            } else {
+              var sp = el("span", "side-lesson-planned");
+              sp.setAttribute("title", "Lesson not written yet");
+              sp.innerHTML = '<span class="side-lesson-title">' + esc(t.title) + '</span>';
+              li2.appendChild(sp);
+            }
+            ul2.appendChild(li2);
+          });
+          wrap2.appendChild(ul2);
+          nav.appendChild(wrap2);
+        });
+      });
+    }
     if (LS.reference) {
       nav.appendChild(el("div", "side-level", "Reference"));
       var rwrap = el("div", "side-module");
@@ -908,9 +937,17 @@
     var ctx = { lessonId: id, onItemDone: null };
     var page = el("div", "page");
     var mc = moduleOf(id);
+    var kicker;
+    if (mc && LS.manifest.modules[mc]) {
+      kicker = '<a href="#/module/' + mc + '">' + esc(LS.manifest.modules[mc].title) + "</a>";
+    } else {
+      var loc = conceptLocation(id);
+      kicker = loc
+        ? esc("Level " + loc.level.level + " · " + loc.module.title)
+        : esc("FinStudio");
+    }
     page.appendChild(el("p", "lesson-kicker",
-      '<a href="#/module/' + mc + '">' + esc(LS.manifest.modules[mc].title) + "</a>" +
-      ' <span class="kicker-min">· ' + (lesson.minutes || 4) + " min</span>"));
+      kicker + ' <span class="kicker-min">· ' + (lesson.minutes || 4) + " min</span>"));
     page.appendChild(el("h1", null, esc(lesson.title)));
     if (lesson.lede) page.appendChild(el("p", "lesson-lede", lesson.lede));
 
@@ -952,41 +989,6 @@
   }
 
   /* ================= router ================= */
-  /* ---- v2 learning layer: curriculum graph, progress, next-lesson ---- */
-  (function () {
-    if (!window.FinCurriculum || !window.FinLessons) return;
-    var C = window.FinCurriculum;
-    var all = Object.keys(window.FinLessons).map(function (k) { return window.FinLessons[k]; });
-    LS.v2Curriculum = new C.Curriculum(all);
-    LS.v2Progress = new C.Progress(readV2Progress());
-    LS.levelTitle = function (key) {
-      var lv = C.LEVELS.filter(function (l) { return l.key === key; })[0];
-      return lv ? "Level " + lv.id + " · " + lv.title : key;
-    };
-    LS.nextV2Lesson = function (id) {
-      var order = LS.v2Curriculum.learningOrder();
-      var i = order.indexOf(id);
-      for (var j = i + 1; j < order.length; j++) {
-        var l = LS.v2Curriculum.get(order[j]);
-        if (l) return l;
-      }
-      return null;
-    };
-    function readV2Progress() {
-      try { return JSON.parse(localStorage.getItem("finstudio:v2:progress") || "{}"); }
-      catch (e) { return {}; }
-    }
-    LS.store = LS.store || {};
-    LS.store.markSeen = function (id) {
-      LS.v2Progress.markSeen(id);
-      try { localStorage.setItem("finstudio:v2:progress", JSON.stringify(LS.v2Progress.data)); } catch (e) {}
-    };
-    LS.store.markDone = function (id) {
-      LS.v2Progress.record(id, { modeling: 1 });
-      try { localStorage.setItem("finstudio:v2:progress", JSON.stringify(LS.v2Progress.data)); } catch (e) {}
-    };
-  })();
-
   function currentRoute() {
     var h = location.hash.replace(/^#\/?/, "");
     if (!h) return { kind: "home" };
@@ -995,7 +997,6 @@
     if (parts[0] === "quiz" && parts[1]) return { kind: "quiz", id: parts[1] };
     if (parts[0] === "ref" && parts[1]) return { kind: "ref", id: parts[1] };
     if (parts[0] === "glossary") return { kind: "glossary" };
-    if (parts[0] === "learn" && parts[1]) return { kind: "v2", id: parts[1] };
     return { kind: "lesson", id: parts[0] };
   }
 
@@ -1005,8 +1006,6 @@
     else if (r.kind === "quiz" && LS.renderQuiz) LS.renderQuiz(r.id, content);
     else if (r.kind === "ref" && LS.renderRef) LS.renderRef(r.id, content);
     else if (r.kind === "glossary" && LS.renderGlossary) LS.renderGlossary(content);
-    else if (r.kind === "v2" && window.FinLessons && window.FinLessons[r.id] && LS.renderV2Lesson)
-      LS.renderV2Lesson(window.FinLessons[r.id], content);
     else if (r.kind === "lesson" && LS.lessons[r.id]) renderLesson(r.id);
     else renderHome();
     buildSidebar();
