@@ -274,321 +274,321 @@ var FinStudioSandbox = (() => {
   LS.curriculumMap = [
     { level: 0, title: "Finance Foundations", modules: [
       { title: "Finance basics", topics: [
-        { title: "What is finance?", id: "c-what-is-finance", written: true },
-        { title: "Personal finance vs corporate finance vs investing", id: "c-personal-corporate-investing", written: true },
-        { title: "Financial markets", id: "c-financial-markets", written: true },
-        { title: "Companies and capital", id: "c-companies-and-capital", written: true },
-        { title: "Revenue", id: "c-revenue", written: true },
-        { title: "Costs", id: "c-costs", written: true },
-        { title: "Profit", id: "c-profit", written: true },
-        { title: "Cash", id: "c-cash", written: true },
-        { title: "Assets", id: "c-assets", written: true },
-        { title: "Liabilities", id: "c-liabilities", written: true },
-        { title: "Equity", id: "c-equity", written: true },
-        { title: "Debt", id: "c-debt", written: true },
-        { title: "Interest", id: "c-interest", written: true },
-        { title: "Risk", id: "c-risk", written: true },
-        { title: "Return", id: "c-return", written: true }
+        { title: "What is finance?", id: "c-what-is-finance", cid: "c-what-is-finance", written: true },
+        { title: "Personal finance vs corporate finance vs investing", id: "c-personal-corporate-investing", cid: "c-personal-corporate-investing", written: true },
+        { title: "Financial markets", id: "c-financial-markets", cid: "c-financial-markets", written: true },
+        { title: "Companies and capital", id: "c-companies-and-capital", cid: "c-companies-and-capital", written: true },
+        { title: "Revenue", id: "c-revenue", cid: "c-revenue", written: true },
+        { title: "Costs", id: "c-costs", cid: "c-costs", written: true },
+        { title: "Profit", id: "c-profit", cid: "c-profit", written: true },
+        { title: "Cash", id: "c-cash", cid: "c-cash", written: true },
+        { title: "Assets", id: "c-assets", cid: "c-assets", written: true },
+        { title: "Liabilities", id: "c-liabilities", cid: "c-liabilities", written: true },
+        { title: "Equity", id: "c-equity", cid: "c-equity", written: true },
+        { title: "Debt", id: "c-debt", cid: "c-debt", written: true },
+        { title: "Interest", id: "c-interest", cid: "c-interest", written: true },
+        { title: "Risk", id: "c-risk", cid: "c-risk", written: true },
+        { title: "Return", id: "c-return", cid: "c-return", written: true }
       ] },
       { title: "Time value & decision making", topics: [
-        { title: "Time value of money", id: "c-time-value-of-money", written: true },
-        { title: "Compounding", id: "c-compounding", written: true },
-        { title: "Inflation", id: "c-inflation", written: true },
-        { title: "Present value", id: "c-present-value", written: true },
-        { title: "Future value", id: "c-future-value", written: true },
-        { title: "Opportunity cost", id: "c-opportunity-cost", written: true },
-        { title: "Risk vs reward", id: "c-risk-vs-reward", written: true }
+        { title: "Time value of money", id: "c-time-value-of-money", cid: "c-time-value-of-money", written: true },
+        { title: "Compounding", id: "c-compounding", cid: "c-compounding", written: true },
+        { title: "Inflation", id: "c-inflation", cid: "c-inflation", written: true },
+        { title: "Present value", id: "c-present-value", cid: "c-present-value", written: true },
+        { title: "Future value", id: "c-future-value", cid: "c-future-value", written: true },
+        { title: "Opportunity cost", id: "c-opportunity-cost", cid: "c-opportunity-cost", written: true },
+        { title: "Risk vs reward", id: "c-risk-vs-reward", cid: "c-risk-vs-reward", written: true }
       ] }
     ] },
     { level: 1, title: "Accounting Foundations", modules: [
       { title: "Accounting mechanics", topics: [
-        { title: "Accounting equation", id: "c-accounting-equation", written: true },
-        { title: "Double-entry accounting", id: "c-double-entry-accounting", written: true },
-        { title: "Debits and credits", id: "c-debits-and-credits", written: true },
-        { title: "Chart of accounts", id: "c-chart-of-accounts", written: true },
-        { title: "Accrual accounting", id: "c-accrual-accounting", written: true },
-        { title: "Cash accounting", id: "c-cash-accounting", written: true },
-        { title: "Revenue recognition", id: "c-revenue-recognition", written: true },
-        { title: "Expenses", id: "c-expenses", written: true }
+        { title: "Accounting equation", id: "c-accounting-equation", cid: "c-accounting-equation", written: true },
+        { title: "Double-entry accounting", id: "c-double-entry-accounting", cid: "c-double-entry-accounting", written: true },
+        { title: "Debits and credits", id: "c-debits-and-credits", cid: "c-debits-and-credits", written: true },
+        { title: "Chart of accounts", id: "c-chart-of-accounts", cid: "c-chart-of-accounts", written: true },
+        { title: "Accrual accounting", id: "c-accrual-accounting", cid: "c-accrual-accounting", written: true },
+        { title: "Cash accounting", id: "c-cash-accounting", cid: "c-cash-accounting", written: true },
+        { title: "Revenue recognition", id: "c-revenue-recognition", cid: "c-revenue-recognition", written: true },
+        { title: "Expenses", id: "c-expenses", cid: "c-expenses", written: true }
       ] },
       { title: "Working capital & operating assets", topics: [
-        { title: "Accounts receivable", id: "c-accounts-receivable", written: true },
-        { title: "Accounts payable", id: "c-accounts-payable", written: true },
-        { title: "Inventory", id: "c-inventory", written: true },
-        { title: "Prepaid expenses", id: "c-prepaid-expenses", written: true },
-        { title: "Deferred revenue", id: "c-deferred-revenue", written: true },
-        { title: "Accrued expenses", id: "c-accrued-expenses", written: true },
-        { title: "Working capital", id: "c-working-capital", written: true }
+        { title: "Accounts receivable", id: "c-accounts-receivable", cid: "c-accounts-receivable", written: true },
+        { title: "Accounts payable", id: "c-accounts-payable", cid: "c-accounts-payable", written: true },
+        { title: "Inventory", id: "c-inventory", cid: "c-inventory", written: true },
+        { title: "Prepaid expenses", id: "c-prepaid-expenses", cid: "c-prepaid-expenses", written: true },
+        { title: "Deferred revenue", id: "c-deferred-revenue", cid: "c-deferred-revenue", written: true },
+        { title: "Accrued expenses", id: "c-accrued-expenses", cid: "c-accrued-expenses", written: true },
+        { title: "Working capital", id: "c-working-capital", cid: "c-working-capital", written: true }
       ] },
       { title: "Long-lived assets & equity", topics: [
-        { title: "Depreciation", id: "c-depreciation", written: true },
-        { title: "Amortization", id: "c-amortization", written: true },
-        { title: "PP&E", id: "c-ppe", written: true },
-        { title: "Goodwill", id: "c-goodwill", written: true },
-        { title: "Intangible assets", id: "c-intangible-assets", written: true },
-        { title: "Retained earnings", id: "c-retained-earnings", written: true }
+        { title: "Depreciation", id: "c-depreciation", cid: "c-depreciation", written: true },
+        { title: "Amortization", id: "c-amortization", cid: "c-amortization", written: true },
+        { title: "PP&E", id: "c-ppe", cid: "c-ppe", written: true },
+        { title: "Goodwill", id: "c-goodwill", cid: "c-goodwill", written: true },
+        { title: "Intangible assets", id: "c-intangible-assets", cid: "c-intangible-assets", written: true },
+        { title: "Retained earnings", id: "c-retained-earnings", cid: "c-retained-earnings", written: true }
       ] }
     ] },
     { level: 2, title: "Financial Statements", modules: [
       { title: "Income statement", topics: [
-        { title: "Revenue", id: "1410-revenue", written: true },
-        { title: "COGS", id: "1420-cogs", written: true },
-        { title: "Gross profit", id: "c-gross-profit", written: true },
-        { title: "Operating expenses", id: "1430-opex-ebitda", written: true },
-        { title: "EBITDA", id: "c-ebitda", written: true },
-        { title: "D&A", id: "1440-depreciation-pl", written: true },
-        { title: "EBIT", id: "c-ebit", written: true },
-        { title: "Interest", id: "1450-interest-tax", written: true },
-        { title: "EBT", id: "c-ebt", written: true },
-        { title: "Taxes", id: "c-taxes", written: true },
-        { title: "Net income", id: "1460-pl-capstone", written: true }
+        { title: "Revenue", id: "1410-revenue", cid: "1410-revenue", written: true },
+        { title: "COGS", id: "1420-cogs", cid: "1420-cogs", written: true },
+        { title: "Gross profit", id: "c-gross-profit", cid: "c-gross-profit", written: true },
+        { title: "Operating expenses", id: "1430-opex-ebitda", cid: "1430-opex-ebitda", written: true },
+        { title: "EBITDA", id: "c-ebitda", cid: "c-ebitda", written: true },
+        { title: "D&A", id: "1440-depreciation-pl", cid: "1440-depreciation-pl", written: true },
+        { title: "EBIT", id: "c-ebit", cid: "c-ebit", written: true },
+        { title: "Interest", id: "1450-interest-tax", cid: "1450-interest-tax", written: true },
+        { title: "EBT", id: "c-ebt", cid: "c-ebt", written: true },
+        { title: "Taxes", id: "c-taxes", cid: "c-taxes", written: true },
+        { title: "Net income", id: "1460-pl-capstone", cid: "1460-pl-capstone", written: true }
       ] },
       { title: "Balance sheet", topics: [
-        { title: "Cash", id: "1150-cash-deposit", written: true },
-        { title: "Receivables", id: "1140-receivables", written: true },
-        { title: "Inventory", id: "1130-inventory", written: true },
-        { title: "PP&E", id: "1110-ppe", written: true },
-        { title: "Intangibles", id: "c-intangibles", written: true },
-        { title: "Debt", id: "1220-borrowings", written: true },
-        { title: "Payables", id: "1210-payables", written: true },
-        { title: "Other liabilities", id: "c-other-liabilities", written: true },
-        { title: "Equity", id: "1310-share-capital", written: true }
+        { title: "Cash", id: "1150-cash-deposit", cid: "1150-cash-deposit", written: true },
+        { title: "Receivables", id: "1140-receivables", cid: "1140-receivables", written: true },
+        { title: "Inventory", id: "1130-inventory", cid: "1130-inventory", written: true },
+        { title: "PP&E", id: "1110-ppe", cid: "1110-ppe", written: true },
+        { title: "Intangibles", id: "c-intangibles", cid: "c-intangibles", written: true },
+        { title: "Debt", id: "1220-borrowings", cid: "1220-borrowings", written: true },
+        { title: "Payables", id: "1210-payables", cid: "1210-payables", written: true },
+        { title: "Other liabilities", id: "c-other-liabilities", cid: "c-other-liabilities", written: true },
+        { title: "Equity", id: "1310-share-capital", cid: "1310-share-capital", written: true }
       ] },
       { title: "Cash flow statement", topics: [
-        { title: "CFO", id: "1520-cfo", written: true },
-        { title: "CFI", id: "1530-cfi", written: true },
-        { title: "CFF", id: "1540-cff", written: true },
-        { title: "Capex", id: "c-capex", written: true },
-        { title: "Change in working capital", id: "c-change-in-working-capital", written: true },
-        { title: "Debt issuance", id: "c-debt-issuance", written: true },
-        { title: "Debt repayment", id: "c-debt-repayment", written: true },
-        { title: "Dividends", id: "c-dividends", written: true },
-        { title: "Stock issuance", id: "c-stock-issuance", written: true }
+        { title: "CFO", id: "1520-cfo", cid: "1520-cfo", written: true },
+        { title: "CFI", id: "1530-cfi", cid: "1530-cfi", written: true },
+        { title: "CFF", id: "1540-cff", cid: "1540-cff", written: true },
+        { title: "Capex", id: "c-capex", cid: "c-capex", written: true },
+        { title: "Change in working capital", id: "c-change-in-working-capital", cid: "c-change-in-working-capital", written: true },
+        { title: "Debt issuance", id: "c-debt-issuance", cid: "c-debt-issuance", written: true },
+        { title: "Debt repayment", id: "c-debt-repayment", cid: "c-debt-repayment", written: true },
+        { title: "Dividends", id: "c-dividends", cid: "c-dividends", written: true },
+        { title: "Stock issuance", id: "c-stock-issuance", cid: "c-stock-issuance", written: true }
       ] },
       { title: "Three-statement connection", topics: [
-        { title: "Three-statement connection", id: "2110-three-bridges", written: true },
-        { title: "Revenue cascade through the three statements", id: "c-revenue-cascade-through-the-three-statements", written: true },
-        { title: "Profit to cash", id: "1510-profit-not-cash", written: true },
-        { title: "Balance sheet check", id: "1330-balance-sheet", written: true }
+        { title: "Three-statement connection", id: "2110-three-bridges", cid: "2110-three-bridges", written: true },
+        { title: "Revenue cascade through the three statements", id: "c-revenue-cascade-through-the-three-statements", cid: "c-revenue-cascade-through-the-three-statements", written: true },
+        { title: "Profit to cash", id: "1510-profit-not-cash", cid: "1510-profit-not-cash", written: true },
+        { title: "Balance sheet check", id: "1330-balance-sheet", cid: "1330-balance-sheet", written: true }
       ] }
     ] },
     { level: 3, title: "Financial Analysis", modules: [
       { title: "Profitability & returns", topics: [
-        { title: "Gross margin", id: "1610-margins", written: true },
-        { title: "EBITDA margin", id: "c-ebitda-margin", written: false },
-        { title: "EBIT margin", id: "c-ebit-margin", written: false },
-        { title: "Net margin", id: "c-net-margin", written: false },
-        { title: "ROE", id: "1640-returns", written: true },
-        { title: "ROA", id: "c-roa", written: false },
-        { title: "ROIC", id: "c-roic", written: false },
-        { title: "Asset turnover", id: "c-asset-turnover", written: false }
+        { title: "Gross margin", id: "1610-margins", cid: "1610-margins", written: true },
+        { title: "EBITDA margin", id: "c-ebitda-margin", cid: "c-ebitda-margin", written: true },
+        { title: "EBIT margin", id: "c-ebit-margin", cid: "c-ebit-margin", written: true },
+        { title: "Net margin", id: "c-net-margin", cid: "c-net-margin", written: true },
+        { title: "ROE", id: "1640-returns", cid: "1640-returns", written: true },
+        { title: "ROA", id: "c-roa", cid: "c-roa", written: true },
+        { title: "ROIC", id: "c-roic", cid: "c-roic", written: true },
+        { title: "Asset turnover", id: "c-asset-turnover", cid: "c-asset-turnover", written: true }
       ] },
       { title: "Liquidity & leverage", topics: [
-        { title: "Current ratio", id: "1620-liquidity", written: true },
-        { title: "Quick ratio", id: "c-quick-ratio", written: false },
-        { title: "Debt/equity", id: "1630-leverage", written: true },
-        { title: "Net debt/EBITDA", id: "c-net-debt-ebitda", written: false },
-        { title: "Interest coverage", id: "c-interest-coverage", written: false }
+        { title: "Current ratio", id: "1620-liquidity", cid: "1620-liquidity", written: true },
+        { title: "Quick ratio", id: "c-quick-ratio", cid: "c-quick-ratio", written: true },
+        { title: "Debt/equity", id: "1630-leverage", cid: "1630-leverage", written: true },
+        { title: "Net debt/EBITDA", id: "c-net-debt-ebitda", cid: "c-net-debt-ebitda", written: true },
+        { title: "Interest coverage", id: "c-interest-coverage", cid: "c-interest-coverage", written: true }
       ] },
       { title: "Cash & operating analysis", topics: [
-        { title: "Free cash flow", id: "2230-fcff", written: true },
-        { title: "Working capital analysis", id: "c-working-capital-analysis", written: false },
-        { title: "Cash conversion cycle", id: "c-cash-conversion-cycle", written: false },
-        { title: "Operating leverage", id: "c-operating-leverage", written: false },
-        { title: "Financial leverage", id: "c-financial-leverage", written: false }
+        { title: "Free cash flow", id: "2230-fcff", cid: "2230-fcff", written: true },
+        { title: "Working capital analysis", id: "c-working-capital-analysis", cid: "c-working-capital-analysis", written: true },
+        { title: "Cash conversion cycle", id: "c-cash-conversion-cycle", cid: "c-cash-conversion-cycle", written: true },
+        { title: "Operating leverage", id: "c-operating-leverage", cid: "c-operating-leverage", written: true },
+        { title: "Financial leverage", id: "c-financial-leverage", cid: "c-financial-leverage", written: true }
       ] }
     ] },
     { level: 4, title: "Financial Modeling", modules: [
       { title: "Model architecture", topics: [
-        { title: "Model architecture", id: "c-model-architecture", written: false },
-        { title: "Assumptions", id: "c-assumptions", written: false },
-        { title: "Historical periods", id: "c-historical-periods", written: false },
-        { title: "Forecast periods", id: "2220-project-pl", written: true },
-        { title: "Drivers", id: "2210-drivers", written: true },
-        { title: "Model formatting", id: "c-model-formatting", written: false },
-        { title: "Model best practices", id: "c-model-best-practices", written: false }
+        { title: "Model architecture", id: "c-model-architecture", cid: "c-model-architecture", written: false },
+        { title: "Assumptions", id: "c-assumptions", cid: "c-assumptions", written: false },
+        { title: "Historical periods", id: "c-historical-periods", cid: "c-historical-periods", written: false },
+        { title: "Forecast periods", id: "2220-project-pl", cid: "2220-project-pl", written: true },
+        { title: "Drivers", id: "2210-drivers", cid: "2210-drivers", written: true },
+        { title: "Model formatting", id: "c-model-formatting", cid: "c-model-formatting", written: false },
+        { title: "Model best practices", id: "c-model-best-practices", cid: "c-model-best-practices", written: false }
       ] },
       { title: "Operating schedules", topics: [
-        { title: "Revenue build", id: "c-revenue-build", written: false },
-        { title: "Cost build", id: "c-cost-build", written: false },
-        { title: "Headcount model", id: "c-headcount-model", written: false },
-        { title: "Working capital model", id: "c-working-capital-model", written: false },
-        { title: "Capex model", id: "c-capex-model", written: false },
-        { title: "Depreciation schedule", id: "c-depreciation-schedule", written: false },
-        { title: "Debt schedule", id: "c-debt-schedule", written: false },
-        { title: "Interest schedule", id: "c-interest-schedule", written: false },
-        { title: "Tax schedule", id: "c-tax-schedule", written: false },
-        { title: "Retained earnings", id: "c-retained-earnings-schedule", written: false }
+        { title: "Revenue build", id: "c-revenue-build", cid: "c-revenue-build", written: false },
+        { title: "Cost build", id: "c-cost-build", cid: "c-cost-build", written: false },
+        { title: "Headcount model", id: "c-headcount-model", cid: "c-headcount-model", written: false },
+        { title: "Working capital model", id: "c-working-capital-model", cid: "c-working-capital-model", written: false },
+        { title: "Capex model", id: "c-capex-model", cid: "c-capex-model", written: false },
+        { title: "Depreciation schedule", id: "c-depreciation-schedule", cid: "c-depreciation-schedule", written: false },
+        { title: "Debt schedule", id: "c-debt-schedule", cid: "c-debt-schedule", written: false },
+        { title: "Interest schedule", id: "c-interest-schedule", cid: "c-interest-schedule", written: false },
+        { title: "Tax schedule", id: "c-tax-schedule", cid: "c-tax-schedule", written: false },
+        { title: "Retained earnings", id: "c-retained-earnings-schedule", cid: "c-retained-earnings-schedule", written: false }
       ] },
       { title: "Integrated modeling", topics: [
-        { title: "Three-statement model", id: "2120-linked-model", written: true },
-        { title: "Scenario analysis", id: "c-scenario-analysis", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis", written: false },
-        { title: "Model checks", id: "2130-broken-link", written: true },
-        { title: "Circularity", id: "c-circularity", written: false }
+        { title: "Three-statement model", id: "2120-linked-model", cid: "2120-linked-model", written: true },
+        { title: "Scenario analysis", id: "c-scenario-analysis", cid: "c-scenario-analysis", written: false },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis", cid: "c-sensitivity-analysis", written: false },
+        { title: "Model checks", id: "2130-broken-link", cid: "2130-broken-link", written: true },
+        { title: "Circularity", id: "c-circularity", cid: "c-circularity", written: false }
       ] },
       { title: "Build a real model", topics: [
-        { title: "Revenue", id: "c-revenue-forecast", written: false },
-        { title: "Gross Profit", id: "c-gross-profit-model", written: false },
-        { title: "EBITDA", id: "c-ebitda-model", written: false },
-        { title: "EBIT", id: "c-ebit-model", written: false },
-        { title: "Net Income", id: "c-net-income-model", written: false },
-        { title: "Cash Flow", id: "c-cash-flow", written: false },
-        { title: "Balance Sheet", id: "c-balance-sheet", written: false }
+        { title: "Revenue", id: "c-revenue-forecast", cid: "c-revenue-forecast", written: false },
+        { title: "Gross Profit", id: "c-gross-profit-model", cid: "c-gross-profit-model", written: false },
+        { title: "EBITDA", id: "c-ebitda-model", cid: "c-ebitda-model", written: false },
+        { title: "EBIT", id: "c-ebit-model", cid: "c-ebit-model", written: false },
+        { title: "Net Income", id: "c-net-income-model", cid: "c-net-income-model", written: false },
+        { title: "Cash Flow", id: "c-cash-flow", cid: "c-cash-flow", written: false },
+        { title: "Balance Sheet", id: "c-balance-sheet", cid: "c-balance-sheet", written: false }
       ] }
     ] },
     { level: 5, title: "Valuation", modules: [
       { title: "Valuation building blocks", topics: [
-        { title: "Enterprise value", id: "c-enterprise-value", written: false },
-        { title: "Equity value", id: "c-equity-value", written: false },
-        { title: "Market capitalization", id: "c-market-capitalization", written: false },
-        { title: "Net debt", id: "c-net-debt", written: false },
-        { title: "EV/Revenue", id: "c-ev-revenue", written: false },
-        { title: "EV/EBITDA", id: "c-ev-ebitda", written: false },
-        { title: "P/E", id: "c-p-e", written: false },
-        { title: "PEG", id: "c-peg", written: false }
+        { title: "Enterprise value", id: "c-enterprise-value", cid: "c-enterprise-value", written: false },
+        { title: "Equity value", id: "c-equity-value", cid: "c-equity-value", written: false },
+        { title: "Market capitalization", id: "c-market-capitalization", cid: "c-market-capitalization", written: false },
+        { title: "Net debt", id: "c-net-debt", cid: "c-net-debt", written: false },
+        { title: "EV/Revenue", id: "c-ev-revenue", cid: "c-ev-revenue", written: false },
+        { title: "EV/EBITDA", id: "c-ev-ebitda", cid: "c-ev-ebitda", written: false },
+        { title: "P/E", id: "c-p-e", cid: "c-p-e", written: false },
+        { title: "PEG", id: "c-peg", cid: "c-peg", written: false }
       ] },
       { title: "DCF", topics: [
-        { title: "DCF", id: "2240-dcf", written: true },
-        { title: "WACC", id: "c-wacc", written: false },
-        { title: "Cost of equity", id: "c-cost-of-equity", written: false },
-        { title: "Cost of debt", id: "c-cost-of-debt", written: false },
-        { title: "CAPM", id: "c-capm", written: false },
-        { title: "Beta", id: "c-beta", written: false },
-        { title: "Risk-free rate", id: "c-risk-free-rate", written: false },
-        { title: "Equity risk premium", id: "c-equity-risk-premium", written: false },
-        { title: "Terminal value", id: "c-terminal-value", written: false },
-        { title: "Perpetuity growth", id: "c-perpetuity-growth", written: false },
-        { title: "Exit multiple", id: "c-exit-multiple", written: false },
-        { title: "Discount factors", id: "c-discount-factors", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-dcf", written: false }
+        { title: "DCF", id: "2240-dcf", cid: "2240-dcf", written: true },
+        { title: "WACC", id: "c-wacc", cid: "c-wacc", written: false },
+        { title: "Cost of equity", id: "c-cost-of-equity", cid: "c-cost-of-equity", written: false },
+        { title: "Cost of debt", id: "c-cost-of-debt", cid: "c-cost-of-debt", written: false },
+        { title: "CAPM", id: "c-capm", cid: "c-capm", written: false },
+        { title: "Beta", id: "c-beta", cid: "c-beta", written: false },
+        { title: "Risk-free rate", id: "c-risk-free-rate", cid: "c-risk-free-rate", written: false },
+        { title: "Equity risk premium", id: "c-equity-risk-premium", cid: "c-equity-risk-premium", written: false },
+        { title: "Terminal value", id: "c-terminal-value", cid: "c-terminal-value", written: false },
+        { title: "Perpetuity growth", id: "c-perpetuity-growth", cid: "c-perpetuity-growth", written: false },
+        { title: "Exit multiple", id: "c-exit-multiple", cid: "c-exit-multiple", written: false },
+        { title: "Discount factors", id: "c-discount-factors", cid: "c-discount-factors", written: false },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-dcf", cid: "c-sensitivity-analysis-dcf", written: false }
       ] },
       { title: "Live DCF", topics: [
-        { title: "Revenue growth", id: "c-revenue-growth", written: false },
-        { title: "Margin", id: "c-margin", written: false },
-        { title: "WACC", id: "c-wacc-dcf-input", written: false },
-        { title: "Terminal growth", id: "c-terminal-growth", written: false },
-        { title: "Enterprise Value", id: "c-enterprise-value-dcf-output", written: false },
-        { title: "Equity Value", id: "c-equity-value-dcf-output", written: false },
-        { title: "Share Price", id: "c-share-price", written: false }
+        { title: "Revenue growth", id: "c-revenue-growth", cid: "c-revenue-growth", written: false },
+        { title: "Margin", id: "c-margin", cid: "c-margin", written: false },
+        { title: "WACC", id: "c-wacc-dcf-input", cid: "c-wacc-dcf-input", written: false },
+        { title: "Terminal growth", id: "c-terminal-growth", cid: "c-terminal-growth", written: false },
+        { title: "Enterprise Value", id: "c-enterprise-value-dcf-output", cid: "c-enterprise-value-dcf-output", written: false },
+        { title: "Equity Value", id: "c-equity-value-dcf-output", cid: "c-equity-value-dcf-output", written: false },
+        { title: "Share Price", id: "c-share-price", cid: "c-share-price", written: false }
       ] }
     ] },
     { level: 6, title: "Investment Banking", modules: [
       { title: "Transaction valuation", topics: [
-        { title: "Comparable companies", id: "c-comparable-companies", written: false },
-        { title: "Precedent transactions", id: "c-precedent-transactions", written: false },
-        { title: "Trading multiples", id: "c-trading-multiples", written: false },
-        { title: "Transaction multiples", id: "c-transaction-multiples", written: false }
+        { title: "Comparable companies", id: "c-comparable-companies", cid: "c-comparable-companies", written: false },
+        { title: "Precedent transactions", id: "c-precedent-transactions", cid: "c-precedent-transactions", written: false },
+        { title: "Trading multiples", id: "c-trading-multiples", cid: "c-trading-multiples", written: false },
+        { title: "Transaction multiples", id: "c-transaction-multiples", cid: "c-transaction-multiples", written: false }
       ] },
       { title: "M&A modeling", topics: [
-        { title: "Accretion/dilution", id: "c-accretion-dilution", written: false },
-        { title: "Merger models", id: "c-merger-models", written: false },
-        { title: "Sources & Uses", id: "c-sources-and-uses", written: false },
-        { title: "Purchase price", id: "c-purchase-price", written: false },
-        { title: "Financing mix", id: "c-financing-mix", written: false },
-        { title: "Goodwill", id: "c-goodwill-acquisition", written: false },
-        { title: "Synergies", id: "c-synergies", written: false },
-        { title: "Pro forma financials", id: "c-pro-forma-financials", written: false },
-        { title: "Debt schedules", id: "c-debt-schedules", written: false }
+        { title: "Accretion/dilution", id: "c-accretion-dilution", cid: "c-accretion-dilution", written: false },
+        { title: "Merger models", id: "c-merger-models", cid: "c-merger-models", written: false },
+        { title: "Sources & Uses", id: "c-sources-and-uses", cid: "c-sources-and-uses", written: false },
+        { title: "Purchase price", id: "c-purchase-price", cid: "c-purchase-price", written: false },
+        { title: "Financing mix", id: "c-financing-mix", cid: "c-financing-mix", written: false },
+        { title: "Goodwill", id: "c-goodwill-acquisition", cid: "c-goodwill-acquisition", written: false },
+        { title: "Synergies", id: "c-synergies", cid: "c-synergies", written: false },
+        { title: "Pro forma financials", id: "c-pro-forma-financials", cid: "c-pro-forma-financials", written: false },
+        { title: "Debt schedules", id: "c-debt-schedules", cid: "c-debt-schedules", written: false }
       ] },
       { title: "LBO basics", topics: [
-        { title: "LBO basics", id: "c-lbo-basics", written: false }
+        { title: "LBO basics", id: "c-lbo-basics", cid: "c-lbo-basics", written: false }
       ] }
     ] },
     { level: 7, title: "Private Equity / LBO", modules: [
       { title: "LBO construction", topics: [
-        { title: "Entry valuation", id: "c-entry-valuation", written: false },
-        { title: "Debt financing", id: "c-debt-financing", written: false },
-        { title: "Sources & Uses", id: "c-sources-and-uses-lbo", written: false },
-        { title: "Operating case", id: "c-operating-case", written: false },
-        { title: "Debt paydown", id: "c-debt-paydown", written: false },
-        { title: "Exit valuation", id: "c-exit-valuation", written: false },
-        { title: "Exit multiple", id: "c-exit-multiple-lbo", written: false },
-        { title: "Sponsor equity", id: "c-sponsor-equity", written: false }
+        { title: "Entry valuation", id: "c-entry-valuation", cid: "c-entry-valuation", written: false },
+        { title: "Debt financing", id: "c-debt-financing", cid: "c-debt-financing", written: false },
+        { title: "Sources & Uses", id: "c-sources-and-uses-lbo", cid: "c-sources-and-uses-lbo", written: false },
+        { title: "Operating case", id: "c-operating-case", cid: "c-operating-case", written: false },
+        { title: "Debt paydown", id: "c-debt-paydown", cid: "c-debt-paydown", written: false },
+        { title: "Exit valuation", id: "c-exit-valuation", cid: "c-exit-valuation", written: false },
+        { title: "Exit multiple", id: "c-exit-multiple-lbo", cid: "c-exit-multiple-lbo", written: false },
+        { title: "Sponsor equity", id: "c-sponsor-equity", cid: "c-sponsor-equity", written: false }
       ] },
       { title: "Sponsor returns", topics: [
-        { title: "MOIC", id: "c-moic", written: false },
-        { title: "IRR", id: "c-irr", written: false },
-        { title: "Management options", id: "c-management-options", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-lbo", written: false }
+        { title: "MOIC", id: "c-moic", cid: "c-moic", written: false },
+        { title: "IRR", id: "c-irr", cid: "c-irr", written: false },
+        { title: "Management options", id: "c-management-options", cid: "c-management-options", written: false },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-lbo", cid: "c-sensitivity-analysis-lbo", written: false }
       ] }
     ] },
     { level: 8, title: "Equity Research & Investing", modules: [
       { title: "Business analysis", topics: [
-        { title: "Business analysis", id: "c-business-analysis", written: false },
-        { title: "Revenue drivers", id: "c-revenue-drivers", written: false },
-        { title: "Unit economics", id: "c-unit-economics", written: false },
-        { title: "Competitive advantage", id: "c-competitive-advantage", written: false },
-        { title: "TAM / SAM / SOM", id: "c-tam-sam-som", written: false },
-        { title: "Management analysis", id: "c-management-analysis", written: false },
-        { title: "Earnings", id: "c-earnings", written: false },
-        { title: "Guidance", id: "c-guidance", written: false }
+        { title: "Business analysis", id: "c-business-analysis", cid: "c-business-analysis", written: false },
+        { title: "Revenue drivers", id: "c-revenue-drivers", cid: "c-revenue-drivers", written: false },
+        { title: "Unit economics", id: "c-unit-economics", cid: "c-unit-economics", written: false },
+        { title: "Competitive advantage", id: "c-competitive-advantage", cid: "c-competitive-advantage", written: false },
+        { title: "TAM / SAM / SOM", id: "c-tam-sam-som", cid: "c-tam-sam-som", written: false },
+        { title: "Management analysis", id: "c-management-analysis", cid: "c-management-analysis", written: false },
+        { title: "Earnings", id: "c-earnings", cid: "c-earnings", written: false },
+        { title: "Guidance", id: "c-guidance", cid: "c-guidance", written: false }
       ] },
       { title: "Investment case", topics: [
-        { title: "Free cash flow", id: "c-free-cash-flow-investment-case", written: false },
-        { title: "Valuation", id: "c-valuation", written: false },
-        { title: "Investment thesis", id: "c-investment-thesis", written: false },
-        { title: "Catalysts", id: "c-catalysts", written: false },
-        { title: "Risks", id: "c-risks", written: false },
-        { title: "Bear case", id: "c-bear-case", written: false },
-        { title: "Base case", id: "c-base-case", written: false },
-        { title: "Bull case", id: "c-bull-case", written: false }
+        { title: "Free cash flow", id: "c-free-cash-flow-investment-case", cid: "c-free-cash-flow-investment-case", written: false },
+        { title: "Valuation", id: "c-valuation", cid: "c-valuation", written: false },
+        { title: "Investment thesis", id: "c-investment-thesis", cid: "c-investment-thesis", written: false },
+        { title: "Catalysts", id: "c-catalysts", cid: "c-catalysts", written: false },
+        { title: "Risks", id: "c-risks", cid: "c-risks", written: false },
+        { title: "Bear case", id: "c-bear-case", cid: "c-bear-case", written: false },
+        { title: "Base case", id: "c-base-case", cid: "c-base-case", written: false },
+        { title: "Bull case", id: "c-bull-case", cid: "c-bull-case", written: false }
       ] },
       { title: "Interactive investment cases", topics: [
-        { title: "Build interactive investment cases", id: "c-build-interactive-investment-cases", written: false }
+        { title: "Build interactive investment cases", id: "c-build-interactive-investment-cases", cid: "c-build-interactive-investment-cases", written: false }
       ] }
     ] },
     { level: 9, title: "Markets", modules: [
       { title: "Equities", topics: [
-        { title: "Stocks", id: "c-stocks", written: false },
-        { title: "Market capitalization", id: "c-market-capitalization-equities", written: false }
+        { title: "Stocks", id: "c-stocks", cid: "c-stocks", written: false },
+        { title: "Market capitalization", id: "c-market-capitalization-equities", cid: "c-market-capitalization-equities", written: false }
       ] },
       { title: "Fixed income", topics: [
-        { title: "Bonds", id: "c-bonds", written: false },
-        { title: "Yield", id: "c-yield", written: false },
-        { title: "Yield curves", id: "c-yield-curves", written: false },
-        { title: "Duration", id: "c-duration", written: false },
-        { title: "Convexity", id: "c-convexity", written: false },
-        { title: "Credit", id: "c-credit", written: false }
+        { title: "Bonds", id: "c-bonds", cid: "c-bonds", written: false },
+        { title: "Yield", id: "c-yield", cid: "c-yield", written: false },
+        { title: "Yield curves", id: "c-yield-curves", cid: "c-yield-curves", written: false },
+        { title: "Duration", id: "c-duration", cid: "c-duration", written: false },
+        { title: "Convexity", id: "c-convexity", cid: "c-convexity", written: false },
+        { title: "Credit", id: "c-credit", cid: "c-credit", written: false }
       ] },
       { title: "Macro & currencies", topics: [
-        { title: "Interest rates", id: "c-interest-rates", written: false },
-        { title: "Central banks", id: "c-central-banks", written: false },
-        { title: "FX", id: "c-fx", written: false },
-        { title: "Commodities", id: "c-commodities", written: false }
+        { title: "Interest rates", id: "c-interest-rates", cid: "c-interest-rates", written: false },
+        { title: "Central banks", id: "c-central-banks", cid: "c-central-banks", written: false },
+        { title: "FX", id: "c-fx", cid: "c-fx", written: false },
+        { title: "Commodities", id: "c-commodities", cid: "c-commodities", written: false }
       ] },
       { title: "Derivatives", topics: [
-        { title: "Derivatives", id: "c-derivatives", written: false },
-        { title: "Options", id: "c-options", written: false },
-        { title: "Futures", id: "c-futures", written: false }
+        { title: "Derivatives", id: "c-derivatives", cid: "c-derivatives", written: false },
+        { title: "Options", id: "c-options", cid: "c-options", written: false },
+        { title: "Futures", id: "c-futures", cid: "c-futures", written: false }
       ] },
       { title: "Market mechanics", topics: [
-        { title: "Liquidity", id: "c-liquidity", written: false },
-        { title: "Volatility", id: "c-volatility", written: false }
+        { title: "Liquidity", id: "c-liquidity", cid: "c-liquidity", written: false },
+        { title: "Volatility", id: "c-volatility", cid: "c-volatility", written: false }
       ] }
     ] },
     { level: 10, title: "Advanced Finance", modules: [
       { title: "Options & portfolio theory", topics: [
-        { title: "Options pricing", id: "c-options-pricing", written: false },
-        { title: "Black-Scholes intuition", id: "c-black-scholes-intuition", written: false },
-        { title: "Greeks", id: "c-greeks", written: false },
-        { title: "Portfolio theory", id: "c-portfolio-theory", written: false },
-        { title: "CAPM", id: "c-capm-portfolio-theory", written: false },
-        { title: "Efficient frontier", id: "c-efficient-frontier", written: false },
-        { title: "Sharpe ratio", id: "c-sharpe-ratio", written: false },
-        { title: "Beta", id: "c-beta-portfolio-theory", written: false },
-        { title: "Alpha", id: "c-alpha", written: false },
-        { title: "Factor investing", id: "c-factor-investing", written: false }
+        { title: "Options pricing", id: "c-options-pricing", cid: "c-options-pricing", written: false },
+        { title: "Black-Scholes intuition", id: "c-black-scholes-intuition", cid: "c-black-scholes-intuition", written: false },
+        { title: "Greeks", id: "c-greeks", cid: "c-greeks", written: false },
+        { title: "Portfolio theory", id: "c-portfolio-theory", cid: "c-portfolio-theory", written: false },
+        { title: "CAPM", id: "c-capm-portfolio-theory", cid: "c-capm-portfolio-theory", written: false },
+        { title: "Efficient frontier", id: "c-efficient-frontier", cid: "c-efficient-frontier", written: false },
+        { title: "Sharpe ratio", id: "c-sharpe-ratio", cid: "c-sharpe-ratio", written: false },
+        { title: "Beta", id: "c-beta-portfolio-theory", cid: "c-beta-portfolio-theory", written: false },
+        { title: "Alpha", id: "c-alpha", cid: "c-alpha", written: false },
+        { title: "Factor investing", id: "c-factor-investing", cid: "c-factor-investing", written: false }
       ] },
       { title: "Risk & simulation", topics: [
-        { title: "Risk management", id: "c-risk-management", written: false },
-        { title: "VaR", id: "c-var", written: false },
-        { title: "Scenario analysis", id: "c-scenario-analysis-risk", written: false },
-        { title: "Monte Carlo simulation", id: "c-monte-carlo-simulation", written: false }
+        { title: "Risk management", id: "c-risk-management", cid: "c-risk-management", written: false },
+        { title: "VaR", id: "c-var", cid: "c-var", written: false },
+        { title: "Scenario analysis", id: "c-scenario-analysis-risk", cid: "c-scenario-analysis-risk", written: false },
+        { title: "Monte Carlo simulation", id: "c-monte-carlo-simulation", cid: "c-monte-carlo-simulation", written: false }
       ] },
       { title: "Corporate finance", topics: [
-        { title: "Capital structure", id: "c-capital-structure", written: false },
-        { title: "Cost of capital", id: "c-cost-of-capital", written: false }
+        { title: "Capital structure", id: "c-capital-structure", cid: "c-capital-structure", written: false },
+        { title: "Cost of capital", id: "c-cost-of-capital", cid: "c-cost-of-capital", written: false }
       ] }
     ] }
   ];

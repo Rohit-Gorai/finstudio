@@ -105,7 +105,7 @@
     if (LS.curriculumMap) {
       LS.curriculumMap.forEach(function (lv) {
         lv.modules.forEach(function (mod) {
-          mod.topics.forEach(function (t) { if (t.written) push(t.id); });
+          mod.topics.forEach(function (t) { if (t.written) push(t.cid || t.id); });
         });
       });
     }
@@ -114,6 +114,7 @@
         LS.manifest.modules[mc].lessons.forEach(push);
       });
     });
+    push("c-capstone"); // the end-to-end case closes the sequence
     return out;
   }
   /* Where a concept lesson sits in the 11-level curriculum. */
@@ -152,6 +153,45 @@
     var nav = document.getElementById("sidebar");
     nav.innerHTML = "";
     var hash = currentRoute();
+
+    /* Learning path panel: where the learner is, and the one link that matters
+       most — the next unfinished written lesson in curriculum order. Beginners
+       abandon curricula that don't tell them where they are. */
+    (function learningPath() {
+      if (!LS.curriculumMap) return;
+      var written = [], done = 0, next = null;
+      LS.curriculumMap.forEach(function (lv) {
+        lv.modules.forEach(function (mod) {
+          mod.topics.forEach(function (t) {
+            if (!t.written || !LS.lessons[t.id]) return;
+            written.push(t);
+            if (store.isDone(t.id)) done++;
+            else if (!next) next = { topic: t, level: lv };
+          });
+        });
+      });
+      if (!written.length) return;
+
+      var box = el("div", "path-panel");
+      var pct = Math.round((done / written.length) * 100);
+      var started = done > 0;
+      box.innerHTML =
+        '<p class="path-label">' + (started ? "Your progress" : "Start here") + "</p>" +
+        '<p class="path-count">' + done + " of " + written.length + " lessons</p>" +
+        '<div class="path-bar"><span style="width:' + pct + '%"></span></div>';
+      if (next) {
+        var a = el("a", "path-next");
+        a.href = "#/" + next.topic.id;
+        a.innerHTML =
+          '<span class="path-next-label">' + (started ? "Continue" : "Begin with") + "</span>" +
+          '<span class="path-next-title">' + esc(next.topic.title) + "</span>" +
+          '<span class="path-next-meta">Level ' + next.level.level + " · " + esc(next.level.title) + "</span>";
+        box.appendChild(a);
+      } else {
+        box.appendChild(el("p", "path-next-meta", "Every written lesson complete."));
+      }
+      nav.appendChild(box);
+    })();
     /* Which café lessons already appear inside Levels 0-10, so they are not
        listed twice. The old "Level 1 / Level 2" headings are gone: the
        curriculum below is the single source of truth for the pane. */
@@ -201,6 +241,22 @@
         });
       });
     }
+    /* Capstone: the end-to-end case that uses every level together. */
+    if (LS.lessons && LS.lessons["c-capstone"]) {
+      nav.appendChild(el("div", "side-level", "Capstone"));
+      var capWrap = el("div", "side-module");
+      var capUl = el("ul", "side-lessons");
+      var capLi = el("li"), capA = el("a");
+      capA.href = "#/c-capstone";
+      if (hash.kind === "lesson" && hash.id === "c-capstone") capA.className = "active";
+      capA.innerHTML = '<span class="side-lesson-title">Value a company end to end</span>' +
+        (store.isDone("c-capstone") ? '<span class="side-done">\u2713</span>' : "");
+      capLi.appendChild(capA);
+      capUl.appendChild(capLi);
+      capWrap.appendChild(capUl);
+      nav.appendChild(capWrap);
+    }
+
     /* Café model labs: the interactive spreadsheet lessons that don't map onto a
        single curriculum topic (capstones, module quizzes). Kept reachable. */
     var labModules = [];
@@ -1084,6 +1140,22 @@
     page.appendChild(el("h1", null, esc(lesson.title)));
     if (lesson.lede) page.appendChild(el("p", "lesson-lede", lesson.lede));
 
+    /* Before you start: the concepts this lesson assumes, so nobody hits an
+       explanation that silently depends on something they haven't read. */
+    if (LS.learningGraph) {
+      var pre = LS.learningGraph.prerequisitesFor(id);
+      if (pre.length) {
+        var pbox = el("div", "prereq-box");
+        var links = pre.map(function (x) {
+          var done = store.isDone(x.id) ? ' <span class="prereq-done">\u2713</span>' : "";
+          return '<a href="#/' + x.id + '">' + esc(x.title) + "</a>" + done;
+        }).join('<span class="prereq-sep">·</span>');
+        pbox.innerHTML = '<span class="prereq-label">Before you start</span>' +
+          '<span class="prereq-links">' + links + "</span>";
+        page.appendChild(pbox);
+      }
+    }
+
     (lesson.body || []).forEach(function (b, i) {
       var fn = blockRenderers[b.t];
       if (fn) page.appendChild(fn(b, ctx, i));
@@ -1101,8 +1173,41 @@
     }
 
     // prev/next
+    /* Where this fits: the chain of concepts this lesson belongs to, with the
+       current step marked. Answers "why am I learning this?" without adding a
+       new navigation system. */
+    if (LS.learningGraph) {
+      var chain = LS.learningGraph.chainFor(id);
+      if (chain) {
+        var cbox = el("div", "chain-box");
+        var inner = '<p class="chain-label">' + esc(chain.label) + "</p><div class=\"chain-steps\">";
+        chain.steps.forEach(function (stepItem, si) {
+          if (si) inner += '<span class="chain-arrow" aria-hidden="true">\u2192</span>';
+          inner += stepItem.current
+            ? '<span class="chain-step is-current" aria-current="step">' + esc(stepItem.title) + "</span>"
+            : '<a class="chain-step" href="#/' + stepItem.id + '">' + esc(stepItem.title) + "</a>";
+        });
+        inner += "</div>";
+        cbox.innerHTML = inner;
+        page.appendChild(cbox);
+      }
+    }
+
     var order = allLessonIdsInOrder();
     var at = order.indexOf(id);
+    /* all-topic-routes.js republishes each lesson under a topic-l<level>-... id
+       and overwrites topic.id. The reading order is built from the canonical
+       `cid`, so map a republished id back to it and Previous/Next keeps working
+       on both URLs. */
+    if (at < 0 && LS.curriculumMap) {
+      LS.curriculumMap.forEach(function (lv) {
+        lv.modules.forEach(function (mod) {
+          mod.topics.forEach(function (t) {
+            if (at < 0 && t.id === id && t.cid) at = order.indexOf(t.cid);
+          });
+        });
+      });
+    }
     var nav = el("div", "lesson-nav");
     var prev = el("span"), next = el("span");
     if (at > 0) {
