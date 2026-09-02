@@ -1,66 +1,65 @@
-# Level 0 rebuilt from your document
+# Level 1 rebuilt from your document
 
-Replace **`concepts-l0.js`** in the repo root with the new one. That single file
-is the whole change — nothing else moved.
+Replace **`concepts-l1.js`** in the repo root. That's the only file that changed
+this round.
 
-If you haven't yet uploaded the five files from my last message (`app.js`,
-`site.css`, `concepts-l0.js`, `concepts-l1.js`, `curriculum-map.js`), upload
-those too, using this newer `concepts-l0.js`. Without `app.js` the practice
-boxes and sandboxes won't render.
+If the earlier files aren't up yet, upload these together — `app.js`,
+`site.css`, `concepts-l0.js`, `concepts-l1.js`, `curriculum-map.js` — all to the
+root. Without `app.js` the practice boxes and sandboxes won't render.
 
-## I can't push to your repo
+## I still can't push to your repo
 
-I have no GitHub credentials in this environment and no network path to push —
-`git push` fails with "could not read Username for https://github.com". You'll
-need to commit the file yourself. Everything else below is verified and ready.
+No GitHub credentials exist in this environment; `git push` fails with "could
+not read Username for https://github.com". You'll need to commit the file.
 
-## What came from the document
+## What was imported
 
-All 14 topics it covers were rebuilt from your text, keeping its structure:
+All 21 Level 1 topics rebuilt from your text, in its structure: What is this ·
+Why does it matter · How does it work (step by step) · Real-Life Case Study +
+What It Means · Key Terms · Practice Questions with worked solutions · What to
+Remember · Common Mistakes · Check Yourself · Interview Questions.
 
-What is this? · Why does it matter? · How does it work? (step by step) ·
-Real-Life Case Study + What It Means · Key Terms · Practice Questions with
-worked solutions · What to Remember · Common Mistakes · Check Yourself (5 MCQs,
-correct answer taken from your ✅ marks) · Interview Questions
+Correct quiz answers were read from your ✅ marks.
 
-Interview questions render as a second practice block, so each has a writing
-space and a reveal — useful for prep.
+Totals: **99 quiz questions · 168 practice/interview items · 99 key-term cards ·
+21 worked case studies · 15 interactive sandboxes.**
 
-Totals across Level 0: **94 quiz questions, 140 practice/interview items,
-84 key-term cards, 19 sandboxes.**
+## Three gaps in the document
 
-## Two gaps in the document you should know about
+1. **PP&E has no "Check Yourself" section** — no quiz at all, and no interview
+   questions. Rather than ship a topic with nothing to test against, I kept its
+   3 existing questions. Everything else in PP&E comes from your document.
+2. **Cash accounting** and **Accrued expenses** have 3 quiz questions each and
+   no interview questions, where other topics have 5 and ~6.
+3. Six topics have no sandbox in the document (double-entry, debits and credits,
+   chart of accounts, cash accounting, accrued expenses, intangible assets) —
+   these are conceptual, so nothing numeric to model. The 15 working sandboxes
+   were carried over from the interactive specs, since your document describes
+   sandboxes as prose rather than runnable input/output definitions.
 
-1. **Liabilities is missing.** The "Assets" section appears twice — the second
-   block is a byte-for-byte duplicate of the first, so the Liabilities topic
-   never got written. Its existing lesson has been kept.
-2. **The whole "Time value & decision making" module is absent** — time value of
-   money, compounding, inflation, present value, future value, opportunity cost,
-   risk vs reward. Their existing lessons have been kept.
+Send the missing PP&E quiz and I'll drop it straight in.
 
-So all 22 Level 0 topics still have a page: 14 rebuilt from your document,
-8 carried over. Send me the text for those 8 and I'll rebuild them the same way.
+## Document quirks I had to correct
 
-## Sandboxes
+- `PP****&****E` — nested bold around the ampersands, which broke the title
+- The **Retained Earnings** heading was fused onto the end of the previous
+  paragraph ("…media companies.** ****Retained Earnings**"), so it wasn't a
+  heading at all until separated
 
-Your document describes sandboxes as prose ("Inputs: Fixed Costs, Variable Cost
-Per Unit… Challenge: reduce cost per unit"), not as runnable specs. I kept the
-19 working interactive sandboxes already built, since they compute live results.
-The three topics without one are Financial markets, Assets and Liabilities,
-which have nothing numeric to model.
+Both are fixed by the importer's normalisation step, not by hand-editing, so
+re-running on an updated document works the same way.
 
 ## Verified
 
-- 22 lessons load; 0 invalid quiz answers; 0 leftover ✅ marks in options;
-  0 unconverted markdown
-- Booted in a browser engine: "Revenue" renders with 8 practice/interview boxes,
-  a sandbox computing ₹30,00,000 on its defaults, 5 quizzes, and
-  Previous → Companies and capital, Next → Costs
+- 21 lessons load · 0 invalid quiz answers · 0 stray ✅ marks · 0 unconverted
+  markdown · every lesson has a title and full body
+- Booted in a browser engine: "Working capital" renders with 9 practice/interview
+  boxes, a sandbox computing ₹33,00,000, 5 quizzes, Previous → Accrued expenses,
+  Next → Depreciation
 - Curriculum audit passes: 11 levels, 227 topics, 72 clickable
 
 ## Regenerating
 
-    node scripts/import-level0-doc.mjs <extracted.md> <sandboxes.json> <baseline.js>
+    node scripts/import-level-doc.mjs 1 <extracted.md> <sandboxes.json> <baseline.js>
 
-The importer is in the zip history as `scripts/import-level0-doc.mjs`; it reads
-the document, so re-running it after you edit the source rebuilds the lessons.
+Pass `0` instead of `1` for Level 0. The same script now handles both.
