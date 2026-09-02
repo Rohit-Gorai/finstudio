@@ -400,41 +400,41 @@ var FinStudioSandbox = (() => {
     ] },
     { level: 4, title: "Financial Modeling", modules: [
       { title: "Model architecture", topics: [
-        { title: "Model architecture", id: "c-model-architecture", cid: "c-model-architecture", written: false },
-        { title: "Assumptions", id: "c-assumptions", cid: "c-assumptions", written: false },
-        { title: "Historical periods", id: "c-historical-periods", cid: "c-historical-periods", written: false },
+        { title: "Model architecture", id: "c-model-architecture", cid: "c-model-architecture", written: true },
+        { title: "Assumptions", id: "c-assumptions", cid: "c-assumptions", written: true },
+        { title: "Historical periods", id: "c-historical-periods", cid: "c-historical-periods", written: true },
         { title: "Forecast periods", id: "2220-project-pl", cid: "2220-project-pl", written: true },
         { title: "Drivers", id: "2210-drivers", cid: "2210-drivers", written: true },
-        { title: "Model formatting", id: "c-model-formatting", cid: "c-model-formatting", written: false },
-        { title: "Model best practices", id: "c-model-best-practices", cid: "c-model-best-practices", written: false }
+        { title: "Model formatting", id: "c-model-formatting", cid: "c-model-formatting", written: true },
+        { title: "Model best practices", id: "c-model-best-practices", cid: "c-model-best-practices", written: true }
       ] },
       { title: "Operating schedules", topics: [
-        { title: "Revenue build", id: "c-revenue-build", cid: "c-revenue-build", written: false },
-        { title: "Cost build", id: "c-cost-build", cid: "c-cost-build", written: false },
-        { title: "Headcount model", id: "c-headcount-model", cid: "c-headcount-model", written: false },
-        { title: "Working capital model", id: "c-working-capital-model", cid: "c-working-capital-model", written: false },
-        { title: "Capex model", id: "c-capex-model", cid: "c-capex-model", written: false },
-        { title: "Depreciation schedule", id: "c-depreciation-schedule", cid: "c-depreciation-schedule", written: false },
-        { title: "Debt schedule", id: "c-debt-schedule", cid: "c-debt-schedule", written: false },
-        { title: "Interest schedule", id: "c-interest-schedule", cid: "c-interest-schedule", written: false },
-        { title: "Tax schedule", id: "c-tax-schedule", cid: "c-tax-schedule", written: false },
-        { title: "Retained earnings", id: "c-retained-earnings-schedule", cid: "c-retained-earnings-schedule", written: false }
+        { title: "Revenue build", id: "c-revenue-build", cid: "c-revenue-build", written: true },
+        { title: "Cost build", id: "c-cost-build", cid: "c-cost-build", written: true },
+        { title: "Headcount model", id: "c-headcount-model", cid: "c-headcount-model", written: true },
+        { title: "Working capital model", id: "c-working-capital-model", cid: "c-working-capital-model", written: true },
+        { title: "Capex model", id: "c-capex-model", cid: "c-capex-model", written: true },
+        { title: "Depreciation schedule", id: "c-depreciation-schedule", cid: "c-depreciation-schedule", written: true },
+        { title: "Debt schedule", id: "c-debt-schedule", cid: "c-debt-schedule", written: true },
+        { title: "Interest schedule", id: "c-interest-schedule", cid: "c-interest-schedule", written: true },
+        { title: "Tax schedule", id: "c-tax-schedule", cid: "c-tax-schedule", written: true },
+        { title: "Retained earnings", id: "c-retained-earnings-schedule", cid: "c-retained-earnings-schedule", written: true }
       ] },
       { title: "Integrated modeling", topics: [
         { title: "Three-statement model", id: "2120-linked-model", cid: "2120-linked-model", written: true },
-        { title: "Scenario analysis", id: "c-scenario-analysis", cid: "c-scenario-analysis", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis", cid: "c-sensitivity-analysis", written: false },
+        { title: "Scenario analysis", id: "c-scenario-analysis", cid: "c-scenario-analysis", written: true },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis", cid: "c-sensitivity-analysis", written: true },
         { title: "Model checks", id: "2130-broken-link", cid: "2130-broken-link", written: true },
-        { title: "Circularity", id: "c-circularity", cid: "c-circularity", written: false }
+        { title: "Circularity", id: "c-circularity", cid: "c-circularity", written: true }
       ] },
       { title: "Build a real model", topics: [
-        { title: "Revenue", id: "c-revenue-forecast", cid: "c-revenue-forecast", written: false },
-        { title: "Gross Profit", id: "c-gross-profit-model", cid: "c-gross-profit-model", written: false },
-        { title: "EBITDA", id: "c-ebitda-model", cid: "c-ebitda-model", written: false },
-        { title: "EBIT", id: "c-ebit-model", cid: "c-ebit-model", written: false },
-        { title: "Net Income", id: "c-net-income-model", cid: "c-net-income-model", written: false },
-        { title: "Cash Flow", id: "c-cash-flow", cid: "c-cash-flow", written: false },
-        { title: "Balance Sheet", id: "c-balance-sheet", cid: "c-balance-sheet", written: false }
+        { title: "Revenue", id: "c-revenue-forecast", cid: "c-revenue-forecast", written: true },
+        { title: "Gross Profit", id: "c-gross-profit-model", cid: "c-gross-profit-model", written: true },
+        { title: "EBITDA", id: "c-ebitda-model", cid: "c-ebitda-model", written: true },
+        { title: "EBIT", id: "c-ebit-model", cid: "c-ebit-model", written: true },
+        { title: "Net Income", id: "c-net-income-model", cid: "c-net-income-model", written: true },
+        { title: "Cash Flow", id: "c-cash-flow", cid: "c-cash-flow", written: true },
+        { title: "Balance Sheet", id: "c-balance-sheet", cid: "c-balance-sheet", written: true }
       ] }
     ] },
     { level: 5, title: "Valuation", modules: [

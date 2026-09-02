@@ -1,90 +1,75 @@
-# FinStudio — connective tissue + capstone
+# Batch 1 — Level 4 (Financial Modeling) written
 
-Upload all 13 files to the repo **ROOT**. `index.html`, `app.js` and
-`curriculum-map.js` must go together.
+Upload all 14 files to the repo ROOT. New this batch: `concepts-l4.js`.
+`index.html`, `curriculum-map.js` and `learning-graph.js` must go with it.
 
-    index.html   app.js   site.css   curriculum-map.js
+    index.html  app.js  site.css  curriculum-map.js  learning-graph.js
     concepts-l0.js  concepts-l1.js  concepts-l2.js  concepts-l3.js
-    capstone.js         ← new
-    learning-graph.js   ← new
-    topic-lessons.js  master-topic-lab.js  researched-topic-pages.js
+    concepts-l4.js  ← new
+    capstone.js  topic-lessons.js  master-topic-lab.js  researched-topic-pages.js
 
-No template, layout, route or component was replaced. Two new data files, two
-new render blocks, one new CSS section.
+## How the placeholders were generated
 
-## What the brief asked for that was genuinely missing
+`topic-lessons.js` walks `LS.curriculumMap` and, for any topic with
+`written: false`, builds a lesson from a template — one generic example, one
+practice item, one MCQ and the same "opportunity" sandbox on every topic. It
+only fills unwritten topics, so marking a topic `written: true` in
+`curriculum-map.js` removes its placeholder automatically. No placeholder file
+needed editing; the 25 new lessons simply displace them.
 
-Your lessons already had why-it-matters, intuition, worked examples, practice
-with feedback, common-mistake callouts and quizzes — Steps 5, 7, 8, 13, 14 and
-15 were largely in place. The real gaps were **connections between concepts**
-and **a capstone**. That is what this adds.
+## Implemented — 25 lessons
 
-### 1. "Before you start" — prerequisites (Step 4)
+    Model architecture   architecture · assumptions · historical periods
+                         formatting · best practices
+    Operating schedules  revenue build · cost build · headcount · working capital
+                         capex · depreciation · debt · interest · tax · retained earnings
+    Integrated modeling  scenario analysis · sensitivity analysis · circularity
+    Build a real model   revenue · gross profit · EBITDA · EBIT · net income
+                         cash flow · balance sheet
 
-Every authored lesson now shows the concepts it assumes, as links, with a tick
-against ones you have completed. ROIC, for instance, opens with: EBIT · Taxes ·
-Equity · Debt.
+Each carries the loop from your brief: intuition → accurate explanation →
+worked example with figures → 2 practice questions with full answers → 1 check
+with an explained answer → connection to the rest of finance. Depth scales as
+instructed — circularity, the debt schedule, working capital and the cash flow
+statement run long; model formatting is short.
 
-70 lessons have prerequisite chains defined. Foundational lessons deliberately
-have none. Verified: **0 dangling references, 0 circular prerequisites.**
+Twelve reuse existing calculators (revenue-growth, operating-leverage,
+receivables-cash, ppe-rollforward, depreciation, leverage-returns, retained,
+profit-bridge, profit-to-cash, balance). No new UI, no new components.
 
-### 2. "Where this fits" — concept chains (Steps 6, 16, 17)
+The lessons build one café-chain model end to end, so the revenue build, cost
+build, capex, debt and statements all use the same company and tie together.
 
-Below each lesson, the sequence it belongs to, with the current step marked:
+Level 4 lessons also gained prerequisites and a "Building an integrated model"
+chain in `learning-graph.js`.
 
-    How a sale becomes profit
-    Revenue → Costs → Gross profit → EBITDA → EBIT → EBT → Taxes → Profit
+## One standard change, flagged
 
-Eight chains cover the mental maps a beginner needs: profit, profit-to-cash,
-the balance sheet, time value, returns on capital, risk and debt, the three
-statements, and where cash gets trapped. Every step is a link, so the learner
-can jump back to anything they don't recognise.
+The audit previously required 3 MCQs per lesson — the Level 0-3 format. Your
+brief specifies the shorter loop, so the completion standard is now: a worked
+example, **2+ practice items with answers**, and **1+ explained check**. It is
+enforced on every authored lesson including Levels 0-3, which still exceed it.
 
-### 3. Capstone (Step 12)
+## Verified
 
-A new lesson — **"Value a company end to end"** — appears in the rail above
-Café model labs. One fictional company, Bharat Kitchen Appliances, carried
-through six steps in the order an analyst actually works:
+    curriculum audit PASS — Levels 0-4 complete (124 of 227 topics)
+    scripts 50 · duplicates 0 · missing 0 · execution failures 0
+    L4 sample: invalid nesting 0 · empty paragraphs 0 · prev+next 6/6
+    learning graph: 0 dangling references · 0 cycles
+    unlinked topics in rail: 0
 
-    business → income statement → balance sheet → ratios → cash → valuation → decision
+## Remaining placeholders: 103
 
-Each step's answer feeds the next. It ends with the question the whole
-curriculum is for: *would you invest at ₹75 a share?* — with a model answer
-that grades the **method**, not a single right answer.
+    Level 5  Valuation                  27
+    Level 6  Investment Banking         14
+    Level 7  Private Equity / LBO       12
+    Level 8  Equity Research & Investing 17
+    Level 9  Markets                    17
+    Level 10 Advanced Finance           16
 
-The case is deliberately uncomfortable: the company reports ₹54 crore of profit
-and produces ₹3 crore of free cash flow, and its ROIC of 13.9% barely clears a
-12% cost of capital. A learner who finishes it has had to use working capital
-days, ROIC, EBITDA multiples, enterprise vs equity value, and margin of safety
-together.
+## Next batch
 
-## Also fixed
-
-The capstone had no Previous/Next because it sits outside the 227-topic
-sequence. It is now appended to the reading order, so it closes the journey.
-
-## Validated
-
-    scripts 49 · duplicates 0 · missing 0 · execution failures 0
-    learning graph: 0 dangling references · 0 prerequisite cycles
-    prerequisites, chain and current-step marker render on every sampled lesson
-    capstone: 4 practice boxes · 4 case-figure blocks · working sandbox · 4 quizzes
-    10 sampled lessons across Levels 0-3: invalid nesting 0 · empty paragraphs 0
-    curriculum audit PASS — 11 levels, 227 topics, 99 authored/mapped
-
-## Honest status against your brief
-
-**Done:** beginner on-ramp (Levels 0-1), learning loop in every authored lesson,
-prerequisites, concept chains, micro-quizzes with explanations, common-mistake
-callouts, teaching sandboxes, Indian-context examples, capstone, "you are here"
-path panel.
-
-**Not done:** Levels 4-10 (128 topics) still have auto-generated placeholder
-pages. That means the investing content of Step 10 — stocks, P/E, market cap,
-diversification, index funds — and the modelling, valuation, PE/LBO and startup
-finance strands are still scaffolding, not teaching. **No amount of structural
-work substitutes for writing them.** Level 4 (Financial Modeling, 25 topics) is
-the next batch.
-
-Two things only you can do: check pixel alignment and mobile in a real browser,
-and put the site in front of five actual beginners to see where they stop.
+**Level 5 — Valuation (27 topics).** It is the next incomplete level and sits
+first in your priority order after the modelling foundation this batch laid:
+enterprise value, equity value, the multiples, then DCF, WACC, CAPM, beta,
+terminal value and discount factors. DCF and WACC get the deep treatment.
