@@ -1166,6 +1166,49 @@
     }
   });
   scrim.addEventListener("click", closeNav);
+
+  /* Hide the header on scroll down, bring it back on scroll up.
+     - Always visible in the top 120px, so the page never opens headerless.
+     - An 8px threshold stops trackpad jitter from flapping the header.
+     - Reads are batched into rAF so the listener never forces layout.
+     - Never hides while the mobile syllabus drawer is open, which would leave
+       the drawer floating under a missing header. */
+  (function headerOnScroll() {
+    var bar = document.getElementById("topbar");
+    if (!bar) return;
+    var lastY = window.pageYOffset || 0;
+    var ticking = false;
+    var TOP_ZONE = 120;
+    var THRESHOLD = 8;
+
+    function update() {
+      ticking = false;
+      var y = window.pageYOffset || 0;
+      var delta = y - lastY;
+      if (Math.abs(delta) < THRESHOLD) return;
+      if (y <= TOP_ZONE || sidebar.classList.contains("open")) {
+        document.body.classList.remove("header-hidden");
+      } else if (delta > 0) {
+        document.body.classList.add("header-hidden");
+      } else {
+        document.body.classList.remove("header-hidden");
+      }
+      lastY = y;
+    }
+
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+    }, { passive: true });
+
+    // Opening the drawer or following a link must not leave the header hidden.
+    toggle.addEventListener("click", function () {
+      document.body.classList.remove("header-hidden");
+    });
+    window.addEventListener("hashchange", function () {
+      document.body.classList.remove("header-hidden");
+      lastY = 0;
+    });
+  })();
   // Escape closes the mobile syllabus and returns focus to the toggle, so
   // keyboard users aren't stranded inside it.
   document.addEventListener("keydown", function (e) {

@@ -987,151 +987,124 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
 /* inside the narrow popover a long formula must wrap, not clip */
 .gloss-pop .gloss-fx { white-space: normal; overflow-x: visible; line-height: 1.5; }
 
-/* Curriculum topics whose concept lesson isn't written yet: visible so the full
-   learning path is clear, muted and unlinked so nothing leads to an empty page.
-   Matches .side-lessons a spacing exactly so the rail stays aligned. */
-.side-lesson-planned {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.32rem 1.1rem 0.32rem 1.6rem;
-  color: var(--ink-faint);
-  border-left: 3px solid transparent;
-  cursor: default;
-}
-.side-lesson-planned .side-lesson-title { opacity: 0.75; }
+/* ==========================================================================
+   LESSON COMPONENTS + POLISH PASS
+   One consolidated section. Everything below reuses the existing tokens
+   (--paper*, --ink*, --line*, --green, --radius, --font-*) and the existing
+   type scale; nothing here introduces a new design system or moves a
+   component. Spacing follows a 4px step: 0.25 / 0.5 / 0.75 / 1 / 1.5 / 2rem.
+   ========================================================================== */
 
-/* Practice: writing space per exercise, solution on request. */
-.practice-block { margin: 1.1rem 0; }
-.practice-item {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.8rem;
-  background: var(--paper-2);
+:root {
+  /* Vertical rhythm, so section spacing stops being ad-hoc. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --topbar-h: 56px;
+  /* One card geometry, used by every callout and panel below. */
+  --card-pad: 1.15rem;
+  --leading-body: 1.72;
 }
-.practice-q { margin: 0 0 0.55rem; }
-.practice-input {
-  width: 100%;
-  font: inherit;
-  padding: 0.55rem 0.65rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  resize: vertical;
-}
-.practice-reveal {
-  margin-top: 0.55rem;
-  font: inherit;
-  font-size: 0.86rem;
-  font-weight: 600;
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-}
-.practice-reveal:hover { background: var(--paper-3); }
-.practice-solution {
-  margin-top: 0.6rem;
-  padding: 0.7rem 0.85rem;
-  border-left: 3px solid var(--green);
-  background: var(--green-soft);
-  border-radius: 0 8px 8px 0;
-}
-.practice-solution p { margin: 0; }
 
-/* Sandbox: editable inputs, live results. */
-.sandbox-block {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 1rem 1.05rem;
-  margin: 1.1rem 0;
-  background: var(--paper-2);
-}
-.sandbox-title { font-weight: 700; margin: 0 0 0.25rem; }
-.sandbox-prompt { margin: 0 0 0.85rem; color: var(--ink-soft); font-size: 0.92rem; }
-.sandbox-inputs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 0.6rem;
-  margin-bottom: 0.9rem;
-}
-.sandbox-field { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.88rem; }
-.sandbox-field em { color: var(--ink-faint); font-style: normal; }
-.sandbox-field input {
-  font: inherit;
-  font-family: var(--font-mono);
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-}
-.sandbox-outputs { border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
-.sandbox-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.6rem 0.8rem;
-  border-bottom: 1px solid var(--line);
-}
-.sandbox-row:last-child { border-bottom: 0; }
-.sandbox-label { display: flex; flex-direction: column; font-size: 0.9rem; }
-.sandbox-note { color: var(--ink-faint); font-size: 0.79rem; margin-top: 0.15rem; }
-.sandbox-value { font-family: var(--font-mono); font-weight: 700; white-space: nowrap; }
-.sandbox-reset {
-  margin-top: 0.8rem;
-  font: inherit;
-  font-size: 0.86rem;
-  font-weight: 600;
-  padding: 0.4rem 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  cursor: pointer;
-}
-.sandbox-reset:hover { background: var(--paper-3); }
+/* --------------------------------------------------------------------------
+   1. Typography rhythm
+   The scale in the base sheet is kept exactly (h1 1.9 / h2 1.35 / h3 1.1rem).
+   These rules only make the spacing around it consistent, so the same
+   semantic level always sits the same distance from its neighbours.
+   -------------------------------------------------------------------------- */
+.content > .page p { line-height: var(--leading-body); }
+.content > .page > p { margin: 0 0 var(--space-4); }
 
-/* Lesson lists: same measure and rhythm as body paragraphs, bullets hanging in
-   the left margin so text edges stay aligned with the prose above and below. */
+/* Headings: generous space above, tight to the text they introduce. */
+.content > .page h2 { margin: var(--space-8) 0 var(--space-3); letter-spacing: -0.01em; }
+.content > .page h3 { margin: var(--space-6) 0 var(--space-2); letter-spacing: -0.005em; }
+.content > .page h2:first-of-type { margin-top: var(--space-6); }
+/* A heading immediately after a heading shouldn't double the gap. */
+.content > .page h2 + h3 { margin-top: var(--space-3); }
+
+.lesson-kicker { margin-bottom: var(--space-2); letter-spacing: 0.08em; }
+.lesson-lede {
+  font-size: 1.06rem;
+  line-height: 1.6;
+  margin: var(--space-1) 0 var(--space-6);
+  max-width: 62ch;
+}
+
+/* --------------------------------------------------------------------------
+   2. Lists
+   Bullets hang in the margin so list text aligns with the paragraph text
+   above and below it, rather than stepping in and out.
+   -------------------------------------------------------------------------- */
 .lesson-list {
-  margin: 0 0 1.05rem;
-  padding-left: 1.25rem;
+  margin: 0 0 var(--space-4);
+  padding-left: 1.15rem;
   list-style: disc;
 }
 .lesson-list li {
-  margin: 0 0 0.4rem;
-  padding-left: 0.15rem;
-  line-height: 1.7;
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-1);
+  line-height: var(--leading-body);
 }
 .lesson-list li:last-child { margin-bottom: 0; }
 .lesson-list li > strong:first-child { color: var(--ink); }
-/* Lists inside callouts inherit the callout's padding, so no extra indent. */
-.note-box .lesson-list,
-.note-box ul {
-  margin: 0;
-  padding-left: 1.15rem;
-}
-.note-box li { margin-bottom: 0.35rem; }
-.note-box li:last-child { margin-bottom: 0; }
 
-/* Case-study figures: label left, value right, on a shared baseline grid so the
-   numbers line up in a column instead of drifting with the text. */
+/* Lists inside a callout inherit the callout's padding — no second indent. */
+.note-box .lesson-list,
+.note-box ul,
+.example-card .lesson-list {
+  margin: 0;
+  padding-left: 1.05rem;
+}
+.note-box li,
+.example-card li { margin-bottom: var(--space-2); line-height: 1.65; }
+.note-box li:last-child,
+.example-card li:last-child { margin-bottom: 0; }
+
+/* Block content (a table or list) arriving inside a prose block: keeps the
+   paragraph rhythm without the invalid <p> nesting that broke indentation. */
+.lesson-block { margin: 0 0 var(--space-4); }
+.lesson-block > table { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   3. Cards and callouts — one padding, one radius, one border
+   -------------------------------------------------------------------------- */
+.note-box,
+.example-card,
+.def-card,
+.mcq-block,
+.practice-item,
+.sandbox-block {
+  border-radius: var(--radius);
+  padding: var(--card-pad);
+}
+.note-box,
+.example-card,
+.mcq-block,
+.practice-item,
+.sandbox-block { margin: var(--space-4) 0; }
+.note-box p:first-child,
+.example-card p:first-child { margin-top: 0; }
+.note-box p:last-child,
+.example-card p:last-child { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   4. Case-study figures
+   Source documents write these as alternating label / value lines. Pairing
+   them onto a shared baseline puts the numbers in one right-aligned column.
+   -------------------------------------------------------------------------- */
 .case-figures {
-  margin: 0.35rem 0 0.9rem;
+  margin: var(--space-2) 0 var(--space-4);
   border-top: 1px solid var(--line);
 }
 .case-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 1.25rem;
-  padding: 0.42rem 0;
+  gap: var(--space-6);
+  padding: 0.45rem 0;
   border-bottom: 1px solid var(--line);
 }
 .case-label { color: var(--ink-soft); }
@@ -1140,16 +1113,173 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   font-weight: 600;
   text-align: right;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
-.case-title { margin-bottom: 0.5rem; }
-.case-meaning { margin-top: 0.9rem; }
-/* Narrow screens: stack rather than squeeze the two columns together. */
-@media (max-width: 480px) {
-  .case-row { flex-direction: column; gap: 0.1rem; }
-  .case-value { text-align: left; }
+.case-title { margin-bottom: var(--space-2); }
+.case-meaning { margin-top: var(--space-4); }
+
+/* --------------------------------------------------------------------------
+   5. Practice — writing space, then the worked solution
+   -------------------------------------------------------------------------- */
+.practice-block { margin: var(--space-4) 0; }
+.practice-item {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  margin-bottom: var(--space-3);
+}
+.practice-q { margin: 0 0 var(--space-3); line-height: 1.6; }
+.practice-input,
+.sandbox-field input {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  min-height: 40px;               /* one input height everywhere */
+}
+.practice-input { resize: vertical; line-height: 1.6; }
+.practice-input:focus,
+.sandbox-field input:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+  border-color: var(--green);
+}
+.practice-reveal,
+.sandbox-reset {
+  margin-top: var(--space-3);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  min-height: 36px;               /* one button height everywhere */
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.practice-reveal:hover,
+.sandbox-reset:hover { background: var(--paper-3); border-color: var(--ink-soft); }
+.practice-solution {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--green);
+  background: var(--green-soft);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.practice-solution p { margin: 0; line-height: 1.65; }
+
+/* --------------------------------------------------------------------------
+   6. Sandbox
+   -------------------------------------------------------------------------- */
+.sandbox-block { border: 1px solid var(--line); background: var(--paper-2); }
+.sandbox-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-1);
+}
+.sandbox-prompt {
+  margin: 0 0 var(--space-4);
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.sandbox-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.sandbox-field { display: flex; flex-direction: column; gap: var(--space-1); font-size: 0.88rem; }
+.sandbox-field em { color: var(--ink-faint); font-style: normal; }
+.sandbox-field input { font-family: var(--font-mono); }
+.sandbox-outputs {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+}
+.sandbox-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+.sandbox-row:last-child { border-bottom: 0; }
+.sandbox-label { display: flex; flex-direction: column; font-size: 0.9rem; }
+.sandbox-note { color: var(--ink-faint); font-size: 0.79rem; margin-top: 0.15rem; line-height: 1.5; }
+.sandbox-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Block content (tables, lists) that arrives inside a prose block: keep the
-   paragraph rhythm without the invalid <p> nesting. */
-.lesson-block { margin: 0 0 1.05rem; }
-.lesson-block > table { width: 100%; }
+/* --------------------------------------------------------------------------
+   7. Sidebar
+   Structure unchanged. Only rhythm, hierarchy and states are tightened, and
+   the planned-topic rows match the link rows exactly so the rail edge is
+   straight from top to bottom.
+   -------------------------------------------------------------------------- */
+.side-level {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+  line-height: 1.35;
+}
+.side-module { margin-bottom: var(--space-3); }
+.side-module-head,
+.side-module-title { line-height: 1.4; }
+.side-lessons a,
+.side-lesson-planned {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: 0.34rem 1.1rem 0.34rem 1.6rem;
+  line-height: 1.45;
+  border-left: 3px solid transparent;
+}
+.side-lessons a { transition: background 120ms ease, color 120ms ease; }
+.side-lesson-planned { color: var(--ink-faint); cursor: default; }
+.side-lesson-planned .side-lesson-title { opacity: 0.75; }
+.side-progress { font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   8. Header hide-on-scroll
+   The sidebar is pinned below the header, so it moves with it — otherwise
+   hiding the header would leave a 56px gap above the rail.
+   -------------------------------------------------------------------------- */
+.topbar {
+  transition: transform 240ms ease;
+  will-change: transform;
+}
+body.header-hidden .topbar { transform: translateY(-100%); }
+.sidebar { transition: top 240ms ease, height 240ms ease; }
+body.header-hidden .sidebar { top: 0; height: 100vh; }
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar, .sidebar { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   9. Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  /* The rail is a drawer here; never let a hidden header shift it. */
+  body.header-hidden .sidebar { top: var(--topbar-h); height: calc(100vh - var(--topbar-h)); }
+}
+@media (max-width: 560px) {
+  .case-row { flex-direction: column; gap: 0.1rem; padding: 0.5rem 0; }
+  .case-value { text-align: left; }
+  .sandbox-row { gap: var(--space-2); }
+  .sandbox-inputs { grid-template-columns: 1fr; }
+  .content > .page h2 { margin-top: var(--space-6); }
+}
+/* Long formulas, mono values and tables must scroll rather than push the page
+   sideways. */
+.content > .page table { display: block; overflow-x: auto; max-width: 100%; }
+.sandbox-value, .case-value { overflow-wrap: anywhere; }

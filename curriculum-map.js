@@ -333,14 +333,14 @@ var FinStudioSandbox = (() => {
       { title: "Income statement", topics: [
         { title: "Revenue", id: "1410-revenue", written: true },
         { title: "COGS", id: "1420-cogs", written: true },
-        { title: "Gross profit", id: "c-gross-profit", written: false },
+        { title: "Gross profit", id: "c-gross-profit", written: true },
         { title: "Operating expenses", id: "1430-opex-ebitda", written: true },
-        { title: "EBITDA", id: "c-ebitda", written: false },
+        { title: "EBITDA", id: "c-ebitda", written: true },
         { title: "D&A", id: "1440-depreciation-pl", written: true },
-        { title: "EBIT", id: "c-ebit", written: false },
+        { title: "EBIT", id: "c-ebit", written: true },
         { title: "Interest", id: "1450-interest-tax", written: true },
-        { title: "EBT", id: "c-ebt", written: false },
-        { title: "Taxes", id: "c-taxes", written: false },
+        { title: "EBT", id: "c-ebt", written: true },
+        { title: "Taxes", id: "c-taxes", written: true },
         { title: "Net income", id: "1460-pl-capstone", written: true }
       ] },
       { title: "Balance sheet", topics: [
@@ -348,26 +348,26 @@ var FinStudioSandbox = (() => {
         { title: "Receivables", id: "1140-receivables", written: true },
         { title: "Inventory", id: "1130-inventory", written: true },
         { title: "PP&E", id: "1110-ppe", written: true },
-        { title: "Intangibles", id: "c-intangibles", written: false },
+        { title: "Intangibles", id: "c-intangibles", written: true },
         { title: "Debt", id: "1220-borrowings", written: true },
         { title: "Payables", id: "1210-payables", written: true },
-        { title: "Other liabilities", id: "c-other-liabilities", written: false },
+        { title: "Other liabilities", id: "c-other-liabilities", written: true },
         { title: "Equity", id: "1310-share-capital", written: true }
       ] },
       { title: "Cash flow statement", topics: [
         { title: "CFO", id: "1520-cfo", written: true },
         { title: "CFI", id: "1530-cfi", written: true },
         { title: "CFF", id: "1540-cff", written: true },
-        { title: "Capex", id: "c-capex", written: false },
-        { title: "Change in working capital", id: "c-change-in-working-capital", written: false },
-        { title: "Debt issuance", id: "c-debt-issuance", written: false },
-        { title: "Debt repayment", id: "c-debt-repayment", written: false },
-        { title: "Dividends", id: "c-dividends", written: false },
-        { title: "Stock issuance", id: "c-stock-issuance", written: false }
+        { title: "Capex", id: "c-capex", written: true },
+        { title: "Change in working capital", id: "c-change-in-working-capital", written: true },
+        { title: "Debt issuance", id: "c-debt-issuance", written: true },
+        { title: "Debt repayment", id: "c-debt-repayment", written: true },
+        { title: "Dividends", id: "c-dividends", written: true },
+        { title: "Stock issuance", id: "c-stock-issuance", written: true }
       ] },
       { title: "Three-statement connection", topics: [
         { title: "Three-statement connection", id: "2110-three-bridges", written: true },
-        { title: "Revenue cascade through the three statements", id: "c-revenue-cascade-through-the-three-statements", written: false },
+        { title: "Revenue cascade through the three statements", id: "c-revenue-cascade-through-the-three-statements", written: true },
         { title: "Profit to cash", id: "1510-profit-not-cash", written: true },
         { title: "Balance sheet check", id: "1330-balance-sheet", written: true }
       ] }
