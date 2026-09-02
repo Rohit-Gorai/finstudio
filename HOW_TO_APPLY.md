@@ -1,71 +1,66 @@
-# Upload these 5 files to the repo ROOT
+# Level 0 rebuilt from your document
 
-Your `index.html` is already correct and loads these five from the root — the
-same place your uploads land. Drag all five onto the repo's root file list,
-replacing the existing copies. Nothing goes in a subfolder.
+Replace **`concepts-l0.js`** in the repo root with the new one. That single file
+is the whole change — nothing else moved.
 
-    app.js   site.css   concepts-l0.js   concepts-l1.js   curriculum-map.js
+If you haven't yet uploaded the five files from my last message (`app.js`,
+`site.css`, `concepts-l0.js`, `concepts-l1.js`, `curriculum-map.js`), upload
+those too, using this newer `concepts-l0.js`. Without `app.js` the practice
+boxes and sandboxes won't render.
 
-## What changes
+## I can't push to your repo
 
-**The duplicate Level 1 & 2 block at the top is gone.** The pane now reads:
+I have no GitHub credentials in this environment and no network path to push —
+`git push` fails with "could not read Username for https://github.com". You'll
+need to commit the file yourself. Everything else below is verified and ready.
 
-    Level 0 · Finance Foundations
-    Level 1 · Accounting Foundations
-    …
-    Level 10 · Advanced Finance
-    Café model labs
-    Reference
+## What came from the document
 
-**The 38 café lessons weren't deleted — they moved inside the curriculum.**
-29 of them are now the lesson for the topic they teach: "Opex & EBITDA" is now
-Level 2 → Income statement → Operating expenses, "CFO (indirect)" is Level 2 →
-Cash flow statement → CFO, and so on. Their spreadsheets and quizzes are
-untouched. The 9 that don't map to a single topic (capstones, the five buckets,
-module quizzes) sit under "Café model labs" at the foot.
+All 14 topics it covers were rebuilt from your text, keeping its structure:
 
-**Previous / Next now walks Level 0 → Level 10 as one sequence**, no duplicates.
+What is this? · Why does it matter? · How does it work? (step by step) ·
+Real-Life Case Study + What It Means · Key Terms · Practice Questions with
+worked solutions · What to Remember · Common Mistakes · Check Yourself (5 MCQs,
+correct answer taken from your ✅ marks) · Interview Questions
 
-## Every clickable lesson now has
+Interview questions render as a second practice block, so each has a writing
+space and a reveal — useful for prep.
 
-- What is this / Why it matters / How it works, in plain English
-- A worked example with every arithmetic step shown
-- Key terms, what to remember, common mistakes
-- **Practice** — exercises with a text box to write your answer (saved in your
-  browser, so it survives a refresh) and a "Show worked solution" button
-- **Sandbox** — editable number inputs with live results and a Reset button.
-  Change the interest rate or the years and the answer recalculates instantly.
-  Real maths, not a mock-up: 24 calculators covering compounding, discounting,
-  leverage, working capital, depreciation, deferred revenue and more
-- **Quiz** — multiple choice with an explanation on every option
-- Previous / Next
+Totals across Level 0: **94 quiz questions, 140 practice/interview items,
+84 key-term cards, 19 sandboxes.**
 
-## Honest coverage
+## Two gaps in the document you should know about
 
-    Level  0 : 22/22 topics have lessons
-    Level  1 : 21/21
-    Level  2 : 19/33
-    Level  3 :  5/18
-    Level  4 :  4/29
-    Level  5 :  1/28
-    Levels 6-10 : 0/76
-    ----------------------------
-    Total    : 72/227 clickable
+1. **Liabilities is missing.** The "Assets" section appears twice — the second
+   block is a byte-for-byte duplicate of the first, so the Liabilities topic
+   never got written. Its existing lesson has been kept.
+2. **The whole "Time value & decision making" module is absent** — time value of
+   money, compounding, inflation, present value, future value, opportunity cost,
+   risk vs reward. Their existing lessons have been kept.
 
-The other 155 topics are listed in the pane in grey and are not clickable — the
-full path is visible, but no link leads to an empty page. Writing them is the
-remaining work; I'd rather do them properly in batches than template 155 pages
-of filler. Level 2 (14 topics left) then Level 3 (13 left) is the natural order.
+So all 22 Level 0 topics still have a page: 14 rebuilt from your document,
+8 carried over. Send me the text for those 8 and I'll rebuild them the same way.
 
-## Verified before sending
+## Sandboxes
 
-Rebuilt your repo as it stands on GitHub, applied these files, booted it in a
-browser engine:
+Your document describes sandboxes as prose ("Inputs: Fixed Costs, Variable Cost
+Per Unit… Challenge: reduce cost per unit"), not as runnable specs. I kept the
+19 working interactive sandboxes already built, since they compute live results.
+The three topics without one are Financial markets, Assets and Liabilities,
+which have nothing numeric to model.
 
-- 0 assets failing to load
-- pane: Levels 0-10, then Café model labs, then Reference — no duplicate levels
-- 95 clickable lesson links · 155 topics shown as not-yet-written
-- opened "Compounding": 3 practice boxes, 3 sandbox inputs computing live
-  (₹2,20,000 on the defaults), 3 quizzes, Previous → Time value of money,
-  Next → Inflation
-- opened "Opex & EBITDA" from inside Level 2: renders with its spreadsheet intact
+## Verified
+
+- 22 lessons load; 0 invalid quiz answers; 0 leftover ✅ marks in options;
+  0 unconverted markdown
+- Booted in a browser engine: "Revenue" renders with 8 practice/interview boxes,
+  a sandbox computing ₹30,00,000 on its defaults, 5 quizzes, and
+  Previous → Companies and capital, Next → Costs
+- Curriculum audit passes: 11 levels, 227 topics, 72 clickable
+
+## Regenerating
+
+    node scripts/import-level0-doc.mjs <extracted.md> <sandboxes.json> <baseline.js>
+
+The importer is in the zip history as `scripts/import-level0-doc.mjs`; it reads
+the document, so re-running it after you edit the source rebuilds the lessons.
