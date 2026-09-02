@@ -1096,3 +1096,60 @@ table.sheet td.cell-selected { outline: 2px solid var(--green); outline-offset: 
   cursor: pointer;
 }
 .sandbox-reset:hover { background: var(--paper-3); }
+
+/* Lesson lists: same measure and rhythm as body paragraphs, bullets hanging in
+   the left margin so text edges stay aligned with the prose above and below. */
+.lesson-list {
+  margin: 0 0 1.05rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.lesson-list li {
+  margin: 0 0 0.4rem;
+  padding-left: 0.15rem;
+  line-height: 1.7;
+}
+.lesson-list li:last-child { margin-bottom: 0; }
+.lesson-list li > strong:first-child { color: var(--ink); }
+/* Lists inside callouts inherit the callout's padding, so no extra indent. */
+.note-box .lesson-list,
+.note-box ul {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.note-box li { margin-bottom: 0.35rem; }
+.note-box li:last-child { margin-bottom: 0; }
+
+/* Case-study figures: label left, value right, on a shared baseline grid so the
+   numbers line up in a column instead of drifting with the text. */
+.case-figures {
+  margin: 0.35rem 0 0.9rem;
+  border-top: 1px solid var(--line);
+}
+.case-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 0.42rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.case-label { color: var(--ink-soft); }
+.case-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+.case-title { margin-bottom: 0.5rem; }
+.case-meaning { margin-top: 0.9rem; }
+/* Narrow screens: stack rather than squeeze the two columns together. */
+@media (max-width: 480px) {
+  .case-row { flex-direction: column; gap: 0.1rem; }
+  .case-value { text-align: left; }
+}
+
+/* Block content (tables, lists) that arrives inside a prose block: keep the
+   paragraph rhythm without the invalid <p> nesting. */
+.lesson-block { margin: 0 0 1.05rem; }
+.lesson-block > table { width: 100%; }

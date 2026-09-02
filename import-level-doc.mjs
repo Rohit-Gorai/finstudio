@@ -65,17 +65,98 @@ function sections(block) {
 const paras = (ls = []) =>
   ls.join("\n").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
-/** Prose paragraphs, bullets folded into the preceding paragraph. */
-function prose(ls = [], limit = 99) {
+/**
+ * Turn a section's raw lines into typed segments:
+ *   { kind: "head", text }  { kind: "para", html }  { kind: "list", items[] }
+ *
+ * The source separates every bullet with a blank line, so consecutive
+ * single-bullet paragraphs are merged back into one list. Emitting a real list
+ * block (rather than <ul> inside <p>) is what keeps indentation and spacing
+ * aligned with the rest of the page.
+ */
+function segments(ls = []) {
   const out = [];
   for (const p of paras(ls)) {
-    if (isHeading(p)) { out.push(`<strong>${esc(headingText(p))}</strong>`); continue; }
+    if (!p.replace(/[*\s]/g, "")) continue; // blank / decorative
+    if (isHeading(p)) { out.push({ kind: "head", text: headingText(p) }); continue; }
     if (/^[-•]\s/.test(p)) {
-      const items = p.split("\n").map((x) => x.replace(/^[-•]\s*/, "").trim()).filter(Boolean);
-      out.push("<ul>" + items.map((x) => `<li>${html(x)}</li>`).join("") + "</ul>");
-    } else out.push(html(p));
+      const items = p.split("\n")
+        .map((x) => x.replace(/^[-•]\s*/, "").trim())
+        .filter(Boolean)
+        .map(html);
+      const last = out[out.length - 1];
+      if (last && last.kind === "list") last.items.push(...items);
+      else out.push({ kind: "list", items });
+      continue;
+    }
+    const h = html(p);
+    if (h.replace(/<[^>]+>/g, "").trim()) out.push({ kind: "para", html: h });
   }
-  return out.slice(0, limit);
+  return out;
+}
+
+/** Push a section's segments as proper blocks. */
+function pushSegments(body, ls) {
+  for (const seg of segments(ls)) {
+    if (seg.kind === "head") body.push(`{ t: "h3", text: ${q(seg.text)} }`);
+    else if (seg.kind === "list") body.push(`{ t: "list", items: [${seg.items.map(q).join(", ")}] }`);
+    else body.push(`{ t: "p", h: ${q(seg.html)} }`);
+  }
+}
+
+/** Flatten segments to inline HTML, for places that take a single string. */
+function prose(ls = [], limit = 99) {
+  return segments(ls)
+    .map((seg) =>
+      seg.kind === "head" ? `<strong>${esc(seg.text)}</strong>`
+        : seg.kind === "list" ? "<ul>" + seg.items.map((i) => `<li>${i}</li>`).join("") + "</ul>"
+        : seg.html,
+    )
+    .slice(0, limit);
+}
+
+
+/**
+ * Case studies in the source are written as alternating label / value lines
+ * ("Daily Sales:" then "800 cups"). Rendered as separate paragraphs they read
+ * as a ragged column, so pair them into aligned rows instead.
+ */
+function caseHtml(ls = []) {
+  const segs = segments(ls);
+  const parts = [];
+  let rows = [];
+  const flushRows = () => {
+    if (rows.length) {
+      parts.push(`<div class="case-figures">${rows.join("")}</div>`);
+      rows = [];
+    }
+  };
+  for (let i = 0; i < segs.length; i++) {
+    const seg = segs[i];
+    if (seg.kind === "list") {
+      flushRows();
+      parts.push("<ul class=\"lesson-list\">" + seg.items.map((x) => `<li>${x}</li>`).join("") + "</ul>");
+      continue;
+    }
+    if (seg.kind === "head") { flushRows(); parts.push(`<p><strong>${esc(seg.text)}</strong></p>`); continue; }
+    const text = seg.html.replace(/<[^>]+>/g, "").trim();
+    const next = segs[i + 1];
+    const nextText = next && next.kind === "para" ? next.html.replace(/<[^>]+>/g, "").trim() : "";
+    const isLabel = /:$/.test(text) && text.length <= 60;
+    const isValue = nextText && !/:$/.test(nextText) && nextText.length <= 70;
+    if (isLabel && isValue) {
+      rows.push(
+        `<div class="case-row"><span class="case-label">${esc(text.replace(/:$/, ""))}</span>` +
+          `<span class="case-value">${next.html}</span></div>`,
+      );
+      i++;
+      continue;
+    }
+    flushRows();
+    parts.push(`<p>${seg.html}</p>`);
+  }
+  flushRows();
+  return parts.join("");
 }
 
 /** "**Term**\n\ndefinition" pairs. */
@@ -270,24 +351,24 @@ for (const b of blocks) {
 
   const concept = prose(s["What is this?"]?.lines);
   push(`{ t: "h2", text: "What is this?" }`);
-  concept.forEach((p) => push(`{ t: "p", h: ${q(p)} }`));
+  pushSegments(body, s["What is this?"]?.lines);
 
   if (s["Why does it matter?"]) {
     push(`{ t: "h2", text: "Why does it matter?" }`);
-    prose(s["Why does it matter?"].lines).forEach((p) => push(`{ t: "p", h: ${q(p)} }`));
+    pushSegments(body, s["Why does it matter?"].lines);
   }
   if (s["How does it work?"]) {
     push(`{ t: "h2", text: "How does it work?" }`);
-    prose(s["How does it work?"].lines).forEach((p) => push(`{ t: "p", h: ${q(p)} }`));
+    pushSegments(body, s["How does it work?"].lines);
   }
   if (s.Case) {
     const meaning = s["What It Means"] ? prose(s["What It Means"].lines) : [];
     push(
       `{ t: "example", h: ${q(
-        `<p><strong>${esc(s.Case.head)}</strong></p>` +
-          prose(s.Case.lines).map((p) => `<p>${p}</p>`).join("") +
-          (meaning.length
-            ? `<p><strong>What it means.</strong></p>` + meaning.map((p) => `<p>${p}</p>`).join("")
+        `<p class="case-title"><strong>${esc(s.Case.head)}</strong></p>` +
+          caseHtml(s.Case.lines) +
+          (s["What It Means"]
+            ? `<p class="case-meaning"><strong>What it means.</strong></p>` + caseHtml(s["What It Means"].lines)
             : ""),
       )} }`,
     );
@@ -323,13 +404,15 @@ for (const b of blocks) {
     push(`{ t: "sandbox", kind: ${q(sb.kind)}, title: ${q(sb.title)}, prompt: ${q(sb.prompt)}, fields: [${fields}] }`);
   }
   if (s["What to Remember"]) {
+    const segs = segments(s["What to Remember"].lines);
+    const bullets = segs.flatMap((x) => (x.kind === "list" ? x.items : x.kind === "para" ? [x.html] : []));
     push(`{ t: "h2", text: "What to remember" }`);
-    push(`{ t: "note", h: ${q(prose(s["What to Remember"].lines).join("<br>"))} }`);
+    push(`{ t: "note", h: ${q("<ul>" + bullets.map((b) => `<li>${b}</li>`).join("") + "</ul>")} }`);
   }
   const mis = mistakes(s["Common Mistakes"]?.lines);
   if (mis.length) {
     push(`{ t: "h2", text: "Common mistakes" }`);
-    push(`{ t: "p", h: ${q(mis.join("<br><br>"))} }`);
+    push(`{ t: "list", items: [${mis.map(q).join(", ")}] }`);
   }
   const iv = interview(s["Interview Questions"]?.lines);
   if (iv.length) {
@@ -357,7 +440,18 @@ for (const b of blocks) {
     push(`{ t: "mcq", q: ${q(item.q)}, opts: [${opts}], correct: ${item.answer}, why: [${why}] }`);
   });
 
-  const lede = concept[0] ? concept[0].replace(/<[^>]+>/g, "").split(". ")[0] + "." : "";
+  /* The lede sits directly above "What is this?", so echoing that section's
+     first sentence just prints the same line twice. Use the document's own
+     summary line ("In simple terms: …") when there is one; otherwise take a
+     later sentence; otherwise leave the lede off entirely. */
+  const conceptText = concept.map((c) => c.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+  const firstSentence = (conceptText[0] || "").split(/(?<=\.)\s/)[0];
+  const simpleIdx = conceptText.findIndex((t) => /^in simple terms/i.test(t));
+  let lede = "";
+  if (simpleIdx >= 0 && conceptText[simpleIdx + 1]) lede = conceptText[simpleIdx + 1];
+  else if (conceptText[1] && conceptText[1].length > 40) lede = conceptText[1].split(/(?<=\.)\s/)[0];
+  if (lede && firstSentence && lede.slice(0, 45) === firstSentence.slice(0, 45)) lede = "";
+  const desc = firstSentence || (conceptText[0] || "").slice(0, 160);
   lessons.push({
     id,
     title: TITLE_MAP[id],
@@ -365,7 +459,7 @@ for (const b of blocks) {
     id: ${q(id)}, minutes: 8,
     title: ${q(TITLE_MAP[id])},
     short: ${q(TITLE_MAP[id])},
-    desc: ${q(lede)},
+    desc: ${q(desc)},
     lede: ${q(lede)},
     body: [
       ${body.join(",\n      ")}

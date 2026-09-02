@@ -270,7 +270,16 @@
 
   /* ================= block renderers ================= */
   var blockRenderers = {
-    p: function (b) { return el("p", null, b.h); },
+    p: function (b) {
+      /* Some lesson data puts a table or list in a "p" block. Nesting those in
+         a <p> is invalid HTML: the browser closes the paragraph early, which
+         breaks indentation and leaves stray gaps. Render block content in a
+         div so it inherits the same spacing without the nesting. */
+      if (/^\s*<(table|ul|ol|div|figure|blockquote)\b/i.test(b.h)) {
+        return el("div", "lesson-block", b.h);
+      }
+      return el("p", null, b.h);
+    },
     h2: function (b) { return el("h2", null, esc(b.text)); },
     h3: function (b) { return el("h3", null, esc(b.text)); },
     def: function (b) {
@@ -298,7 +307,26 @@
       d.appendChild(el("p", null, b.h));
       return d;
     },
-    note: function (b) { return el("div", "note-box", "<p>" + b.h + "</p>"); },
+    note: function (b) {
+      /* Wrap plain text in a paragraph, but insert block content (a list) as-is:
+         nesting <ul> inside <p> makes the browser close the paragraph early and
+         leaves an empty one behind, which shows up as a stray gap. */
+      var d = el("div", "note-box");
+      d.innerHTML = /^\s*<(ul|ol|div|table|p)\b/i.test(b.h) ? b.h : "<p>" + b.h + "</p>";
+      return d;
+    },
+
+    /* A real list, so bullets align with body text instead of sitting inside a
+       paragraph with paragraph spacing. */
+    list: function (b) {
+      var ul = el("ul", "lesson-list");
+      (b.items || []).forEach(function (item) {
+        var li = document.createElement("li");
+        li.innerHTML = item;
+        ul.appendChild(li);
+      });
+      return ul;
+    },
 
     /* Practice: each exercise gets a writing space, then the worked solution
        on request. Answers are kept in localStorage so work isn't lost. */
@@ -318,7 +346,9 @@
         });
         box.appendChild(ta);
         var btn = el("button", "practice-reveal", "Show worked solution");
-        var ans = el("div", "practice-solution", "<p>" + item.a + "</p>");
+        // Same rule as the callout: don't wrap block content in a paragraph.
+        var ans = el("div", "practice-solution");
+        ans.innerHTML = /^\s*<(ul|ol|div|table|p)\b/i.test(item.a) ? item.a : "<p>" + item.a + "</p>";
         ans.style.display = "none";
         btn.addEventListener("click", function () {
           var open = ans.style.display !== "none";

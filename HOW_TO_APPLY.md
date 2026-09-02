@@ -1,65 +1,76 @@
-# Level 1 rebuilt from your document
+# Level 0 & 1 — alignment and readability pass
 
-Replace **`concepts-l1.js`** in the repo root. That's the only file that changed
-this round.
+Upload these four to the repo **root**, replacing what's there:
 
-If the earlier files aren't up yet, upload these together — `app.js`,
-`site.css`, `concepts-l0.js`, `concepts-l1.js`, `curriculum-map.js` — all to the
-root. Without `app.js` the practice boxes and sandboxes won't render.
+    app.js   site.css   concepts-l0.js   concepts-l1.js
 
-## I still can't push to your repo
+No template, layout or colour changes. Same components, same design language —
+the fixes are structural markup plus four small additive CSS rules.
 
-No GitHub credentials exist in this environment; `git push` fails with "could
-not read Username for https://github.com". You'll need to commit the file.
+## What I found reading Level 0 and 1 as a student
 
-## What was imported
+**1. Bullet lists were broken markup — the main alignment bug.**
+Your source documents separate every bullet with a blank line, so each bullet
+became its own paragraph *and* its own one-item `<ul>` wrapped inside a `<p>`.
+That's invalid HTML: the browser closes the paragraph early, so bullets got
+paragraph spacing, inconsistent indents and ragged left edges.
+"What is finance?" alone had **33** of these. Now: **0** across all 43 lessons,
+rendered as real lists (180 of them) that align with the body text.
 
-All 21 Level 1 topics rebuilt from your text, in its structure: What is this ·
-Why does it matter · How does it work (step by step) · Real-Life Case Study +
-What It Means · Key Terms · Practice Questions with worked solutions · What to
-Remember · Common Mistakes · Check Yourself · Interview Questions.
+**2. Case studies read as a ragged column of fragments.**
+"Daily Sales:" / "800 cups" / "Selling Price:" / "₹20 per cup" each sat on its
+own line. They're now paired into aligned label-value rows with the figures in a
+right-aligned mono column, so the numbers line up and scan vertically. On phones
+they stack instead of squeezing.
 
-Correct quiz answers were read from your ✅ marks.
+**3. Step headings looked like body text.**
+"Step 1: Someone Has Capital" was a bold paragraph, visually identical to prose,
+so the how-it-works sections had no scannable structure. They're now real `h3`
+headings — **191** of them — using the heading styles already in your template.
 
-Totals: **99 quiz questions · 168 practice/interview items · 99 key-term cards ·
-21 worked case studies · 15 interactive sandboxes.**
+**4. Stray blank gaps.**
+"What to remember" and revealed practice solutions wrapped a list inside a `<p>`,
+leaving empty paragraphs behind — visible as uneven vertical gaps. Fixed at the
+renderer: block content is no longer wrapped in a paragraph.
 
-## Three gaps in the document
+**5. The lede repeated the first sentence.**
+Every lesson opened with a summary line and then immediately restated it word for
+word under "What is this?". The lede now uses the document's own "In simple
+terms" line where there is one, and is dropped where it would duplicate.
+**0 duplicates** remain.
 
-1. **PP&E has no "Check Yourself" section** — no quiz at all, and no interview
-   questions. Rather than ship a topic with nothing to test against, I kept its
-   3 existing questions. Everything else in PP&E comes from your document.
-2. **Cash accounting** and **Accrued expenses** have 3 quiz questions each and
-   no interview questions, where other topics have 5 and ~6.
-3. Six topics have no sandbox in the document (double-entry, debits and credits,
-   chart of accounts, cash accounting, accrued expenses, intangible assets) —
-   these are conceptual, so nothing numeric to model. The 15 working sandboxes
-   were carried over from the interactive specs, since your document describes
-   sandboxes as prose rather than runnable input/output definitions.
+## Two things in your repo I did not change, but you should know
 
-Send the missing PP&E quiz and I'll drop it straight in.
+**`research-overrides-l01.js` replaces two of your lessons.** It loads after
+`concepts-l0.js`/`concepts-l1.js` and overwrites **Personal finance vs corporate
+finance vs investing** and **Accounting equation** (its title renders as
+"Accounting equation & financial statements"). Those two are the only Level 0/1
+topics with no case study, and they read differently from the other 41. Delete
+that script tag from `index.html` if you want the document versions back — I
+left the choice to you.
 
-## Document quirks I had to correct
+**Three scripts have syntax errors and never run** — they fail to parse in the
+browser too, so whatever they provide is silently dead:
+`js/topic-lessons.js`, `js/master-topic-lab.js`, `js/researched-topic-pages.js`.
+Also `research-overrides-l01.js` and `research-overrides-l45.js` are each listed
+**twice** in `index.html`.
 
-- `PP****&****E` — nested bold around the ampersands, which broke the title
-- The **Retained Earnings** heading was fused onto the end of the previous
-  paragraph ("…media companies.** ****Retained Earnings**"), so it wasn't a
-  heading at all until separated
+I made `app.js` render a table or list that arrives inside a text block as a
+`div` instead, so even the overridden lessons no longer produce invalid nesting.
 
-Both are fixed by the importer's normalisation step, not by hand-editing, so
-re-running on an updated document works the same way.
+## Verified across all 43 Level 0 + 1 lessons
 
-## Verified
+    invalid nesting     0   (was 33 on one page alone)
+    empty paragraphs    0
+    invalid quiz answers 0
+    duplicate ledes     0
+    missing practice    0
+    missing quiz        0
+    missing case study  2   (both are the overridden lessons above)
 
-- 21 lessons load · 0 invalid quiz answers · 0 stray ✅ marks · 0 unconverted
-  markdown · every lesson has a title and full body
-- Booted in a browser engine: "Working capital" renders with 9 practice/interview
-  boxes, a sandbox computing ₹33,00,000, 5 quizzes, Previous → Accrued expenses,
-  Next → Depreciation
-- Curriculum audit passes: 11 levels, 227 topics, 72 clickable
+Curriculum audit still passes: 11 levels, 227 topics, 72 clickable.
 
-## Regenerating
+## Regenerating after a document edit
 
-    node scripts/import-level-doc.mjs 1 <extracted.md> <sandboxes.json> <baseline.js>
-
-Pass `0` instead of `1` for Level 0. The same script now handles both.
+    node scripts/import-level-doc.mjs 0 <level0.md> <sandboxes.json> <baseline.js>
+    node scripts/import-level-doc.mjs 1 <level1.md> <sandboxes.json> <baseline.js>
