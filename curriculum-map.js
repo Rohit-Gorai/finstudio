@@ -439,38 +439,38 @@ var FinStudioSandbox = (() => {
     ] },
     { level: 5, title: "Valuation", modules: [
       { title: "Valuation building blocks", topics: [
-        { title: "Enterprise value", id: "c-enterprise-value", cid: "c-enterprise-value", written: false },
-        { title: "Equity value", id: "c-equity-value", cid: "c-equity-value", written: false },
-        { title: "Market capitalization", id: "c-market-capitalization", cid: "c-market-capitalization", written: false },
-        { title: "Net debt", id: "c-net-debt", cid: "c-net-debt", written: false },
-        { title: "EV/Revenue", id: "c-ev-revenue", cid: "c-ev-revenue", written: false },
-        { title: "EV/EBITDA", id: "c-ev-ebitda", cid: "c-ev-ebitda", written: false },
-        { title: "P/E", id: "c-p-e", cid: "c-p-e", written: false },
-        { title: "PEG", id: "c-peg", cid: "c-peg", written: false }
+        { title: "Enterprise value", id: "c-enterprise-value", cid: "c-enterprise-value", written: true },
+        { title: "Equity value", id: "c-equity-value", cid: "c-equity-value", written: true },
+        { title: "Market capitalization", id: "c-market-capitalization", cid: "c-market-capitalization", written: true },
+        { title: "Net debt", id: "c-net-debt", cid: "c-net-debt", written: true },
+        { title: "EV/Revenue", id: "c-ev-revenue", cid: "c-ev-revenue", written: true },
+        { title: "EV/EBITDA", id: "c-ev-ebitda", cid: "c-ev-ebitda", written: true },
+        { title: "P/E", id: "c-p-e", cid: "c-p-e", written: true },
+        { title: "PEG", id: "c-peg", cid: "c-peg", written: true }
       ] },
       { title: "DCF", topics: [
         { title: "DCF", id: "2240-dcf", cid: "2240-dcf", written: true },
-        { title: "WACC", id: "c-wacc", cid: "c-wacc", written: false },
-        { title: "Cost of equity", id: "c-cost-of-equity", cid: "c-cost-of-equity", written: false },
-        { title: "Cost of debt", id: "c-cost-of-debt", cid: "c-cost-of-debt", written: false },
-        { title: "CAPM", id: "c-capm", cid: "c-capm", written: false },
-        { title: "Beta", id: "c-beta", cid: "c-beta", written: false },
-        { title: "Risk-free rate", id: "c-risk-free-rate", cid: "c-risk-free-rate", written: false },
-        { title: "Equity risk premium", id: "c-equity-risk-premium", cid: "c-equity-risk-premium", written: false },
-        { title: "Terminal value", id: "c-terminal-value", cid: "c-terminal-value", written: false },
-        { title: "Perpetuity growth", id: "c-perpetuity-growth", cid: "c-perpetuity-growth", written: false },
-        { title: "Exit multiple", id: "c-exit-multiple", cid: "c-exit-multiple", written: false },
-        { title: "Discount factors", id: "c-discount-factors", cid: "c-discount-factors", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-dcf", cid: "c-sensitivity-analysis-dcf", written: false }
+        { title: "WACC", id: "c-wacc", cid: "c-wacc", written: true },
+        { title: "Cost of equity", id: "c-cost-of-equity", cid: "c-cost-of-equity", written: true },
+        { title: "Cost of debt", id: "c-cost-of-debt", cid: "c-cost-of-debt", written: true },
+        { title: "CAPM", id: "c-capm", cid: "c-capm", written: true },
+        { title: "Beta", id: "c-beta", cid: "c-beta", written: true },
+        { title: "Risk-free rate", id: "c-risk-free-rate", cid: "c-risk-free-rate", written: true },
+        { title: "Equity risk premium", id: "c-equity-risk-premium", cid: "c-equity-risk-premium", written: true },
+        { title: "Terminal value", id: "c-terminal-value", cid: "c-terminal-value", written: true },
+        { title: "Perpetuity growth", id: "c-perpetuity-growth", cid: "c-perpetuity-growth", written: true },
+        { title: "Exit multiple", id: "c-exit-multiple", cid: "c-exit-multiple", written: true },
+        { title: "Discount factors", id: "c-discount-factors", cid: "c-discount-factors", written: true },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-dcf", cid: "c-sensitivity-analysis-dcf", written: true }
       ] },
       { title: "Live DCF", topics: [
-        { title: "Revenue growth", id: "c-revenue-growth", cid: "c-revenue-growth", written: false },
-        { title: "Margin", id: "c-margin", cid: "c-margin", written: false },
-        { title: "WACC", id: "c-wacc-dcf-input", cid: "c-wacc-dcf-input", written: false },
-        { title: "Terminal growth", id: "c-terminal-growth", cid: "c-terminal-growth", written: false },
-        { title: "Enterprise Value", id: "c-enterprise-value-dcf-output", cid: "c-enterprise-value-dcf-output", written: false },
-        { title: "Equity Value", id: "c-equity-value-dcf-output", cid: "c-equity-value-dcf-output", written: false },
-        { title: "Share Price", id: "c-share-price", cid: "c-share-price", written: false }
+        { title: "Revenue growth", id: "c-revenue-growth", cid: "c-revenue-growth", written: true },
+        { title: "Margin", id: "c-margin", cid: "c-margin", written: true },
+        { title: "WACC", id: "c-wacc-dcf-input", cid: "c-wacc-dcf-input", written: true },
+        { title: "Terminal growth", id: "c-terminal-growth", cid: "c-terminal-growth", written: true },
+        { title: "Enterprise Value", id: "c-enterprise-value-dcf-output", cid: "c-enterprise-value-dcf-output", written: true },
+        { title: "Equity Value", id: "c-equity-value-dcf-output", cid: "c-equity-value-dcf-output", written: true },
+        { title: "Share Price", id: "c-share-price", cid: "c-share-price", written: true }
       ] }
     ] },
     { level: 6, title: "Investment Banking", modules: [
