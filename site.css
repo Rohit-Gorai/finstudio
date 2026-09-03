@@ -1413,3 +1413,124 @@ a.chain-step:hover { color: var(--green); }
   border-bottom: 2px solid var(--green);
 }
 .chain-arrow { color: var(--ink-faint); font-size: 0.8rem; }
+
+/* --------------------------------------------------------------------------
+   12. Study tools: orientation, search, review queue, diagrams, self-check
+   All reuse existing tokens; no new colours, no new components.
+   -------------------------------------------------------------------------- */
+.onboard-panel, .review-panel, .rail-search {
+  margin: 0 1.1rem var(--space-4);
+}
+.onboard-panel {
+  padding: var(--space-3) var(--space-4);
+  background: var(--green-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.onboard-label, .review-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.onboard-panel p { margin: 0 0 var(--space-2); font-size: 0.88rem; line-height: 1.55; }
+.onboard-dismiss, .review-done-btn {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  min-height: 32px;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.onboard-dismiss:hover, .review-done-btn:hover { background: var(--paper-3); }
+
+.rail-search-input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.42rem 0.6rem;
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.rail-search-input:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+.rail-search-hits { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+.rail-search:not(.has-hits) .rail-search-hits { display: none; }
+.rail-search-hit {
+  display: block;
+  padding: 0.3rem 0.45rem;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-radius: 4px;
+}
+.rail-search-hit:hover { background: var(--paper-2); color: var(--ink); }
+
+.review-panel {
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.review-count { margin: 0 0 var(--space-2); font-size: 0.9rem; font-weight: 600; }
+.review-list { list-style: none; margin: 0; padding: 0; }
+.review-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0.28rem 0;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+.review-item:hover { color: var(--green); }
+.review-age { color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+
+.review-banner {
+  margin: 0 0 var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  background: var(--green-soft);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.review-banner-label {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.review-banner p { margin: 0 0 var(--space-2); line-height: 1.6; }
+
+.lesson-diagram {
+  margin: var(--space-4) 0 var(--space-6);
+  padding: var(--space-4);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.lesson-diagram figcaption {
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.practice-check {
+  margin: var(--space-2) 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+.practice-check.is-match { color: var(--green); font-weight: 600; }
+.practice-check.is-nomatch { color: var(--ink-faint); }

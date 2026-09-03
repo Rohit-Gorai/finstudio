@@ -475,42 +475,42 @@ var FinStudioSandbox = (() => {
     ] },
     { level: 6, title: "Investment Banking", modules: [
       { title: "Transaction valuation", topics: [
-        { title: "Comparable companies", id: "c-comparable-companies", cid: "c-comparable-companies", written: false },
-        { title: "Precedent transactions", id: "c-precedent-transactions", cid: "c-precedent-transactions", written: false },
-        { title: "Trading multiples", id: "c-trading-multiples", cid: "c-trading-multiples", written: false },
-        { title: "Transaction multiples", id: "c-transaction-multiples", cid: "c-transaction-multiples", written: false }
+        { title: "Comparable companies", id: "c-comparable-companies", cid: "c-comparable-companies", written: true },
+        { title: "Precedent transactions", id: "c-precedent-transactions", cid: "c-precedent-transactions", written: true },
+        { title: "Trading multiples", id: "c-trading-multiples", cid: "c-trading-multiples", written: true },
+        { title: "Transaction multiples", id: "c-transaction-multiples", cid: "c-transaction-multiples", written: true }
       ] },
       { title: "M&A modeling", topics: [
-        { title: "Accretion/dilution", id: "c-accretion-dilution", cid: "c-accretion-dilution", written: false },
-        { title: "Merger models", id: "c-merger-models", cid: "c-merger-models", written: false },
-        { title: "Sources & Uses", id: "c-sources-and-uses", cid: "c-sources-and-uses", written: false },
-        { title: "Purchase price", id: "c-purchase-price", cid: "c-purchase-price", written: false },
-        { title: "Financing mix", id: "c-financing-mix", cid: "c-financing-mix", written: false },
-        { title: "Goodwill", id: "c-goodwill-acquisition", cid: "c-goodwill-acquisition", written: false },
-        { title: "Synergies", id: "c-synergies", cid: "c-synergies", written: false },
-        { title: "Pro forma financials", id: "c-pro-forma-financials", cid: "c-pro-forma-financials", written: false },
-        { title: "Debt schedules", id: "c-debt-schedules", cid: "c-debt-schedules", written: false }
+        { title: "Accretion/dilution", id: "c-accretion-dilution", cid: "c-accretion-dilution", written: true },
+        { title: "Merger models", id: "c-merger-models", cid: "c-merger-models", written: true },
+        { title: "Sources & Uses", id: "c-sources-and-uses", cid: "c-sources-and-uses", written: true },
+        { title: "Purchase price", id: "c-purchase-price", cid: "c-purchase-price", written: true },
+        { title: "Financing mix", id: "c-financing-mix", cid: "c-financing-mix", written: true },
+        { title: "Goodwill", id: "c-goodwill-acquisition", cid: "c-goodwill-acquisition", written: true },
+        { title: "Synergies", id: "c-synergies", cid: "c-synergies", written: true },
+        { title: "Pro forma financials", id: "c-pro-forma-financials", cid: "c-pro-forma-financials", written: true },
+        { title: "Debt schedules", id: "c-debt-schedules", cid: "c-debt-schedules", written: true }
       ] },
       { title: "LBO basics", topics: [
-        { title: "LBO basics", id: "c-lbo-basics", cid: "c-lbo-basics", written: false }
+        { title: "LBO basics", id: "c-lbo-basics", cid: "c-lbo-basics", written: true }
       ] }
     ] },
     { level: 7, title: "Private Equity / LBO", modules: [
       { title: "LBO construction", topics: [
-        { title: "Entry valuation", id: "c-entry-valuation", cid: "c-entry-valuation", written: false },
-        { title: "Debt financing", id: "c-debt-financing", cid: "c-debt-financing", written: false },
-        { title: "Sources & Uses", id: "c-sources-and-uses-lbo", cid: "c-sources-and-uses-lbo", written: false },
-        { title: "Operating case", id: "c-operating-case", cid: "c-operating-case", written: false },
-        { title: "Debt paydown", id: "c-debt-paydown", cid: "c-debt-paydown", written: false },
-        { title: "Exit valuation", id: "c-exit-valuation", cid: "c-exit-valuation", written: false },
-        { title: "Exit multiple", id: "c-exit-multiple-lbo", cid: "c-exit-multiple-lbo", written: false },
-        { title: "Sponsor equity", id: "c-sponsor-equity", cid: "c-sponsor-equity", written: false }
+        { title: "Entry valuation", id: "c-entry-valuation", cid: "c-entry-valuation", written: true },
+        { title: "Debt financing", id: "c-debt-financing", cid: "c-debt-financing", written: true },
+        { title: "Sources & Uses", id: "c-sources-and-uses-lbo", cid: "c-sources-and-uses-lbo", written: true },
+        { title: "Operating case", id: "c-operating-case", cid: "c-operating-case", written: true },
+        { title: "Debt paydown", id: "c-debt-paydown", cid: "c-debt-paydown", written: true },
+        { title: "Exit valuation", id: "c-exit-valuation", cid: "c-exit-valuation", written: true },
+        { title: "Exit multiple", id: "c-exit-multiple-lbo", cid: "c-exit-multiple-lbo", written: true },
+        { title: "Sponsor equity", id: "c-sponsor-equity", cid: "c-sponsor-equity", written: true }
       ] },
       { title: "Sponsor returns", topics: [
-        { title: "MOIC", id: "c-moic", cid: "c-moic", written: false },
-        { title: "IRR", id: "c-irr", cid: "c-irr", written: false },
-        { title: "Management options", id: "c-management-options", cid: "c-management-options", written: false },
-        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-lbo", cid: "c-sensitivity-analysis-lbo", written: false }
+        { title: "MOIC", id: "c-moic", cid: "c-moic", written: true },
+        { title: "IRR", id: "c-irr", cid: "c-irr", written: true },
+        { title: "Management options", id: "c-management-options", cid: "c-management-options", written: true },
+        { title: "Sensitivity analysis", id: "c-sensitivity-analysis-lbo", cid: "c-sensitivity-analysis-lbo", written: true }
       ] }
     ] },
     { level: 8, title: "Equity Research & Investing", modules: [

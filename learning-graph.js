@@ -57,6 +57,17 @@
       steps: ["c-risk-free-rate", "c-equity-risk-premium", "c-beta", "c-capm",
               "c-cost-of-equity", "c-cost-of-debt", "c-wacc"],
     },
+    deal: {
+      label: "Analysing an acquisition",
+      steps: ["c-comparable-companies", "c-precedent-transactions", "c-purchase-price",
+              "c-sources-and-uses", "c-financing-mix", "c-synergies", "c-merger-models",
+              "c-accretion-dilution"],
+    },
+    buyout: {
+      label: "How a buyout makes money",
+      steps: ["c-lbo-basics", "c-entry-valuation", "c-debt-financing", "c-operating-case",
+              "c-debt-paydown", "c-exit-valuation", "c-moic", "c-irr"],
+    },
     workingcap: {
       label: "Where cash gets trapped in operations",
       steps: ["c-accounts-receivable", "c-inventory", "c-accounts-payable", "c-working-capital", "c-cash-conversion-cycle"],
@@ -194,6 +205,36 @@
     "c-enterprise-value-dcf-output": ["c-discount-factors", "c-terminal-value"],
     "c-equity-value-dcf-output": ["c-enterprise-value-dcf-output", "c-net-debt"],
     "c-share-price": ["c-equity-value-dcf-output"],
+
+    /* Level 6 */
+    "c-comparable-companies": ["c-ev-ebitda"],
+    "c-precedent-transactions": ["c-comparable-companies"],
+    "c-trading-multiples": ["c-ev-ebitda", "c-p-e"],
+    "c-transaction-multiples": ["c-precedent-transactions"],
+    "c-purchase-price": ["c-transaction-multiples", "c-equity-value"],
+    "c-sources-and-uses": ["c-purchase-price"],
+    "c-financing-mix": ["c-sources-and-uses", "c-cost-of-debt"],
+    "c-goodwill-acquisition": ["c-purchase-price", "c-goodwill"],
+    "c-synergies": ["c-purchase-price"],
+    "c-merger-models": ["c-financing-mix", "c-synergies"],
+    "c-accretion-dilution": ["c-merger-models", "c-stock-issuance"],
+    "c-pro-forma-financials": ["c-merger-models", "c-goodwill-acquisition"],
+    "c-debt-schedules": ["c-debt-schedule", "c-financing-mix"],
+    "c-lbo-basics": ["c-financial-leverage", "c-ev-ebitda"],
+
+    /* Level 7 */
+    "c-entry-valuation": ["c-lbo-basics"],
+    "c-debt-financing": ["c-entry-valuation", "c-debt-schedule"],
+    "c-sources-and-uses-lbo": ["c-debt-financing"],
+    "c-operating-case": ["c-cash-flow", "c-working-capital-model"],
+    "c-debt-paydown": ["c-operating-case", "c-debt-financing"],
+    "c-exit-valuation": ["c-debt-paydown"],
+    "c-exit-multiple-lbo": ["c-exit-valuation"],
+    "c-sponsor-equity": ["c-sources-and-uses-lbo"],
+    "c-moic": ["c-sponsor-equity", "c-exit-valuation"],
+    "c-irr": ["c-moic", "c-compounding"],
+    "c-management-options": ["c-sponsor-equity"],
+    "c-sensitivity-analysis-lbo": ["c-irr", "c-exit-multiple-lbo"],
 
     /* Capstone */
     "c-capstone": ["c-revenue-cascade-through-the-three-statements", "c-roic", "c-cash-conversion-cycle", "c-net-debt-ebitda"],

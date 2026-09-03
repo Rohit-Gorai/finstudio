@@ -29,8 +29,22 @@
       },
       markItem: function (lessonId, itemId) {
         this.lesson(lessonId).items[itemId] = true;
+        // Stamp the moment a lesson first becomes complete, so the review
+        // queue can resurface it later. Spacing needs a date, not a boolean.
+        var l = this.lesson(lessonId);
+        if (!l.completedAt && this.isDone(lessonId)) l.completedAt = Date.now();
         save();
       },
+      completedAt: function (lessonId) { return this.lesson(lessonId).completedAt || 0; },
+      /** Record that a review was done, so the next one is scheduled later. */
+      markReviewed: function (lessonId) {
+        var l = this.lesson(lessonId);
+        l.reviews = (l.reviews || 0) + 1;
+        l.reviewedAt = Date.now();
+        save();
+      },
+      reviewCount: function (lessonId) { return this.lesson(lessonId).reviews || 0; },
+      lastReviewed: function (lessonId) { return this.lesson(lessonId).reviewedAt || 0; },
       saveCell: function (lessonId, sheetId, addr, raw) {
         var l = this.lesson(lessonId);
         if (!l.sheets[sheetId]) l.sheets[sheetId] = {};
@@ -153,6 +167,103 @@
     var nav = document.getElementById("sidebar");
     nav.innerHTML = "";
     var hash = currentRoute();
+
+    /* First-visit orientation. One short panel, dismissible for good, so a
+       beginner knows what they are looking at before facing 227 topics. */
+    (function onboarding() {
+      var KEY = "finstudio-oriented-v1";
+      var seen = false;
+      try { seen = localStorage.getItem(KEY) === "1"; } catch (e) { seen = false; }
+      if (seen) return;
+      var box = el("div", "onboard-panel");
+      box.innerHTML = '<p class="onboard-label">New here?</p>' +
+        "<p>Eleven levels, from what money is to valuing a company. " +
+        "Each lesson explains the idea, works an example, then asks you to do one. " +
+        "Start at Level 0 and follow Next \u2014 the order is deliberate.</p>";
+      var btn = el("button", "onboard-dismiss", "Got it");
+      btn.addEventListener("click", function () {
+        try { localStorage.setItem(KEY, "1"); } catch (e) { /* ignore */ }
+        box.parentNode && box.parentNode.removeChild(box);
+      });
+      box.appendChild(btn);
+      nav.appendChild(box);
+    })();
+
+    /* Lesson search. 227 topics is too many to scroll; this filters the rail
+       by title as you type, so a half-remembered concept is findable. */
+    (function railSearch() {
+      var wrap = el("div", "rail-search");
+      var input = document.createElement("input");
+      input.type = "search";
+      input.className = "rail-search-input";
+      input.placeholder = "Search lessons\u2026";
+      input.setAttribute("aria-label", "Search lessons");
+      wrap.appendChild(input);
+      var hits = el("ul", "rail-search-hits");
+      wrap.appendChild(hits);
+      input.addEventListener("input", function () {
+        var q = input.value.trim().toLowerCase();
+        hits.innerHTML = "";
+        if (q.length < 2) { wrap.classList.remove("has-hits"); return; }
+        /* Other scripts republish lessons under a second id, so the same title
+           can appear several times. Keep one entry per title. */
+        var found = [], titleSeen = {};
+        Object.keys(LS.lessons).forEach(function (lid) {
+          var l = LS.lessons[lid];
+          var title = (l.title || "").toLowerCase();
+          if (!title || titleSeen[title] || title.indexOf(q) < 0) return;
+          titleSeen[title] = true;
+          found.push({ id: lid, title: l.title, rank: title.indexOf(q) });
+        });
+        found.sort(function (a, b) { return a.rank - b.rank || a.title.localeCompare(b.title); });
+        found.slice(0, 8).forEach(function (f) {
+          var li = el("li"), a = el("a", "rail-search-hit");
+          a.href = "#/" + f.id;
+          a.textContent = f.title;
+          li.appendChild(a);
+          hits.appendChild(li);
+        });
+        wrap.classList.toggle("has-hits", found.length > 0);
+      });
+      nav.appendChild(wrap);
+    })();
+
+    /* Spaced review queue. A lesson resurfaces 7 days after completion, then
+       30, then 90 — the standard expanding intervals. Reading once and moving
+       on is what makes curricula evaporate; this is the loop that fixes it. */
+    (function reviewQueue() {
+      if (!LS.curriculumMap) return;
+      var DAY = 86400000;
+      var intervals = [7 * DAY, 30 * DAY, 90 * DAY];
+      var due = [];
+      Object.keys(LS.lessons).forEach(function (id) {
+        var done = store.completedAt(id);
+        if (!done) return;
+        var n = store.reviewCount(id);
+        if (n >= intervals.length) return;                 // fully reviewed
+        var since = store.lastReviewed(id) || done;
+        if (Date.now() - since >= intervals[n]) due.push({ id: id, since: since });
+      });
+      if (!due.length) return;
+      due.sort(function (a, b) { return a.since - b.since; });
+
+      var box = el("div", "review-panel");
+      box.innerHTML = '<p class="review-label">Due for review</p>' +
+        '<p class="review-count">' + due.length + (due.length === 1 ? " lesson" : " lessons") + "</p>";
+      var ul = el("ul", "review-list");
+      due.slice(0, 5).forEach(function (item) {
+        var lesson = LS.lessons[item.id];
+        var li = el("li"), a = el("a", "review-item");
+        a.href = "#/" + item.id;
+        var days = Math.floor((Date.now() - item.since) / DAY);
+        a.innerHTML = '<span class="review-title">' + esc(lesson.short || lesson.title) + "</span>" +
+          '<span class="review-age">' + days + "d</span>";
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+      nav.appendChild(box);
+    })();
 
     /* Learning path panel: where the learner is, and the one link that matters
        most — the next unfinished written lesson in curriculum order. Beginners
@@ -401,6 +512,34 @@
           try { localStorage.setItem(key, ta.value); } catch (e) {}
         });
         box.appendChild(ta);
+        /* Numeric self-check. Pull the figures out of the worked solution and
+           tell the learner whether their answer contains one of them. It does
+           not grade reasoning — it catches the case where someone reveals the
+           answer and assumes they were right. */
+        var check = null;   // created on first use, so no empty node sits in the DOM
+        var solutionNumbers = (item.a.match(/[\d][\d,]*\.?\d*/g) || [])
+          .map(function (x) { return x.replace(/,/g, ""); })
+          .filter(function (x) { return parseFloat(x) >= 1; });
+        function selfCheck() {
+          var typed = (ta.value.match(/[\d][\d,]*\.?\d*/g) || [])
+            .map(function (x) { return x.replace(/,/g, ""); });
+          if (!typed.length || !solutionNumbers.length) {
+            if (check) check.style.display = "none";
+            return;
+          }
+          if (!check) { check = el("p", "practice-check"); box.insertBefore(check, btn); }
+          var hit = typed.some(function (t) {
+            return solutionNumbers.some(function (sn) {
+              var a = parseFloat(t), b = parseFloat(sn);
+              return b !== 0 && Math.abs(a - b) / Math.abs(b) < 0.01;
+            });
+          });
+          check.className = "practice-check " + (hit ? "is-match" : "is-nomatch");
+          check.textContent = hit
+            ? "\u2713 A figure in your answer matches the worked solution."
+            : "No figure in your answer matches the solution yet \u2014 check your working.";
+          check.style.display = "block";
+        }
         var btn = el("button", "practice-reveal", "Show worked solution");
         // Same rule as the callout: don't wrap block content in a paragraph.
         var ans = el("div", "practice-solution");
@@ -412,6 +551,7 @@
           btn.textContent = open ? "Show worked solution" : "Hide solution";
         });
         box.appendChild(btn);
+        ta.addEventListener("blur", selfCheck);
         box.appendChild(ans);
         wrap.appendChild(box);
       });
@@ -1139,6 +1279,41 @@
       kicker + ' <span class="kicker-min">· ' + (lesson.minutes || 4) + " min</span>"));
     page.appendChild(el("h1", null, esc(lesson.title)));
     if (lesson.lede) page.appendChild(el("p", "lesson-lede", lesson.lede));
+
+    /* If this lesson is due for review, ask for recall before the learner reads
+       the answer again. Retrieval practice beats re-reading. */
+    (function reviewBanner() {
+      var DAY = 86400000;
+      var intervals = [7 * DAY, 30 * DAY, 90 * DAY];
+      var done = store.completedAt(id);
+      var n = store.reviewCount(id);
+      if (!done || n >= intervals.length) return;
+      var since = store.lastReviewed(id) || done;
+      if (Date.now() - since < intervals[n]) return;
+
+      var box = el("div", "review-banner");
+      box.innerHTML = '<p class="review-banner-label">Review</p>' +
+        "<p>Before scrolling: say the core idea of this lesson out loud, and one number " +
+        "from its example. Then read on and check yourself.</p>";
+      var btn = el("button", "review-done-btn", "I have recalled it \u2014 mark reviewed");
+      btn.addEventListener("click", function () {
+        store.markReviewed(id);
+        box.innerHTML = '<p class="review-banner-label">Reviewed</p><p>Next review scheduled. ' +
+          "Spacing is what turns reading into remembering.</p>";
+      });
+      box.appendChild(btn);
+      page.appendChild(box);
+    })();
+
+    /* A diagram where the concept is structural rather than numerical. */
+    if (LS.diagrams) {
+      var d = LS.diagrams.forLesson(id);
+      if (d) {
+        var dbox = el("figure", "lesson-diagram");
+        dbox.innerHTML = d.svg + '<figcaption>' + esc(d.caption) + "</figcaption>";
+        page.appendChild(dbox);
+      }
+    }
 
     /* Before you start: the concepts this lesson assumes, so nobody hits an
        explanation that silently depends on something they haven't read. */

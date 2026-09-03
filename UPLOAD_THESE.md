@@ -1,75 +1,54 @@
-# Batch 1 — Level 4 (Financial Modeling) written
+# Upload all 18 files to the repo ROOT
 
-Upload all 14 files to the repo ROOT. New this batch: `concepts-l4.js`.
-`index.html`, `curriculum-map.js` and `learning-graph.js` must go with it.
-
-    index.html  app.js  site.css  curriculum-map.js  learning-graph.js
+    index.html   app.js   site.css   curriculum-map.js
     concepts-l0.js  concepts-l1.js  concepts-l2.js  concepts-l3.js
-    concepts-l4.js  ← new
-    capstone.js  topic-lessons.js  master-topic-lab.js  researched-topic-pages.js
+    concepts-l4.js  concepts-l5.js  concepts-l6.js  concepts-l7.js
+    capstone.js  learning-graph.js  diagrams.js
+    topic-lessons.js  master-topic-lab.js  researched-topic-pages.js
 
-## How the placeholders were generated
+This is the complete bundle — nothing from earlier batches is missing.
 
-`topic-lessons.js` walks `LS.curriculumMap` and, for any topic with
-`written: false`, builds a lesson from a template — one generic example, one
-practice item, one MCQ and the same "opportunity" sandbox on every topic. It
-only fills unwritten topics, so marking a topic `written: true` in
-`curriculum-map.js` removes its placeholder automatically. No placeholder file
-needed editing; the 25 new lessons simply displace them.
+## Written this round
 
-## Implemented — 25 lessons
+**Level 6 — Investment Banking, 14/14.** Comparable companies, precedent
+transactions, trading and transaction multiples; then one deal (Northline
+acquiring Kesar Spices) carried through purchase price, sources and uses,
+financing mix, goodwill, synergies, the merger model, accretion/dilution, pro
+forma statements and debt schedules; closing with LBO basics.
 
-    Model architecture   architecture · assumptions · historical periods
-                         formatting · best practices
-    Operating schedules  revenue build · cost build · headcount · working capital
-                         capex · depreciation · debt · interest · tax · retained earnings
-    Integrated modeling  scenario analysis · sensitivity analysis · circularity
-    Build a real model   revenue · gross profit · EBITDA · EBIT · net income
-                         cash flow · balance sheet
+**Level 7 — Private Equity / LBO, 12/12.** One buyout (Meridian Packaging)
+built step by step: entry valuation, debt financing, sources and uses,
+operating case, debt paydown, exit valuation, exit multiple, sponsor equity,
+then MOIC, IRR, management options and the returns sensitivity grid.
 
-Each carries the loop from your brief: intuition → accurate explanation →
-worked example with figures → 2 practice questions with full answers → 1 check
-with an explained answer → connection to the rest of finance. Depth scales as
-instructed — circularity, the debt schedule, working capital and the cash flow
-statement run long; model formatting is short.
+Both levels use one running deal so the numbers accumulate rather than reset
+each lesson — the ₹280 crore equity cheque in Level 7 is the same one that
+returns ₹658 crore eight lessons later, and the return is decomposed to show
+two-thirds came from debt paydown.
 
-Twelve reuse existing calculators (revenue-growth, operating-leverage,
-receivables-cash, ppe-rollforward, depreciation, leverage-returns, retained,
-profit-bridge, profit-to-cash, balance). No new UI, no new components.
+## Everything else in the bundle
 
-The lessons build one café-chain model end to end, so the revenue build, cost
-build, capex, debt and statements all use the same company and tie together.
+Levels 0-5 authored (177 of 227 topics), the capstone, spaced repetition with
+the review queue and recall banner, lesson search, numeric self-check on
+practice, five SVG diagrams, first-visit orientation, prerequisites and concept
+chains, header hide-on-scroll, and the three repaired scripts.
 
-Level 4 lessons also gained prerequisites and a "Building an integrated model"
-chain in `learning-graph.js`.
+## Validated
 
-## One standard change, flagged
-
-The audit previously required 3 MCQs per lesson — the Level 0-3 format. Your
-brief specifies the shorter loop, so the completion standard is now: a worked
-example, **2+ practice items with answers**, and **1+ explained check**. It is
-enforced on every authored lesson including Levels 0-3, which still exceed it.
-
-## Verified
-
-    curriculum audit PASS — Levels 0-4 complete (124 of 227 topics)
-    scripts 50 · duplicates 0 · missing 0 · execution failures 0
-    L4 sample: invalid nesting 0 · empty paragraphs 0 · prev+next 6/6
-    learning graph: 0 dangling references · 0 cycles
+    curriculum audit PASS — 177 of 227 topics with real lessons
+    scripts 54 · duplicates 0 · missing 0 · execution failures 0
+    learning graph: 0 dangling references · 0 prerequisite cycles
+    L6/L7 sample: invalid nesting 0 · empty paragraphs 0 · prev+next 6/6
     unlinked topics in rail: 0
+    study tools verified working: search, diagrams, onboarding, self-check
 
-## Remaining placeholders: 103
+## Remaining: 50 placeholder topics
 
-    Level 5  Valuation                  27
-    Level 6  Investment Banking         14
-    Level 7  Private Equity / LBO       12
-    Level 8  Equity Research & Investing 17
-    Level 9  Markets                    17
-    Level 10 Advanced Finance           16
+    Level 8  Equity Research & Investing  17
+    Level 9  Markets                      17
+    Level 10 Advanced Finance             16
 
-## Next batch
-
-**Level 5 — Valuation (27 topics).** It is the next incomplete level and sits
-first in your priority order after the modelling foundation this batch laid:
-enterprise value, equity value, the multiples, then DCF, WACC, CAPM, beta,
-terminal value and discount factors. DCF and WACC get the deep treatment.
+I stopped here deliberately. Levels 8-10 cover stocks and investing, bonds,
+duration, FX, derivatives, options pricing, Black-Scholes, portfolio theory,
+VaR and Monte Carlo. Writing 50 lessons of that in the same pass would have
+produced the filler you told me not to ship. Level 8 is next.
