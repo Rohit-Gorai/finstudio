@@ -68,6 +68,16 @@
       steps: ["c-lbo-basics", "c-entry-valuation", "c-debt-financing", "c-operating-case",
               "c-debt-paydown", "c-exit-valuation", "c-moic", "c-irr"],
     },
+    investing: {
+      label: "Building an investment case",
+      steps: ["c-business-analysis", "c-revenue-drivers", "c-unit-economics",
+              "c-competitive-advantage", "c-earnings", "c-free-cash-flow-investment-case",
+              "c-valuation", "c-investment-thesis", "c-build-interactive-investment-cases"],
+    },
+    scenarios: {
+      label: "Weighing the outcomes",
+      steps: ["c-risks", "c-bear-case", "c-base-case", "c-bull-case", "c-catalysts"],
+    },
     workingcap: {
       label: "Where cash gets trapped in operations",
       steps: ["c-accounts-receivable", "c-inventory", "c-accounts-payable", "c-working-capital", "c-cash-conversion-cycle"],
@@ -235,6 +245,25 @@
     "c-irr": ["c-moic", "c-compounding"],
     "c-management-options": ["c-sponsor-equity"],
     "c-sensitivity-analysis-lbo": ["c-irr", "c-exit-multiple-lbo"],
+
+    /* Level 8 */
+    "c-business-analysis": ["c-revenue", "c-profit"],
+    "c-revenue-drivers": ["c-business-analysis", "c-revenue-build"],
+    "c-unit-economics": ["c-revenue-drivers", "c-costs"],
+    "c-competitive-advantage": ["c-roic"],
+    "c-tam-sam-som": ["c-revenue-drivers"],
+    "c-management-analysis": ["c-roic", "c-dividends"],
+    "c-earnings": ["c-profit", "c-taxes"],
+    "c-guidance": ["c-earnings"],
+    "c-free-cash-flow-investment-case": ["c-cash-flow", "c-capex"],
+    "c-valuation": ["c-p-e", "c-ev-ebitda", "c-enterprise-value-dcf-output"],
+    "c-investment-thesis": ["c-valuation", "c-competitive-advantage"],
+    "c-catalysts": ["c-investment-thesis"],
+    "c-risks": ["c-investment-thesis"],
+    "c-bear-case": ["c-risks", "c-valuation"],
+    "c-base-case": ["c-valuation", "c-guidance"],
+    "c-bull-case": ["c-base-case"],
+    "c-build-interactive-investment-cases": ["c-bear-case", "c-base-case", "c-bull-case", "c-catalysts"],
 
     /* Capstone */
     "c-capstone": ["c-revenue-cascade-through-the-three-statements", "c-roic", "c-cash-conversion-cycle", "c-net-debt-ebitda"],

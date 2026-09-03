@@ -515,27 +515,27 @@ var FinStudioSandbox = (() => {
     ] },
     { level: 8, title: "Equity Research & Investing", modules: [
       { title: "Business analysis", topics: [
-        { title: "Business analysis", id: "c-business-analysis", cid: "c-business-analysis", written: false },
-        { title: "Revenue drivers", id: "c-revenue-drivers", cid: "c-revenue-drivers", written: false },
-        { title: "Unit economics", id: "c-unit-economics", cid: "c-unit-economics", written: false },
-        { title: "Competitive advantage", id: "c-competitive-advantage", cid: "c-competitive-advantage", written: false },
-        { title: "TAM / SAM / SOM", id: "c-tam-sam-som", cid: "c-tam-sam-som", written: false },
-        { title: "Management analysis", id: "c-management-analysis", cid: "c-management-analysis", written: false },
-        { title: "Earnings", id: "c-earnings", cid: "c-earnings", written: false },
-        { title: "Guidance", id: "c-guidance", cid: "c-guidance", written: false }
+        { title: "Business analysis", id: "c-business-analysis", cid: "c-business-analysis", written: true },
+        { title: "Revenue drivers", id: "c-revenue-drivers", cid: "c-revenue-drivers", written: true },
+        { title: "Unit economics", id: "c-unit-economics", cid: "c-unit-economics", written: true },
+        { title: "Competitive advantage", id: "c-competitive-advantage", cid: "c-competitive-advantage", written: true },
+        { title: "TAM / SAM / SOM", id: "c-tam-sam-som", cid: "c-tam-sam-som", written: true },
+        { title: "Management analysis", id: "c-management-analysis", cid: "c-management-analysis", written: true },
+        { title: "Earnings", id: "c-earnings", cid: "c-earnings", written: true },
+        { title: "Guidance", id: "c-guidance", cid: "c-guidance", written: true }
       ] },
       { title: "Investment case", topics: [
-        { title: "Free cash flow", id: "c-free-cash-flow-investment-case", cid: "c-free-cash-flow-investment-case", written: false },
-        { title: "Valuation", id: "c-valuation", cid: "c-valuation", written: false },
-        { title: "Investment thesis", id: "c-investment-thesis", cid: "c-investment-thesis", written: false },
-        { title: "Catalysts", id: "c-catalysts", cid: "c-catalysts", written: false },
-        { title: "Risks", id: "c-risks", cid: "c-risks", written: false },
-        { title: "Bear case", id: "c-bear-case", cid: "c-bear-case", written: false },
-        { title: "Base case", id: "c-base-case", cid: "c-base-case", written: false },
-        { title: "Bull case", id: "c-bull-case", cid: "c-bull-case", written: false }
+        { title: "Free cash flow", id: "c-free-cash-flow-investment-case", cid: "c-free-cash-flow-investment-case", written: true },
+        { title: "Valuation", id: "c-valuation", cid: "c-valuation", written: true },
+        { title: "Investment thesis", id: "c-investment-thesis", cid: "c-investment-thesis", written: true },
+        { title: "Catalysts", id: "c-catalysts", cid: "c-catalysts", written: true },
+        { title: "Risks", id: "c-risks", cid: "c-risks", written: true },
+        { title: "Bear case", id: "c-bear-case", cid: "c-bear-case", written: true },
+        { title: "Base case", id: "c-base-case", cid: "c-base-case", written: true },
+        { title: "Bull case", id: "c-bull-case", cid: "c-bull-case", written: true }
       ] },
       { title: "Interactive investment cases", topics: [
-        { title: "Build interactive investment cases", id: "c-build-interactive-investment-cases", cid: "c-build-interactive-investment-cases", written: false }
+        { title: "Build interactive investment cases", id: "c-build-interactive-investment-cases", cid: "c-build-interactive-investment-cases", written: true }
       ] }
     ] },
     { level: 9, title: "Markets", modules: [
