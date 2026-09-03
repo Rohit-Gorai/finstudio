@@ -24,12 +24,39 @@ const topics = [];
 w.LS.curriculumMap.forEach((l) => l.modules.forEach((m) => m.topics.forEach((t) =>
   topics.push({ route: slug(l.level + "-" + m.title + "-" + t.title), cid: t.cid, title: t.title }))));
 
-let unresolved = 0;
+/* Phrases produced by the generated topic pages. If any appears on a rendered
+   topic route, a template is being shown instead of the authored lesson. */
+const TEMPLATE_MARKERS = [
+  "useful professional habit",
+  "assumption-free",
+  "30-Second Master Challenge",
+  "interpreted with its underlying assumptions",
+  "numerator rises while the denominator",
+];
+
+let unresolved = 0, templated = 0, wrongTitle = 0;
 for (const t of topics) {
   w.location.hash = "#/topic/" + t.route;
   w.dispatchEvent(new w.Event("hashchange"));
-  await new Promise((r) => setTimeout(r, 10));
+  await new Promise((r) => setTimeout(r, 12));
   if (w.location.hash !== "#/" + t.cid) { unresolved++; if (unresolved < 5) console.log("  unresolved:", t.route); }
+  const main = w.document.getElementById("main");
+  const text = main ? main.textContent : "";
+  if (TEMPLATE_MARKERS.some((m) => text.includes(m))) {
+    templated++;
+    if (templated < 5) console.log("  templated content on:", t.route);
+  }
+  /* The heading must match the lesson the route resolved to. For the 29 café
+     spreadsheet lessons mapped onto curriculum topics the lesson keeps its own
+     title ("Opex & EBITDA" for the Operating expenses topic), so compare
+     against the resolved lesson rather than the curriculum topic name. */
+  const resolved = w.LS.lessons[t.cid];
+  const expected = resolved && (resolved.title || "").trim();
+  const h1 = main && main.querySelector("h1");
+  if (!h1 || !expected || h1.textContent.trim() !== expected) {
+    wrongTitle++;
+    if (wrongTitle < 5) console.log("  wrong heading on:", t.route, "->", h1 && h1.textContent, "expected", expected);
+  }
 }
 
 const L = w.LS.lessons;
@@ -47,7 +74,9 @@ for (const id of Object.keys(L)) {
 
 console.log(`topic routes tested        : ${topics.length}`);
 console.log(`not reaching their lesson  : ${unresolved}`);
+console.log(`showing templated content  : ${templated}`);
+console.log(`wrong heading for the topic: ${wrongTitle}`);
 console.log(`authored quiz questions    : ${quizzes}`);
 console.log(`shared between topics      : ${shared}`);
-if (unresolved || shared) { console.log("\nTOPIC ROUTE TEST: FAIL"); process.exit(1); }
+if (unresolved || shared || templated || wrongTitle) { console.log("\nTOPIC ROUTE TEST: FAIL"); process.exit(1); }
 console.log("\nTOPIC ROUTE TEST: PASS");
