@@ -1333,6 +1333,10 @@
 
     (lesson.body || []).forEach(function (b, i) {
       var fn = blockRenderers[b.t];
+      // A lesson with a live spreadsheet does not also need a calculator.
+      var hasSheet = LS.lessonSheets && LS.lessonSheets[id];
+      if (hasSheet && b.t === "sandbox") return;
+      if (hasSheet && b.t === "h2" && b.text === "Sandbox") return;
       if (fn) page.appendChild(fn(b, ctx, i));
     });
 
@@ -1348,6 +1352,15 @@
     }
 
     // prev/next
+    /* The live spreadsheet. The homepage promises every lesson ends in one, so
+       where a sheet exists it is rendered here using the same engine and
+       checker as the café lessons. */
+    if (LS.lessonSheets && LS.lessonSheets[id] && blockRenderers.sheet) {
+      var sheetBlock = { t: "sheet", sheet: LS.lessonSheets[id] };
+      var node = blockRenderers.sheet(sheetBlock, ctx, 9000);
+      if (node) page.appendChild(node);
+    }
+
     /* Where this fits: the chain of concepts this lesson belongs to, with the
        current step marked. Answers "why am I learning this?" without adding a
        new navigation system. */
@@ -1446,6 +1459,47 @@
     }
   });
   scrim.addEventListener("click", closeNav);
+
+  /* Authored lessons win over generated topic pages.
+     The curriculum page links to #/topic/<slug>, and researched-topic-pages.js
+     answers those with a template — the same two questions on every topic, with
+     only the name swapped. Where a topic has a real authored lesson, redirect to
+     it so each of the 227 topics shows its own content.
+     Slug candidates mirror that script's own findTopic(). */
+  (function authoredLessonWins() {
+    function slug(x) {
+      return String(x).toLowerCase().replace(/&/g, " and ")
+        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    }
+    function canonicalFor(requested) {
+      if (!LS.curriculumMap) return null;
+      var found = null;
+      LS.curriculumMap.forEach(function (lv) {
+        lv.modules.forEach(function (mod) {
+          mod.topics.forEach(function (t) {
+            if (found) return;
+            var cands = [t.id, t.cid, slug(t.title),
+                         slug(lv.level + "-" + mod.title + "-" + t.title)];
+            if (cands.indexOf(requested) >= 0) {
+              var target = t.cid || t.id;
+              if (LS.lessons && LS.lessons[target]) found = target;
+            }
+          });
+        });
+      });
+      return found;
+    }
+    function redirect() {
+      var raw = location.hash.replace(/^#\/?/, "");
+      if (raw.indexOf("topic/") !== 0) return;
+      var requested = raw.slice(6).split("#")[0];
+      var target = canonicalFor(requested);
+      if (target && target !== requested) location.replace("#/" + target);
+    }
+    window.addEventListener("hashchange", redirect);
+    window.addEventListener("load", redirect);
+    redirect();
+  })();
 
   /* Hide the header on scroll down, bring it back on scroll up.
      - Always visible in the top 120px, so the page never opens headerless.

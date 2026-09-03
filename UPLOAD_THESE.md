@@ -1,63 +1,71 @@
-# Upload all 21 files to the repo ROOT — zero placeholders remain
+# Bug fixed — every topic now shows its own lesson
 
-    index.html   app.js   site.css   curriculum-map.js   learning-graph.js
-    concepts-l0.js … concepts-l10.js   (11 files)
-    capstone.js   diagrams.js
-    topic-lessons.js   master-topic-lab.js   researched-topic-pages.js
+Upload the 22 files to the repo ROOT. The fix is in **`app.js`**;
+`concepts-l0.js` and `concepts-l1.js` also changed.
 
-New this round: `concepts-l9.js`, `concepts-l10.js`. Everything else is the
-complete bundle — uploading all 21 gets you the finished site in one go.
+## What was actually wrong
 
-## Level 9 — Markets, 17/17
+You were on `#/topic/6-transaction-valuation-comparable-companies`. That is not
+my authored lesson — it is a generated route.
 
-Stocks and market cap; then fixed income built in order — bonds, yield, yield
-curves, duration, convexity, credit; macro — interest rates, central banks, FX,
-commodities; derivatives — the general contract, options, futures; and market
-mechanics — liquidity and volatility.
+`js/researched-topic-pages.js` intercepts every `#/topic/...` hash and renders
+its own templated page: the same two questions on every topic with only the
+name substituted ("Why should **Comparable companies** be interpreted with its
+underlying assumptions?" / "Why should **Trading multiples** be…"). The
+authored lesson existed and was simply never reached.
 
-Duration and convexity get the deep treatment: a 30-year bond losing 15.8% on a
-one-point rate move with no default risk, and convexity explaining why the same
-move gains 27% and loses 21%.
+The links come from the **Curriculum page** (`roadmap-ui.js`), which points at
+`#/topic/<slug>` rather than at the lesson. The left sidebar was already
+linking correctly to `#/c-comparable-companies` — which is why the bug appears
+from the curriculum page and not from the rail.
 
-## Level 10 — Advanced Finance, 16/16
+## The fix
 
-Options pricing and time decay, Black-Scholes by replication (and why expected
-return does not enter it), the Greeks; portfolio theory, CAPM re-derived from
-diversification, the efficient frontier, Sharpe, beta, alpha, factor investing;
-risk management, VaR and its blind spot, scenario analysis, Monte Carlo; and
-the curriculum closes on capital structure and cost of capital.
+`app.js` now resolves `#/topic/<slug>` to the authored lesson and redirects,
+using the same slug-matching rules that script uses internally. Old links,
+bookmarks and the curriculum page all land on the real lesson.
 
-The final lesson deliberately ends where Level 0 started: a company growing 11%
-a year for two decades while earning 8% on capital costing 11% destroyed value
-every year and reported rising profit throughout.
+Verified on your two exact URLs:
 
-## Two errors I caught and fixed before shipping
+    #/topic/6-transaction-valuation-comparable-companies
+      → #/c-comparable-companies  "Why use the median rather than the mean peer multiple?"
+    #/topic/6-transaction-valuation-trading-multiples
+      → #/c-trading-multiples     "Trading multiples price:"
 
-- The Sharpe practice answer contained a visible mid-answer self-correction.
-  Rewritten: 12% return at 10% volatility, levered at the risk-free rate, gives
-  17% at 20% volatility — Sharpe 0.50 both ways.
-- The Alpha quiz stated a 13% market return while its explanation used 10%.
-  The question now states 10% market, 7% risk-free, beta 2.0, return 13% →
-  alpha zero.
+Then across **all 227 topic routes: 0 fail to reach their own lesson.**
 
-## Validated
+## A second problem the check surfaced
 
-    curriculum audit PASS — 227 of 227 topics have real lessons
-    coverage: {"total":227,"linked":227,"complete":true}
-    unlinked topics in the rail: 0
-    199 authored lessons checked against the completion standard: 0 failures
-    scripts 57 · duplicates 0 · missing 0 · execution failures 0
-    learning graph: 0 dangling references · 0 prerequisite cycles
-    L9/L10 sample: invalid nesting 0 · empty paragraphs 0 · prev+next 8/8
-    café lessons preserved: 38 (29 inside Levels 0-10, 9 in model labs)
-    study tools working: search, diagrams, onboarding, spaced review, self-check
+Testing uniqueness found **8 quiz questions shared between different topics** —
+generic stems from the Level 0/1 source documents such as "Which statement is
+true?", which appeared in five lessons. The options differed, but the question
+did not stand alone, so it read as if the quiz had not changed.
 
-## What is genuinely done, and what is not
+The importer now prefixes repeated or very short stems with the topic name:
 
-Done: all 227 topics, the capstone, spaced repetition, lesson search, numeric
-self-check, five diagrams, onboarding, prerequisites and concept chains across
-all eleven levels, header behaviour, and the three repaired scripts.
+    "Which statement is true?"
+      → "Revenue recognition: which statement is true?"
 
-Not done, and not fixable by me: real annual reports, actual Excel modelling,
-video, and any measurement of whether learners retain this. Those need
-licensing decisions, a spreadsheet, and real users respectively.
+**Shared questions across 484 authored quiz questions: now 0.**
+
+## New regression test
+
+`tests/topic-routes.mjs` walks all 227 topic routes and checks each reaches its
+own lesson with a distinct quiz. This bug cannot return silently.
+
+    node tests/topic-routes.mjs .
+    topic routes tested       : 227
+    not reaching their lesson : 0
+    shared between topics     : 0
+    TOPIC ROUTE TEST: PASS
+
+## Also in this bundle
+
+Level 0's live Bombay Bean spreadsheets (`sheets-l0.js`), the type-scale
+normalisation and the alignment fixes from the previous batch — none of which
+are uploaded yet.
+
+## Still outstanding
+
+72 lessons in Levels 1-10 end in a calculator rather than a spreadsheet, and
+still use the other fictional companies rather than the café.

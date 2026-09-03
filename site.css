@@ -1534,3 +1534,69 @@ a.chain-step:hover { color: var(--green); }
 }
 .practice-check.is-match { color: var(--green); font-weight: 600; }
 .practice-check.is-nomatch { color: var(--ink-faint); }
+
+/* --------------------------------------------------------------------------
+   13. Type scale normalisation
+   The stylesheet had accumulated 32 distinct font sizes, seven of them below
+   0.8rem (under 13px). This collapses the small end onto a deliberate scale
+   and sets a 0.8rem floor for readability. Headings are untouched.
+   Scale: 0.8 / 0.88 / 0.95 / 1 / 1.08 / 1.35 / 1.9rem
+   -------------------------------------------------------------------------- */
+.path-label, .review-label, .onboard-label, .chain-label, .prereq-label,
+.review-banner-label, .lesson-kicker, .mcq-tag, .example-card .ex-tag,
+.side-level, .sandbox-note, .review-age, .side-progress, .prereq-done {
+  font-size: 0.8rem;
+}
+.case-label, .case-value, .sandbox-label, .sandbox-field,
+.rail-search-hit, .review-item, .practice-check, .chain-step,
+.side-lessons a, .side-lesson-planned, .path-next-meta, .prereq-links {
+  font-size: 0.88rem;
+}
+.lesson-diagram figcaption, .sandbox-prompt, .practice-reveal,
+.sandbox-reset, .onboard-dismiss, .review-done-btn, .path-count,
+.review-count, .rail-search-input {
+  font-size: 0.95rem;
+}
+.path-next-title { font-size: 1.08rem; }
+
+/* --------------------------------------------------------------------------
+   14. Alignment corrections
+   Row padding was inconsistent between figure blocks, and the rail's left edge
+   stepped in and out because sections used different insets.
+   -------------------------------------------------------------------------- */
+.case-row, .sandbox-row { padding: 0.55rem 0.85rem; }
+.case-figures { padding: 0 0.85rem; }          /* label edge lines up with sandbox rows */
+.case-row { padding-left: 0; padding-right: 0; }
+
+/* One left inset for every rail section, so the edge is straight top to bottom */
+.side-level, .path-panel, .review-panel, .rail-search, .onboard-panel {
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+.side-module-head { padding-left: 1.1rem; padding-right: 1.1rem; }
+
+/* Numerals align in columns wherever figures are compared */
+.case-value, .sandbox-value, .side-progress, .review-age, .path-count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Remaining small-text selectors raised to the 0.8rem floor. These are the
+   tags, table headers and captions that were set between 0.68 and 0.79rem
+   (roughly 11-12.6px) — too small to read comfortably. */
+.formula-block .fx-title,
+.where-box .where-tag,
+.sheet-tag,
+table.sheet th,
+table.sheet td.rowhead,
+table.ls-table th,
+.sheet-shortcuts kbd,
+.module-card .mc-meta,
+.lesson-nav .nav-label,
+.footer-fine,
+.gloss-level,
+.side-module-head .side-progress,
+.path-next-label {
+  font-size: 0.8rem;
+}
