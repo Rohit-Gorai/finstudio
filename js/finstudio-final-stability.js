@@ -8,7 +8,8 @@
     var hit=null;
     (LS.curriculumMap||[]).some(function(lv){return (lv.modules||[]).some(function(m){return (m.topics||[]).some(function(t){
       var id=t.id||("topic-l"+lv.level+"-"+slug(m.title)+"-"+slug(t.title));
-      if([id,t.cid,slug(String(lv.level)+"-"+m.title+"-"+t.title),slug(t.title)].indexOf(wanted)>=0){hit={id:id,title:t.title};return true;} return false;
+      var aliases=[id,t.cid,slug(String(lv.level)+"-"+m.title+"-"+t.title),slug(t.title)];
+      if(aliases.indexOf(wanted)>=0){hit={id:id,cid:t.cid,title:t.title};return true;} return false;
     });});});
     return hit;
   }
@@ -16,8 +17,7 @@
     if(LS.lessons&&LS.lessons[raw])return raw;
     var hit=findTopic(raw); if(!hit)return raw;
     if(LS.lessons[hit.id])return hit.id;
-    var base=LS.lessons[hit.id.replace(/^topic-l\d+-/,"")];
-    if(!base) base=LS.lessons[hit.id.split("-").slice(4).join("-")];
+    var base=(hit.cid&&LS.lessons[hit.cid])||LS.lessons[slug(hit.title)];
     if(base){var copy={};Object.keys(base).forEach(function(k){copy[k]=base[k];});copy.id=hit.id;copy.title=hit.title;LS.lessons[hit.id]=copy;return hit.id;}
     return raw;
   }
