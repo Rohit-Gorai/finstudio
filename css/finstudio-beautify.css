@@ -1,0 +1,19 @@
+/* FinStudio — visual polish only. No content, routing or lesson architecture changes. */
+:root{--fs-gutter:clamp(18px,3vw,48px);--fs-page:920px}
+html{background:#f7f5ef}body{background:linear-gradient(180deg,#faf9f5 0%,#f7f5ef 100%);letter-spacing:-.005em}
+.topbar{padding:0 1.5rem;min-height:64px;box-shadow:0 4px 20px rgba(24,37,48,.08)}
+.topbar-inner{width:100%;max-width:1440px;margin:auto;display:flex;align-items:center;gap:1.25rem}
+.layout{max-width:1440px;margin:0 auto;background:rgba(255,255,255,.25);box-shadow:0 0 40px rgba(24,37,48,.035)}
+.sidebar{background:rgba(250,249,245,.96);padding-top:1.35rem;border-right:1px solid #ded7c7}
+.content{padding:clamp(2.2rem,4vw,4rem) var(--fs-gutter) 5rem}.content>.page{max-width:var(--fs-page)}
+.page>h1:first-child,.lesson-page h1{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.035em;margin-bottom:.7rem}
+.lesson-kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}.lesson-lede{font-size:1.14rem;line-height:1.75;max-width:72ch}
+.def-card,.formula-block,.example-card,.where-box,.note-box,.sheet-block{border-radius:14px;box-shadow:0 8px 30px rgba(24,37,48,.055)}
+.def-card{padding:1.35rem 1.5rem;border-left-width:4px}.formula-block{padding:1.25rem 1.5rem}.example-card{padding:1.3rem 1.5rem;background:linear-gradient(135deg,#f5f0e5,#f0eadb)}
+.where-box,.note-box{padding:1rem 1.3rem}.side-level{margin-top:1.7rem}.side-module-head{padding-top:.52rem;padding-bottom:.52rem;border-radius:0 8px 8px 0}
+.side-lessons a{padding-top:.4rem;padding-bottom:.4rem;border-radius:0 7px 7px 0;margin-right:.55rem}.side-lessons a.active{box-shadow:inset 3px 0 0 var(--green),0 2px 8px rgba(30,107,78,.06)}
+.content>.page>h2{margin-top:2.8rem;padding-top:.15rem}.content>.page>h2:first-of-type{margin-top:2rem}.content>.page>p{max-width:74ch}.content>.page>ul,.content>.page>ol{max-width:72ch}
+.mcq-block,.practice-block,.quiz-block,.practice-card{border-radius:12px!important;box-shadow:0 6px 22px rgba(24,37,48,.045)}
+button,.btn{transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}button:hover,.btn:hover{transform:translateY(-1px)}
+@media(max-width:900px){.topbar{padding:0 1rem}.layout{width:100%}.content{padding:1.8rem 1rem 4rem}.content>.page{max-width:100%}}
+@media(min-width:1441px){body{padding:0 18px}.topbar{border-radius:0 0 14px 14px}.layout{border-radius:0 0 16px 16px}}
