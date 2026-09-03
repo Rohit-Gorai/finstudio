@@ -1,12 +1,10 @@
-/* FinStudio final stability layer. Keeps the canonical 227-topic curriculum
-   intact, gives Level 0 the same routing behavior as every other level, and
-   makes quiz state deterministic per topic without full-page reloads. */
+/* FinStudio final stability layer. Canonical 227-topic curriculum, reliable
+   Level 0 routing, and deterministic per-topic quiz state. */
 (function () {
   "use strict";
   var LS = window.LS = window.LS || {};
 
   function slug(s) { return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
-
   function topicByRoute(route) {
     var wanted = String(route || "").replace(/^#\/?topic\//, "");
     var hit = null;
@@ -14,7 +12,8 @@
       return (lv.modules || []).some(function (m) {
         return (m.topics || []).some(function (t) {
           var canonical = t.id || ("topic-l" + lv.level + "-" + slug(m.title) + "-" + slug(t.title));
-          var aliases = [canonical, t.cid, slug(String(lv.level) + "-" + m.title + "-" + t.title), slug(t.title), slug(String(lv.level) + "-" + m.title + "-" + t.title).replace(/^\d+-/, "")];
+          var base = slug(String(lv.level) + "-" + m.title + "-" + t.title);
+          var aliases = [canonical, t.cid, base, slug(t.title), base.replace(/^\d+-/, "")];
           if (aliases.indexOf(wanted) !== -1) { hit = { id: canonical, title: t.title, level: lv.level, module: m.title }; return true; }
           return false;
         });
@@ -30,7 +29,6 @@
       Object.keys(rec.items || {}).forEach(function (k) {
         if (/^mcq\d+$/.test(k) || /^quiz[-:]/i.test(k)) delete rec.items[k];
       });
-      /* Persist the deletion because the core store keeps an in-memory cache. */
       var all = JSON.parse(localStorage.getItem("finstudio-progress-v1") || "{}");
       if (all[id] && all[id].items) {
         Object.keys(all[id].items).forEach(function (k) {
@@ -51,19 +49,18 @@
     });
   }
 
-  /* Legacy quiz patches attempted to solve isolation with location.reload().
-     That created a navigation race and allowed the old lesson to be restored.
-     Suppress only those programmatic reload calls; browser refresh remains normal. */
+  /* The two legacy quiz patches call location.reload() on topic changes. That
+     reload is the source of the navigation race. No other FinStudio script
+     needs programmatic reload, so safely neutralise that one legacy mechanism. */
   try {
     var proto = Object.getPrototypeOf(window.location);
-    var originalReload = window.location.reload;
     if (proto && !window.__finstudioReloadGuard) {
       window.__finstudioReloadGuard = true;
       Object.defineProperty(proto, "reload", { configurable: true, writable: true, value: function () {} });
     }
   } catch (e) {}
 
-  /* Capture all legacy /topic links and route them to the actual lesson id. */
+  /* Capture old /topic links before the compatibility/legacy listeners. */
   document.addEventListener("click", function (e) {
     var a = e.target && e.target.closest ? e.target.closest('a[href^="#/topic/"]') : null;
     if (!a) return;
@@ -75,42 +72,53 @@
     location.hash = "#/" + hit.id;
   }, true);
 
-  function normalizeAndRender() {
+  var initialBootDone = false;
+  function initialBoot() {
+    if (initialBootDone) return;
+    initialBootDone = true;
     var raw = String(location.hash || "").replace(/^#\/?/, "");
     if (raw.indexOf("topic/") === 0) {
       var hit = topicByRoute(raw);
       if (hit && LS.lessons[hit.id]) {
-        if (location.hash !== "#/" + hit.id) {
-          history.replaceState(null, "", location.pathname + location.search + "#/" + hit.id);
-        }
+        history.replaceState(null, "", location.pathname + location.search + "#/" + hit.id);
+        raw = hit.id;
       }
     }
-    var current = String(location.hash || "").replace(/^#\/?/, "");
-    if (LS.lessons[current]) {
-      clearQuizState(current);
-      resetRenderedQuiz();
-      /* app.js registered its router before this layer; give it one explicit
-         render pass after all 227 routes have been materialised. */
-      if (LS.ui && typeof LS.ui.route === "function") LS.ui.route();
-      else window.dispatchEvent(new HashChangeEvent("hashchange"));
+    /* app.js ran before all-topic-routes.js created the generated 227 routes.
+       Re-run its normal hash router exactly once after those routes exist. */
+    if (LS.lessons[raw]) {
+      clearQuizState(raw);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
     }
   }
 
   window.addEventListener("hashchange", function () {
-    setTimeout(normalizeAndRender, 0);
+    setTimeout(function () {
+      var raw = String(location.hash || "").replace(/^#\/?/, "");
+      if (raw.indexOf("topic/") === 0) {
+        var hit = topicByRoute(raw);
+        if (hit && LS.lessons[hit.id]) {
+          history.replaceState(null, "", location.pathname + location.search + "#/" + hit.id);
+          clearQuizState(hit.id);
+          window.dispatchEvent(new HashChangeEvent("hashchange"));
+          return;
+        }
+      }
+      if (LS.lessons[raw]) {
+        clearQuizState(raw);
+        /* app.js has already rendered the target lesson for this hash. Reset
+           only the transient quiz UI; do not touch practice/sandbox content. */
+        resetRenderedQuiz();
+      }
+    }, 0);
   });
-  window.addEventListener("load", function () {
-    setTimeout(normalizeAndRender, 0);
-  });
-  setTimeout(normalizeAndRender, 0);
 
-  /* The generated canonical curriculum is the source of truth: 11 levels,
-     35 modules and 227 topics. Never silently replace it with a smaller list. */
+  setTimeout(initialBoot, 0);
+  window.addEventListener("load", initialBoot);
+
   function countCanonical() {
     var n = 0;
-    (LS.curriculumMap || []).forEach(function (lv) {
-      (lv.modules || []).forEach(function (m) { n += (m.topics || []).length; });
-    });
+    (LS.curriculumMap || []).forEach(function (lv) { (lv.modules || []).forEach(function (m) { n += (m.topics || []).length; }); });
     return n;
   }
   window.addEventListener("load", function () {
