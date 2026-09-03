@@ -1,66 +1,81 @@
-/* FinStudio — hard isolation between lesson routes.
-   A topic change is a new learning session: never let the previous lesson's
-   rendered quiz DOM/state survive a hash-only navigation. This intentionally
-   uses the existing hash architecture and does not alter lesson content.
-*/
+/* FinStudio — hard isolation between lesson routes + canonical topic navigation. */
 (function () {
   "use strict";
   var LS = window.LS = window.LS || {};
-  var RELOADING = "finstudio-topic-route-reload";
 
-  function topicFromHash() {
-    var h = String(window.location.hash || "").replace(/^#\/?/, "");
-    if (!h || h === "curriculum" || h === "glossary" || h.indexOf("module/") === 0 ||
-        h.indexOf("quiz/") === 0 || h.indexOf("ref/") === 0 || h.indexOf("lab/") === 0 ||
-        h.indexOf("cases/") === 0) return null;
+  function slug(s) { return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function canonicalFor(raw) {
+    if (!LS.curriculumMap) return null;
+    var wanted = String(raw || "").replace(/^#\/?topic\//, "");
+    var found = null;
+    LS.curriculumMap.some(function (lv) {
+      return (lv.modules || []).some(function (mod) {
+        return (mod.topics || []).some(function (t) {
+          var id = t.id || ("topic-l" + lv.level + "-" + slug(mod.title) + "-" + slug(t.title));
+          var candidates = [id, t.cid, slug(String(lv.level) + "-" + mod.title + "-" + t.title), slug(t.title)];
+          if (candidates.indexOf(wanted) >= 0) { found = id; return true; }
+          return false;
+        });
+      });
+    });
+    return found;
+  }
+
+  /* Level 0 has authored lessons under legacy ids. Convert roadmap /topic links
+     to those canonical lesson ids before any legacy template listener runs. */
+  document.addEventListener("click", function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href^="#/topic/"]') : null;
+    if (!a) return;
+    var canonical = canonicalFor(a.getAttribute("href"));
+    if (!canonical || !LS.lessons || !LS.lessons[canonical]) return;
+    ev.preventDefault();
+    if (location.hash !== "#/" + canonical) location.hash = "#/" + canonical;
+  }, true);
+
+  function currentTopic() {
+    var h = String(location.hash || "").replace(/^#\/?/, "");
+    if (!h || h === "curriculum" || /^(module|quiz|ref|lab|cases)\//.test(h)) return null;
     return LS.lessons && LS.lessons[h] ? h : null;
   }
 
-  function clearQuizSelections(id) {
-    /* The legacy renderer stores MCQ completion under lesson.items as mcq0,
-       mcq1, ... . Delete only those transient quiz markers; practice answers,
-       sandbox work, and broader lesson progress remain untouched. */
+  function clearQuiz(id) {
     try {
-      var store = LS.store;
-      if (!store || typeof store.lesson !== "function") return;
-      var record = store.lesson(id);
-      if (!record || !record.items) return;
-      Object.keys(record.items).forEach(function (key) {
-        if (/^mcq\d+$/.test(key)) delete record.items[key];
-      });
-      /* Also remove any old quiz markers created by earlier implementations. */
-      Object.keys(record.items).forEach(function (key) {
-        if (/^quiz[-:]/i.test(key)) delete record.items[key];
+      var r = LS.store && LS.store.lesson ? LS.store.lesson(id) : null;
+      if (!r || !r.items) return;
+      Object.keys(r.items).forEach(function (k) {
+        if (/^mcq\d+$/.test(k) || /^quiz[-:]/i.test(k)) delete r.items[k];
       });
     } catch (e) {}
   }
 
-  var previous = topicFromHash();
-
+  var previous = currentTopic();
   window.addEventListener("hashchange", function () {
-    var next = topicFromHash();
+    var raw = String(location.hash || "").replace(/^#\/?/, "");
+    if (raw.indexOf("topic/") === 0) {
+      var canonical = canonicalFor(raw);
+      if (canonical) {
+        location.hash = "#/" + canonical;
+        return;
+      }
+    }
+    var next = currentTopic();
     if (!next || next === previous) return;
     previous = next;
-
-    clearQuizSelections(next);
-
-    /* Hash routes are normally rendered in-place by the legacy app. A full
-       reload here is deliberate: it guarantees every DOM node, event handler,
-       quiz answer, feedback message and renderer-local variable belongs to the
-       newly selected topic. It also fixes browser back/forward navigation. */
-    try { sessionStorage.setItem(RELOADING, "1"); } catch (e) {}
-    window.location.reload();
+    clearQuiz(next);
+    /* Full reload is retained as the final isolation boundary: no prior topic
+       DOM, selection, feedback, or renderer-local quiz state can survive. */
+    try { sessionStorage.setItem("finstudio-topic-route-reload", "1"); } catch (e) {}
+    location.reload();
   });
 
-  /* Defensive cleanup if an older route implementation left quiz classes or
-     feedback in the DOM while switching without a hashchange. */
   window.addEventListener("pageshow", function () {
-    try { sessionStorage.removeItem(RELOADING); } catch (e) {}
+    try { sessionStorage.removeItem("finstudio-topic-route-reload"); } catch (e) {}
     var main = document.getElementById("main");
     if (!main) return;
     main.querySelectorAll(".mcq-explain").forEach(function (n) { n.remove(); });
     main.querySelectorAll(".mcq-opts button").forEach(function (b) {
       b.classList.remove("picked-right", "picked-wrong");
+      b.disabled = false;
     });
   });
 })();
