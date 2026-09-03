@@ -540,55 +540,55 @@ var FinStudioSandbox = (() => {
     ] },
     { level: 9, title: "Markets", modules: [
       { title: "Equities", topics: [
-        { title: "Stocks", id: "c-stocks", cid: "c-stocks", written: false },
-        { title: "Market capitalization", id: "c-market-capitalization-equities", cid: "c-market-capitalization-equities", written: false }
+        { title: "Stocks", id: "c-stocks", cid: "c-stocks", written: true },
+        { title: "Market capitalization", id: "c-market-capitalization-equities", cid: "c-market-capitalization-equities", written: true }
       ] },
       { title: "Fixed income", topics: [
-        { title: "Bonds", id: "c-bonds", cid: "c-bonds", written: false },
-        { title: "Yield", id: "c-yield", cid: "c-yield", written: false },
-        { title: "Yield curves", id: "c-yield-curves", cid: "c-yield-curves", written: false },
-        { title: "Duration", id: "c-duration", cid: "c-duration", written: false },
-        { title: "Convexity", id: "c-convexity", cid: "c-convexity", written: false },
-        { title: "Credit", id: "c-credit", cid: "c-credit", written: false }
+        { title: "Bonds", id: "c-bonds", cid: "c-bonds", written: true },
+        { title: "Yield", id: "c-yield", cid: "c-yield", written: true },
+        { title: "Yield curves", id: "c-yield-curves", cid: "c-yield-curves", written: true },
+        { title: "Duration", id: "c-duration", cid: "c-duration", written: true },
+        { title: "Convexity", id: "c-convexity", cid: "c-convexity", written: true },
+        { title: "Credit", id: "c-credit", cid: "c-credit", written: true }
       ] },
       { title: "Macro & currencies", topics: [
-        { title: "Interest rates", id: "c-interest-rates", cid: "c-interest-rates", written: false },
-        { title: "Central banks", id: "c-central-banks", cid: "c-central-banks", written: false },
-        { title: "FX", id: "c-fx", cid: "c-fx", written: false },
-        { title: "Commodities", id: "c-commodities", cid: "c-commodities", written: false }
+        { title: "Interest rates", id: "c-interest-rates", cid: "c-interest-rates", written: true },
+        { title: "Central banks", id: "c-central-banks", cid: "c-central-banks", written: true },
+        { title: "FX", id: "c-fx", cid: "c-fx", written: true },
+        { title: "Commodities", id: "c-commodities", cid: "c-commodities", written: true }
       ] },
       { title: "Derivatives", topics: [
-        { title: "Derivatives", id: "c-derivatives", cid: "c-derivatives", written: false },
-        { title: "Options", id: "c-options", cid: "c-options", written: false },
-        { title: "Futures", id: "c-futures", cid: "c-futures", written: false }
+        { title: "Derivatives", id: "c-derivatives", cid: "c-derivatives", written: true },
+        { title: "Options", id: "c-options", cid: "c-options", written: true },
+        { title: "Futures", id: "c-futures", cid: "c-futures", written: true }
       ] },
       { title: "Market mechanics", topics: [
-        { title: "Liquidity", id: "c-liquidity", cid: "c-liquidity", written: false },
-        { title: "Volatility", id: "c-volatility", cid: "c-volatility", written: false }
+        { title: "Liquidity", id: "c-liquidity", cid: "c-liquidity", written: true },
+        { title: "Volatility", id: "c-volatility", cid: "c-volatility", written: true }
       ] }
     ] },
     { level: 10, title: "Advanced Finance", modules: [
       { title: "Options & portfolio theory", topics: [
-        { title: "Options pricing", id: "c-options-pricing", cid: "c-options-pricing", written: false },
-        { title: "Black-Scholes intuition", id: "c-black-scholes-intuition", cid: "c-black-scholes-intuition", written: false },
-        { title: "Greeks", id: "c-greeks", cid: "c-greeks", written: false },
-        { title: "Portfolio theory", id: "c-portfolio-theory", cid: "c-portfolio-theory", written: false },
-        { title: "CAPM", id: "c-capm-portfolio-theory", cid: "c-capm-portfolio-theory", written: false },
-        { title: "Efficient frontier", id: "c-efficient-frontier", cid: "c-efficient-frontier", written: false },
-        { title: "Sharpe ratio", id: "c-sharpe-ratio", cid: "c-sharpe-ratio", written: false },
-        { title: "Beta", id: "c-beta-portfolio-theory", cid: "c-beta-portfolio-theory", written: false },
-        { title: "Alpha", id: "c-alpha", cid: "c-alpha", written: false },
-        { title: "Factor investing", id: "c-factor-investing", cid: "c-factor-investing", written: false }
+        { title: "Options pricing", id: "c-options-pricing", cid: "c-options-pricing", written: true },
+        { title: "Black-Scholes intuition", id: "c-black-scholes-intuition", cid: "c-black-scholes-intuition", written: true },
+        { title: "Greeks", id: "c-greeks", cid: "c-greeks", written: true },
+        { title: "Portfolio theory", id: "c-portfolio-theory", cid: "c-portfolio-theory", written: true },
+        { title: "CAPM", id: "c-capm-portfolio-theory", cid: "c-capm-portfolio-theory", written: true },
+        { title: "Efficient frontier", id: "c-efficient-frontier", cid: "c-efficient-frontier", written: true },
+        { title: "Sharpe ratio", id: "c-sharpe-ratio", cid: "c-sharpe-ratio", written: true },
+        { title: "Beta", id: "c-beta-portfolio-theory", cid: "c-beta-portfolio-theory", written: true },
+        { title: "Alpha", id: "c-alpha", cid: "c-alpha", written: true },
+        { title: "Factor investing", id: "c-factor-investing", cid: "c-factor-investing", written: true }
       ] },
       { title: "Risk & simulation", topics: [
-        { title: "Risk management", id: "c-risk-management", cid: "c-risk-management", written: false },
-        { title: "VaR", id: "c-var", cid: "c-var", written: false },
-        { title: "Scenario analysis", id: "c-scenario-analysis-risk", cid: "c-scenario-analysis-risk", written: false },
-        { title: "Monte Carlo simulation", id: "c-monte-carlo-simulation", cid: "c-monte-carlo-simulation", written: false }
+        { title: "Risk management", id: "c-risk-management", cid: "c-risk-management", written: true },
+        { title: "VaR", id: "c-var", cid: "c-var", written: true },
+        { title: "Scenario analysis", id: "c-scenario-analysis-risk", cid: "c-scenario-analysis-risk", written: true },
+        { title: "Monte Carlo simulation", id: "c-monte-carlo-simulation", cid: "c-monte-carlo-simulation", written: true }
       ] },
       { title: "Corporate finance", topics: [
-        { title: "Capital structure", id: "c-capital-structure", cid: "c-capital-structure", written: false },
-        { title: "Cost of capital", id: "c-cost-of-capital", cid: "c-cost-of-capital", written: false }
+        { title: "Capital structure", id: "c-capital-structure", cid: "c-capital-structure", written: true },
+        { title: "Cost of capital", id: "c-cost-of-capital", cid: "c-cost-of-capital", written: true }
       ] }
     ] }
   ];

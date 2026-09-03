@@ -78,6 +78,23 @@
       label: "Weighing the outcomes",
       steps: ["c-risks", "c-bear-case", "c-base-case", "c-bull-case", "c-catalysts"],
     },
+    fixedincome: {
+      label: "How bonds behave",
+      steps: ["c-bonds", "c-yield", "c-yield-curves", "c-duration", "c-convexity", "c-credit"],
+    },
+    portfolio: {
+      label: "Combining assets into a portfolio",
+      steps: ["c-volatility", "c-portfolio-theory", "c-efficient-frontier", "c-sharpe-ratio",
+              "c-beta-portfolio-theory", "c-alpha", "c-factor-investing"],
+    },
+    optionchain: {
+      label: "Understanding options",
+      steps: ["c-options", "c-options-pricing", "c-black-scholes-intuition", "c-greeks"],
+    },
+    riskchain: {
+      label: "Measuring what could go wrong",
+      steps: ["c-risk-management", "c-var", "c-scenario-analysis-risk", "c-monte-carlo-simulation"],
+    },
     workingcap: {
       label: "Where cash gets trapped in operations",
       steps: ["c-accounts-receivable", "c-inventory", "c-accounts-payable", "c-working-capital", "c-cash-conversion-cycle"],
@@ -264,6 +281,43 @@
     "c-base-case": ["c-valuation", "c-guidance"],
     "c-bull-case": ["c-base-case"],
     "c-build-interactive-investment-cases": ["c-bear-case", "c-base-case", "c-bull-case", "c-catalysts"],
+
+    /* Level 9 */
+    "c-stocks": ["c-equity", "c-financial-markets"],
+    "c-market-capitalization-equities": ["c-stocks", "c-market-capitalization"],
+    "c-bonds": ["c-debt", "c-interest"],
+    "c-yield": ["c-bonds", "c-present-value"],
+    "c-yield-curves": ["c-yield", "c-risk-free-rate"],
+    "c-duration": ["c-yield", "c-discount-factors"],
+    "c-convexity": ["c-duration"],
+    "c-credit": ["c-bonds", "c-net-debt-ebitda"],
+    "c-interest-rates": ["c-interest", "c-inflation"],
+    "c-central-banks": ["c-interest-rates"],
+    "c-fx": ["c-financial-markets"],
+    "c-commodities": ["c-costs", "c-competitive-advantage"],
+    "c-derivatives": ["c-financial-markets", "c-risk"],
+    "c-options": ["c-derivatives"],
+    "c-futures": ["c-derivatives"],
+    "c-liquidity": ["c-financial-markets"],
+    "c-volatility": ["c-risk", "c-return"],
+
+    /* Level 10 */
+    "c-options-pricing": ["c-options"],
+    "c-black-scholes-intuition": ["c-options-pricing", "c-volatility"],
+    "c-greeks": ["c-black-scholes-intuition"],
+    "c-portfolio-theory": ["c-volatility", "c-risk-vs-reward"],
+    "c-capm-portfolio-theory": ["c-portfolio-theory", "c-capm"],
+    "c-efficient-frontier": ["c-portfolio-theory"],
+    "c-sharpe-ratio": ["c-efficient-frontier", "c-risk-free-rate"],
+    "c-beta-portfolio-theory": ["c-capm-portfolio-theory", "c-beta"],
+    "c-alpha": ["c-beta-portfolio-theory"],
+    "c-factor-investing": ["c-alpha"],
+    "c-risk-management": ["c-risks"],
+    "c-var": ["c-volatility", "c-risk-management"],
+    "c-scenario-analysis-risk": ["c-risk-management", "c-scenario-analysis"],
+    "c-monte-carlo-simulation": ["c-scenario-analysis-risk", "c-sensitivity-analysis"],
+    "c-capital-structure": ["c-financial-leverage", "c-wacc"],
+    "c-cost-of-capital": ["c-wacc", "c-roic", "c-capital-structure"],
 
     /* Capstone */
     "c-capstone": ["c-revenue-cascade-through-the-three-statements", "c-roic", "c-cash-conversion-cycle", "c-net-debt-ebitda"],
