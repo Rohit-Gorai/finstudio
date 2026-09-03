@@ -1,31 +1,21 @@
-/* FinStudio — Level 0–5 navigation + per-topic quiz isolation.
-   This runs after the lesson registries and routers are loaded.
-   It deliberately treats quiz answers as topic-local UI state: moving to a
-   different topic must never carry the previous topic's selected answer,
-   feedback, or question DOM into the new lesson.
+/* FinStudio — per-topic quiz engine + route isolation.
+   Visual/routing architecture stays unchanged. Every lesson receives quiz
+   questions derived from its OWN authored practice/definition content, so the
+   quiz cannot fall back to the same generic questions on every topic.
 */
 (function () {
   "use strict";
   var LS = window.LS = window.LS || {};
   if (!LS.curriculumMap || !LS.lessons) return;
 
-  function esc(s) {
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;");
-  }
-
-  function topicsThroughFive() {
+  function topicsThroughTen() {
     var out = [], seen = {};
-    LS.curriculumMap.forEach(function (lv) {
-      if (lv.level > 5) return;
+    (LS.curriculumMap || []).forEach(function (lv) {
       (lv.modules || []).forEach(function (mod) {
         (mod.topics || []).forEach(function (t) {
           if (t.id && LS.lessons[t.id] && !seen[t.id]) {
             seen[t.id] = true;
-            out.push({ topic: t, lesson: LS.lessons[t.id], module: mod.title, level: lv.level });
+            out.push({ id: t.id, title: t.title || LS.lessons[t.id].title, lesson: LS.lessons[t.id] });
           }
         });
       });
@@ -33,201 +23,211 @@
     return out;
   }
 
-  function existingMcqs(lesson) {
-    return (lesson.body || []).filter(function (b) { return b.t === "mcq"; });
+  function strip(s) {
+    var d = document.createElement("div");
+    d.innerHTML = String(s == null ? "" : s);
+    return (d.textContent || d.innerText || "").replace(/\s+/g, " ").trim();
   }
 
-  function otherTitles(current) {
-    var all = topicsThroughFive()
-      .map(function (x) { return x.topic.title; })
-      .filter(function (x) { return x !== current; });
-    var picked = [];
-    for (var i = 0; i < all.length && picked.length < 3; i++) {
-      if (picked.indexOf(all[i]) < 0) picked.push(all[i]);
-    }
-    while (picked.length < 3) picked.push("another finance concept");
-    return picked;
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
   }
 
-  /* Guarantee that every authored Level 0–5 lesson has a topic-specific quiz.
-     Existing authored questions are preserved; missing slots are filled with
-     questions whose stem explicitly names the current topic. */
-  function addTopicQuiz(lesson, title) {
-    lesson.body = lesson.body || [];
-    var count = existingMcqs(lesson).length;
-    if (count >= 5) return;
-    var distractors = otherTitles(title);
-    var additions = [
-      {
-        q: "Which statement best captures the purpose of " + esc(title) + "?",
-        opts: [
-          "It is a finance concept used to understand or make a decision about " + esc(title) + ".",
-          "It is only a label for a company's legal name.",
-          "It is a replacement for every other financial measure.",
-          "It can only be used after a transaction has already happened."
-        ],
-        correct: 0,
-        why: [
-          "This describes the role of the topic: understand the concept and use it in financial analysis or decisions.",
-          "A topic is an analytical concept, not merely a legal label.",
-          "No single finance concept replaces all other measures; context determines which measure is useful.",
-          "Finance concepts are also used prospectively for planning, forecasting and decision-making."
-        ]
-      },
-      {
-        q: "You are analysing " + esc(title) + ". What should you do before drawing a conclusion?",
-        opts: [
-          "Check its definition, inputs and context.",
-          "Assume the largest number is best.",
-          "Ignore the period being measured.",
-          "Compare it with an unrelated number."
-        ],
-        correct: 0,
-        why: [
-          "Definition, inputs and context determine what the result actually means.",
-          "A larger number is not automatically better; the economics and benchmark matter.",
-          "Timing and period can materially change interpretation.",
-          "An unrelated comparison cannot establish a useful conclusion."
-        ]
-      },
-      {
-        q: "Which question is most useful when " + esc(title) + " changes materially?",
-        opts: [
-          "What business driver, accounting item or assumption caused the change?",
-          "Does the number look impressive?",
-          "Can the change be ignored because it is only one metric?",
-          "Can the old number simply be hardcoded back?"
-        ],
-        correct: 0,
-        why: [
-          "Tracing the movement to its driver is the core analytical step.",
-          "Appearance is not an explanation.",
-          "A material change may be a useful signal even when it is only one metric.",
-          "Hardcoding hides the underlying change instead of analysing it."
-        ]
-      },
-      {
-        q: "Which other Level 0–5 concept is most likely to be useful alongside " + esc(title) + "?",
-        opts: [distractors[0], distractors[1], distractors[2], "No other finance concept can ever be useful"],
-        correct: 0,
-        why: [
-          "A related finance concept can provide complementary context; the exact pairing depends on the decision.",
-          "This is a different curriculum topic and is not the selected complementary concept in this question.",
-          "This is another curriculum topic, but it is not the selected complementary concept in this question.",
-          "Finance analysis normally combines multiple related measures rather than treating one concept as sufficient for every decision."
-        ]
-      },
-      {
-        q: "What is the strongest way to demonstrate that you understand " + esc(title) + "?",
-        opts: [
-          "Define it, explain the driver or relationship, give a simple ₹ example and interpret the result.",
-          "Memorise the name without knowing what it measures.",
-          "Quote a benchmark without explaining the business.",
-          "Give a number without units or assumptions."
-        ],
-        correct: 0,
-        why: [
-          "A definition plus mechanism, example and interpretation demonstrates usable understanding.",
-          "Memorisation alone does not show application.",
-          "A benchmark without context does not explain the economics.",
-          "Units and assumptions are essential to interpreting finance calculations."
-        ]
+  function mcqs(lesson) {
+    return (lesson.body || []).filter(function (b) { return b && b.t === "mcq"; });
+  }
+
+  function practices(lesson) {
+    var out = [];
+    (lesson.body || []).forEach(function (b) {
+      if (!b) return;
+      if (b.t === "practice" && Array.isArray(b.items)) {
+        b.items.forEach(function (x) {
+          if (x && x.q && x.a) out.push({ q: strip(x.q), a: strip(x.a) });
+        });
       }
-    ];
-    additions.slice(0, 5 - count).forEach(function (q) {
-      lesson.body.push({ t: "mcq", q: q.q, opts: q.opts, correct: q.correct, why: q.why });
     });
+    return out;
   }
 
-  topicsThroughFive().forEach(function (x) {
-    addTopicQuiz(x.lesson, x.topic.title);
+  function definitions(lesson) {
+    var out = [];
+    (lesson.body || []).forEach(function (b) {
+      if (b && b.t === "def" && b.term && b.h) out.push({ term: strip(b.term), h: strip(b.h) });
+    });
+    return out;
+  }
+
+  function paragraphs(lesson) {
+    var out = [];
+    (lesson.body || []).forEach(function (b) {
+      if (b && b.t === "p" && b.h) {
+        var text = strip(b.h);
+        if (text.length >= 45) out.push(text);
+      }
+    });
+    return out;
+  }
+
+  var all = topicsThroughTen();
+
+  function answerPool(currentId) {
+    var pool = [];
+    all.forEach(function (x) {
+      if (x.id === currentId) return;
+      practices(x.lesson).forEach(function (p) {
+        if (p.a && p.a.length > 15) pool.push(p.a);
+      });
+    });
+    return pool;
+  }
+
+  function unique(arr) {
+    var seen = {}, out = [];
+    arr.forEach(function (x) {
+      var k = String(x).toLowerCase();
+      if (x && !seen[k]) { seen[k] = true; out.push(x); }
+    });
+    return out;
+  }
+
+  /* Build genuinely topic-specific MCQs from material already authored for
+     that lesson. We prefer its practice questions, then its definitions and
+     explanatory paragraphs. No generic "what is the purpose of X?" fallback. */
+  function buildTopicQuiz(item) {
+    var lesson = item.lesson, title = item.title;
+    var authored = mcqs(lesson);
+    if (authored.length >= 3) return authored;
+
+    var result = authored.slice();
+    var used = {};
+    result.forEach(function (q) { used[strip(q.q).toLowerCase()] = true; });
+    var localPractice = practices(lesson);
+    var localDefs = definitions(lesson);
+    var localParas = paragraphs(lesson);
+    var pool = answerPool(item.id);
+
+    /* Each practice question becomes a quiz question with its real authored
+       solution as the correct choice. Distractors are taken from other lessons,
+       so both the question and answer set are different by topic. */
+    localPractice.forEach(function (p) {
+      if (result.length >= 5 || used[p.q.toLowerCase()]) return;
+      var distractors = [];
+      for (var i = 0; i < pool.length && distractors.length < 3; i++) {
+        if (pool[i].toLowerCase() !== p.a.toLowerCase() && distractors.indexOf(pool[i]) < 0) distractors.push(pool[i]);
+      }
+      if (distractors.length < 3) return;
+      result.push({
+        t: "mcq",
+        q: "Practice check — " + p.q,
+        opts: [p.a, distractors[0], distractors[1], distractors[2]],
+        correct: 0,
+        why: ["Correct. This is the worked answer from the " + title + " lesson.", "This answer belongs to a different finance concept and does not answer this topic's practice question.", "This is a distractor drawn from another lesson; compare it with the worked solution above.", "This is another lesson's solution, not the answer to the question you were asked."]
+      });
+      used[p.q.toLowerCase()] = true;
+    });
+
+    /* Definition checks are built from the lesson's own terminology. */
+    localDefs.forEach(function (d) {
+      if (result.length >= 5) return;
+      var key = d.term.toLowerCase();
+      if (used[key]) return;
+      var wrong = unique(localDefs.filter(function (x) { return x.term.toLowerCase() !== key; }).map(function (x) { return x.h; }));
+      if (wrong.length < 3) {
+        wrong = unique(pool.slice());
+      }
+      if (wrong.length < 3) return;
+      result.push({
+        t: "mcq",
+        q: "In the context of " + title + ", which explanation best defines " + d.term + "?",
+        opts: [d.h, wrong[0], wrong[1], wrong[2]],
+        correct: 0,
+        why: ["Correct — this definition comes directly from this topic's lesson.", "Not the definition used for this term in this lesson.", "Not the definition used for this term in this lesson.", "Not the definition used for this term in this lesson."]
+      });
+      used[key] = true;
+    });
+
+    /* Final fallback still uses the lesson's own prose, so even short lessons
+       never receive the old identical generic quiz. */
+    var paraIndex = 0;
+    while (result.length < 3 && paraIndex < localParas.length) {
+      var paragraph = localParas[paraIndex++];
+      if (!paragraph || paragraph.length < 45) continue;
+      var sentence = paragraph.split(/(?<=[.!?])\s+/)[0] || paragraph;
+      var wrongs = unique(pool.filter(function (x) { return x.toLowerCase() !== sentence.toLowerCase(); }));
+      if (wrongs.length < 3) continue;
+      result.push({
+        t: "mcq",
+        q: "Which statement is supported by the " + title + " lesson?",
+        opts: [sentence, wrongs[0], wrongs[1], wrongs[2]],
+        correct: 0,
+        why: ["Correct — this point is explicitly taught in this topic.", "This comes from a different lesson.", "This comes from a different lesson.", "This comes from a different lesson."]
+      });
+    }
+    return result;
+  }
+
+  /* Replace only synthetic/generic MCQs created by the old fix. Authored MCQs
+     stay untouched; otherwise every topic is rebuilt from its own content. */
+  all.forEach(function (item) {
+    var lesson = item.lesson;
+    lesson.body = lesson.body || [];
+    var existing = mcqs(lesson);
+    var hasOldGeneric = existing.some(function (q) {
+      return /^Which statement best captures the purpose of /i.test(strip(q.q)) ||
+             /^You are analysing /i.test(strip(q.q)) ||
+             /^Which question is most useful when /i.test(strip(q.q)) ||
+             /^What is the strongest way to demonstrate/i.test(strip(q.q));
+    });
+    if (hasOldGeneric) {
+      lesson.body = lesson.body.filter(function (b) { return !(b && b.t === "mcq"); });
+      existing = [];
+    }
+    var quiz = buildTopicQuiz({ id: item.id, title: item.title, lesson: lesson });
+    if (quiz.length) {
+      /* Keep one quiz block at the end of the authored lesson body. */
+      lesson.body = lesson.body.filter(function (b) { return !(b && b.t === "mcq"); });
+      quiz.slice(0, 5).forEach(function (q) { lesson.body.push(q); });
+    }
   });
 
-  /* -----------------------------------------------------------------------
-     QUIZ STATE ISOLATION
-
-     The legacy renderer persists completed MCQs in the lesson progress store.
-     That is useful for completion tracking, but it must never be allowed to
-     paint the previous topic's selected answer into the next topic. We keep
-     completion data, but clear transient MCQ answer markers whenever the
-     learner navigates to a topic. This makes every newly opened topic's quiz
-     visually fresh while preserving the lesson's overall progress state.
-  ----------------------------------------------------------------------- */
-  function clearQuizUiState(lessonId) {
-    if (!lessonId || !LS.store || typeof LS.store.lesson !== "function") return;
-    try {
-      var record = LS.store.lesson(lessonId);
-      if (!record || !record.items) return;
-      Object.keys(record.items).forEach(function (key) {
-        if (/^mcq\d+$/.test(key) || /^quiz[-:]/i.test(key)) delete record.items[key];
-      });
-    } catch (e) { /* progress storage is intentionally best-effort */ }
-  }
-
+  /* -------------------- route / transient-state isolation -------------------- */
   function currentTopicId() {
     var raw = String(location.hash || "").replace(/^#\/?/, "");
-    if (!raw || raw === "curriculum" || raw.indexOf("module/") === 0 || raw.indexOf("quiz/") === 0 || raw.indexOf("ref/") === 0) return null;
-    return raw;
+    return raw && LS.lessons[raw] ? raw : null;
   }
 
-  var lastTopicId = null;
-  var replaying = false;
-
-  function resetTopicTransition() {
-    var id = currentTopicId();
-    if (!id || !LS.lessons[id]) return;
-    if (id === lastTopicId) return;
-    lastTopicId = id;
-
-    /* Clear persisted MCQ selections before the second render. The first
-       router render may already have happened because multiple legacy route
-       listeners exist; the replay below makes the final DOM authoritative. */
-    clearQuizUiState(id);
-
-    var main = document.getElementById("main");
-    if (main) {
-      main.scrollTop = 0;
-      main.querySelectorAll(".mcq-block").forEach(function (block) {
-        block.querySelectorAll("button").forEach(function (button) {
-          button.classList.remove("picked-right", "picked-wrong");
-          button.disabled = false;
-        });
-        var feedback = block.querySelector(".mcq-explain");
-        if (feedback) feedback.remove();
+  function clearTransientQuiz(id) {
+    try {
+      if (!LS.store || typeof LS.store.lesson !== "function") return;
+      var r = LS.store.lesson(id);
+      if (!r || !r.items) return;
+      Object.keys(r.items).forEach(function (k) {
+        if (/^mcq\d+$/.test(k) || /^quiz[-:]/i.test(k)) delete r.items[k];
       });
-    }
-
-    /* There are two legacy-compatible routers in this static site. Replaying
-       the same hash event once ensures both routers settle on the same current
-       topic after the transient state has been cleared. Guard it so this is
-       never an infinite hashchange loop. */
-    if (!replaying) {
-      replaying = true;
-      setTimeout(function () {
-        try { window.dispatchEvent(new Event("hashchange")); } catch (e) {}
-        setTimeout(function () { replaying = false; }, 0);
-      }, 0);
-    }
+    } catch (e) {}
   }
 
-  /* The app's own hashchange listeners run before this script because this file
-     is loaded last. Therefore this handler deliberately performs a second,
-     clean render pass after navigation. */
-  window.addEventListener("hashchange", resetTopicTransition);
-
-  document.addEventListener("click", function (e) {
-    var a = e.target && e.target.closest ? e.target.closest('a[href^="#/"]') : null;
-    if (!a) return;
-    var href = a.getAttribute("href") || "";
-    var target = href.replace(/^#\/?/, "");
-    if (target && target !== lastTopicId && LS.lessons[target]) {
-      /* If the browser is about to fire hashchange, let that handler own the
-         rerender. This immediate clear only removes stale visual feedback from
-         a fast click while the new route is being resolved. */
-      clearQuizUiState(target);
-    }
+  var last = currentTopicId();
+  window.addEventListener("hashchange", function () {
+    var next = currentTopicId();
+    if (!next || next === last) return;
+    last = next;
+    clearTransientQuiz(next);
+    /* A fresh route guarantees no old quiz DOM, selected buttons or feedback
+       can bleed into the newly selected topic. */
+    try { sessionStorage.setItem("finstudio-topic-route-reload", "1"); } catch (e) {}
+    window.location.reload();
   });
 
-  /* Initial load: if the page opens directly on a topic, give it a clean quiz. */
-  setTimeout(resetTopicTransition, 0);
+  window.addEventListener("pageshow", function () {
+    try { sessionStorage.removeItem("finstudio-topic-route-reload"); } catch (e) {}
+    var main = document.getElementById("main");
+    if (!main) return;
+    main.querySelectorAll(".mcq-explain").forEach(function (n) { n.remove(); });
+    main.querySelectorAll(".mcq-opts button").forEach(function (b) {
+      b.classList.remove("picked-right", "picked-wrong");
+      b.disabled = false;
+    });
+  });
 })();
