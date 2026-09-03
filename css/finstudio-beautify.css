@@ -1,16 +1,18 @@
 /* FinStudio — visual polish only. No content, routing, lesson or quiz architecture changes. */
-:root{--fs-gutter:clamp(20px,3.2vw,52px);--fs-page:1040px;--fs-ink:#182530;--fs-line:#ddd6c7;--fs-shadow:0 10px 35px rgba(24,37,48,.07)}
-html{background:#f3f0e8;scroll-behavior:smooth}body{background:linear-gradient(180deg,#fbfaf7 0%,#f4f1e9 100%);color:var(--fs-ink);letter-spacing:-.005em}
-.topbar{padding:0 1.5rem;min-height:68px;box-shadow:0 3px 22px rgba(24,37,48,.09);z-index:50}.topbar-inner{width:100%;max-width:1520px;margin:auto;display:flex;align-items:center;gap:1.5rem}
-.layout{max-width:1520px;margin:0 auto;background:rgba(255,255,255,.38);box-shadow:0 0 50px rgba(24,37,48,.045);min-height:calc(100vh - 68px)}
-.sidebar{background:rgba(249,247,241,.97);padding:1.25rem .7rem 2rem;border-right:1px solid var(--fs-line)}
-.content{padding:clamp(2.4rem,4vw,4.5rem) var(--fs-gutter) 5.5rem;min-width:0}.content>.page{max-width:var(--fs-page);margin:0 auto}
-.page>h1:first-child,.lesson-page h1{font-size:clamp(2.2rem,4.2vw,3.35rem);line-height:1.08;letter-spacing:-.045em;margin:0 0 .9rem}.lesson-kicker{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;font-weight:700}.lesson-lede{font-size:1.16rem;line-height:1.78;max-width:70ch;color:#45515a}
-.content>.page>h2{font-size:clamp(1.3rem,2vw,1.65rem);line-height:1.25;margin-top:3.2rem;padding-top:.2rem}.content>.page>h2:first-of-type{margin-top:2.2rem}.content>.page>p{max-width:74ch;line-height:1.72}.content>.page>ul,.content>.page>ol{max-width:72ch;line-height:1.7}
-.def-card,.formula-block,.example-card,.where-box,.note-box,.sheet-block{border-radius:14px;box-shadow:var(--fs-shadow)}.def-card{padding:1.45rem 1.6rem;border-left-width:4px}.formula-block{padding:1.35rem 1.6rem}.example-card{padding:1.45rem 1.6rem;background:linear-gradient(135deg,#f7f1e4,#eee7d8);border:1px solid #e2dac9}.where-box,.note-box{padding:1.1rem 1.35rem}
-.side-level{margin-top:1.5rem}.side-module-head{padding:.6rem .75rem;border-radius:0 9px 9px 0}.side-lessons a{padding:.48rem .75rem;border-radius:0 8px 8px 0;margin-right:.45rem;line-height:1.35}.side-lessons a.active{box-shadow:inset 3px 0 0 var(--green),0 3px 10px rgba(30,107,78,.08)}
-.mcq-block,.practice-block,.quiz-block,.practice-card{border-radius:14px!important;box-shadow:0 7px 26px rgba(24,37,48,.06)}
+:root{--fs-gutter:clamp(22px,3.5vw,58px);--fs-page:min(1180px,100%);--fs-ink:#182530;--fs-line:#ddd6c7;--fs-shadow:0 12px 38px rgba(24,37,48,.075)}
+html{background:#f3f0e8;scroll-behavior:smooth}body{min-height:100vh;background:linear-gradient(180deg,#fbfaf7 0%,#f3f0e8 100%);color:var(--fs-ink);letter-spacing:-.005em}
+.topbar{padding:0 clamp(18px,2.5vw,40px);min-height:72px;box-shadow:0 3px 22px rgba(24,37,48,.09);z-index:50}.topbar-inner{width:100%;max-width:1680px;margin:auto;display:flex;align-items:center;gap:1.6rem}
+.layout{width:100%;max-width:1680px;margin:0 auto;background:rgba(255,255,255,.42);box-shadow:0 0 55px rgba(24,37,48,.045);min-height:calc(100vh - 72px)}
+.sidebar{background:rgba(249,247,241,.98);padding:1.35rem .8rem 2.2rem;border-right:1px solid var(--fs-line)}
+.content{padding:clamp(2.5rem,4.5vw,5rem) var(--fs-gutter) 6rem;min-width:0}.content>.page{width:100%;max-width:var(--fs-page);margin:0 auto}
+.page>h1:first-child,.lesson-page h1{font-size:clamp(2.45rem,4.6vw,3.8rem);line-height:1.06;letter-spacing:-.05em;margin:0 0 1rem}.lesson-kicker{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700}.lesson-lede{font-size:clamp(1.12rem,1.5vw,1.28rem);line-height:1.78;max-width:76ch;color:#45515a}
+.content>.page>h2{font-size:clamp(1.45rem,2.2vw,1.85rem);line-height:1.2;margin-top:3.5rem;padding-top:.2rem}.content>.page>h2:first-of-type{margin-top:2.3rem}.content>.page>p{max-width:78ch;line-height:1.78;font-size:1.02rem}.content>.page>ul,.content>.page>ol{max-width:76ch;line-height:1.75}
+.def-card,.formula-block,.example-card,.where-box,.note-box,.sheet-block{border-radius:16px;box-shadow:var(--fs-shadow)}.def-card{padding:1.55rem 1.75rem;border-left-width:4px}.formula-block{padding:1.45rem 1.7rem}.example-card{padding:1.55rem 1.75rem;background:linear-gradient(135deg,#f7f1e4,#eee7d8);border:1px solid #e2dac9}.where-box,.note-box{padding:1.2rem 1.45rem}
+.side-level{margin-top:1.6rem}.side-module-head{padding:.65rem .8rem;border-radius:0 9px 9px 0}.side-lessons a{padding:.5rem .8rem;border-radius:0 8px 8px 0;margin-right:.45rem;line-height:1.4}.side-lessons a.active{box-shadow:inset 3px 0 0 var(--green),0 3px 10px rgba(30,107,78,.08)}
+.mcq-block,.practice-block,.quiz-block,.practice-card{border-radius:15px!important;box-shadow:0 8px 28px rgba(24,37,48,.065)}
 button,.btn{transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}button:hover,.btn:hover{transform:translateY(-1px)}
-@media(min-width:1100px){.content>.page{margin-left:clamp(0px,2vw,32px);margin-right:auto}}
-@media(max-width:900px){.topbar{padding:0 1rem;min-height:62px}.layout{width:100%}.content{padding:2rem 1rem 4rem}.content>.page{max-width:100%}}
-@media(min-width:1441px){body{padding:0 20px}.topbar{border-radius:0 0 14px 14px}.layout{border-radius:0 0 18px 18px}}
+/* Use the available viewport without creating an oversized text column. */
+@media(min-width:1100px){.content>.page{margin-left:clamp(0px,1.5vw,28px);margin-right:auto}}
+@media(min-width:1500px){.topbar{padding-left:30px;padding-right:30px}.layout{min-height:calc(100vh - 72px)} }
+@media(max-width:900px){.topbar{padding:0 1rem;min-height:64px}.layout{width:100%}.content{padding:2rem 1.15rem 4.5rem}.content>.page{max-width:100%}.page>h1:first-child,.lesson-page h1{font-size:clamp(2rem,9vw,3rem)}}
+@media(max-width:600px){.content{padding-left:1rem;padding-right:1rem}.def-card,.formula-block,.example-card{padding:1.15rem}.lesson-lede{font-size:1.05rem}}
